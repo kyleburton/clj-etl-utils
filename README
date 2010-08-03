@@ -1,0 +1,27 @@
+# clj-etl-utils
+
+ETL Utilities for Clojure.  This library was created as a collecitng point for
+various utilities for handling a multitude of file encodings, record formats
+and other ETL activities.
+
+## Usage
+
+Fill this in...
+
+## Installation
+
+Leiningen and Maven repository / depdencney inforamtion using Clojars.
+
+## References
+
+UTF and BOM
+  http://unicode.org/faq/utf_bom.html
+
+EncodingHeuristics
+  http://downloads.atlassian.com/software/clover/samples/xom/nu/xom/xinclude/EncodingHeuristics.html
+  http://xom.dev.java.net/source/browse/xom/ 
+
+## License
+
+This code is covered under the same as Clojure.
+
