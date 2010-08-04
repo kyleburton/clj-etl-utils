@@ -2,7 +2,7 @@
 
 (ns clj-etl-utils.io
   (:require [clojure.contrib.logging :as log])
-  (:import [java.io FileInputStream File]))
+  (:import [java.io FileInputStream File InputStreamReader]))
 
 
 ;; (BufferedReader. (InputStreamReader. (FileInputStream. file) (or encoding *file-encoding*)))
@@ -122,6 +122,9 @@
   (throw (format "Error: fell through to :default for detect-stream-encoding-via-bom file=%s" file)))
 
 
-
+(defn unicode-input-stream [#^String path]
+  (InputStreamReader.
+   (FileInputStream. path)
+   (:encoding (detect-file-encoding-via-bom path))))
 
 

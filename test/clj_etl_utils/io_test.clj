@@ -71,7 +71,23 @@
 
 ;; (test-detect-file-encoding-via-bom)
 
-;; (deftest read-files
-;;   (let [ascii-txt (fixture-file-contents "sample.in.txt")
-;;         utf8-txt  (fixture-file-contents "sample.utf-8.txt")]
-;;     (is (= ascii-txt utf8-txt))))
+
+;; (prn (java.nio.charset.Charset/availableCharsets))
+
+(deftest test-unicode-input-stream
+  (is (= "UTF-32BE"
+         (.getEncoding
+          (io/unicode-input-stream
+           (fixture-file "sample.utf-32be.txt")))))
+  ;; Is UnicodeLittleUnmarked an alternate name for 16le?
+  (is (= "UnicodeLittleUnmarked"
+         (.getEncoding
+          (io/unicode-input-stream
+           (fixture-file "sample.utf-16le.txt")))))
+  ;; The stream drops the hyphen, this is otherwise correct
+  (is (= "UTF8"
+         (.getEncoding
+          (io/unicode-input-stream
+           (fixture-file "sample.utf-8.txt"))))))
+
+;; (test-unicode-input-stream)
