@@ -95,7 +95,6 @@
 ;; TODO: may return a false positive on arbitrary binary data
 (defn detect-stream-encoding-via-bom [stream & [default-encoding]]
   (let [file-bytes (first-n-bytes-available stream 4)]
-    (log/error (format "detect-stream-encoding-via-bom: stream=%s %s" stream file-bytes))
     (loop [[encoding & encodings] *bom-markers*]
       (cond
         (not encoding)
