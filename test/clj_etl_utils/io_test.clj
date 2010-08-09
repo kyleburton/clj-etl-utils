@@ -74,20 +74,32 @@
 
 ;; (prn (java.nio.charset.Charset/availableCharsets))
 
+;; ensure it recognizes the BOM correctly and that it reads off the
+;; BOM if present in all cases, the first few bytes should be: "Lorem"
 (deftest test-unicode-input-stream
-  (is (= "UTF-32BE"
-         (.getEncoding
-          (io/unicode-input-stream
-           (fixture-file "sample.utf-32be.txt")))))
+  (let [inp (io/unicode-input-stream (fixture-file "sample.utf-32be.txt"))]
+    (is (= "UTF-32BE" (.getEncoding inp)))
+    ;; TODO: assert we've read the first word w/no BOM
+    ; (is (= "Lorem" (.something inp))
+    )
+
+
   ;; Is UnicodeLittleUnmarked an alternate name for 16le?
-  (is (= "UnicodeLittleUnmarked"
-         (.getEncoding
-          (io/unicode-input-stream
-           (fixture-file "sample.utf-16le.txt")))))
+  (let [inp (io/unicode-input-stream (fixture-file "sample.utf-16le.txt"))]
+   (is (= "UnicodeLittleUnmarked" (.getEncoding inp))))
+
   ;; The stream drops the hyphen, this is otherwise correct
-  (is (= "UTF8"
-         (.getEncoding
-          (io/unicode-input-stream
-           (fixture-file "sample.utf-8.txt"))))))
+  (let [inp (io/unicode-input-stream (fixture-file "sample.utf-8.txt"))]
+    (is (= "UTF8" (.getEncoding inp)))))
 
 ;; (test-unicode-input-stream)
+
+(deftest test-read-fixed-length-string
+  (is (= ""     (io/read-fixed-length-string (io/string-input-stream "foof") 0)))
+  (is (= "f"    (io/read-fixed-length-string (io/string-input-stream "foof") 1)))
+  (is (= "foof" (io/read-fixed-length-string (io/string-input-stream "foof") 99))))
+
+;; (test-read-fixed-length-string)
+
+(deftest test-drain-line-reader
+  (is (= "no implemented" "")))
