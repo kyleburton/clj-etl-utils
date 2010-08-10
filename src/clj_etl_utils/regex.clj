@@ -1,4 +1,9 @@
-(ns clj-etl-utils.regex)
+(ns clj-etl-utils.regex
+  (:import
+   [java.util.regex Pattern Matcher])
+  (:require
+   [clojure.contrib.str-utils :as str]
+   [clj-etl-utils.ref-data :as ref-data]))
 
 ;; regexes, initial set pulled from Regex::Common CPAN module
 (def *common-regexes*

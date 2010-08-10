@@ -1,6 +1,6 @@
 (ns clj-etl-utils.lang)
 
-(defn throwf
+(defn raise
   "Simple wrapper around throw."
   [& args]
   (throw (RuntimeException. (apply format args))))
@@ -9,8 +9,6 @@
 (defn log [& args]
   (.println System/err (apply format args)))
 
-
-
-
-
-
+(defn seq-like? [thing]
+  (or (seq? thing)
+      (vector? thing)))

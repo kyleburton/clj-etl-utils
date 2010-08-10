@@ -1,9 +1,9 @@
 (ns clj-etl-utils.landmark-parser
   (:import [java.util.regex Pattern Matcher])
-  (:use [com.github.kyleburton.sandbox.utils :as kutils])
-  (:use [com.github.kyleburton.sandbox.regex :as regex-util])
-  (:use [clojure.contrib.str-utils :as str]
-        [clojure.contrib.fcase :only (case)]))
+  (:use    [clj-etl-utils.lang :only (raise seq-like?)])
+  (:require
+   [clj-etl-utils.regex :as regex]))
+
 
 (declare *cmds*)
 
@@ -40,6 +40,15 @@
     (do
       (reset! (:pos parser) pos)
       true)))
+
+;; TODO: remove the need to have 1 and only 1 parameter to each
+;; command (see do-commands)
+(defn move-to-start [p & [_]]
+  (reset! (:pos p) 0))
+
+(defn move-to-end [p & [_]]
+  (reset! (:pos p)
+          (:doclen p)))
 
 (defn forward [parser cnt]
   (let [pos (+ cnt @(:pos parser))]
@@ -81,12 +90,12 @@
 ;; support either '((:fp "foo") (:fp "bar"))
 ;;             or '(:fp "foo" :fp "bar")
 (defn parse-cmds [cmds]
-  (cond (and (seq? cmds)
-             (seq? (first cmds))
+  (cond (and (seq-like? cmds)
+             (seq-like? (first cmds))
              (= 2 (count (first cmds))))
         cmds
         (= 1 (mod (count cmds) 2))
-        (kutils/raise (format "parse-cmds: error, odd number of commands (expected even, symbol/landmark): cmds=%s" cmds))
+        (raise (format "parse-cmds: error, odd number of commands (expected even, symbol/landmark): cmds=%s" cmds))
         true
         (partition 2 cmds)))
 
@@ -106,7 +115,9 @@
   (loop [[[cmd & args] & cmds] (parse-cmds cmds)]
     (if cmd
       (do
-        ;(prn (format  "pos:%d cmd=%s args=%s" @(:pos parser) cmd args))
+        (prn (format  "pos:%d cmd=%s args=%s" @(:pos parser) cmd args))
+        (if (not (*cmds* cmd))
+          (raise "Error: invalid command: %s" cmd))
         (if (apply (*cmds* cmd) (cons parser args))
           (do
             ;(prn (format  "pos:%d cmd=%s args=%s" @(:pos parser) cmd args))
@@ -115,33 +126,34 @@
       true)))
 
 (defn forward-past-regex
-  "See also regex-util/*common-regexes*"
+  "See also regex/*common-regexes*"
   [p regex]
-  (kutils/log "forward-past-regex regex=%s" regex)
-  (let [pat (if (and (keyword? regex) (regex regex-util/*common-regexes*))
-              (regex regex-util/*common-regexes*)
+  (lang/log "forward-past-regex regex=%s" regex)
+  (let [pat (if (and (keyword? regex) (regex regex/*common-regexes*))
+              (regex regex/*common-regexes*)
               (Pattern/compile (str regex) (bit-or Pattern/MULTILINE Pattern/CASE_INSENSITIVE)))
         m   (.matcher pat (:doc p))]
-    (kutils/log "forward-past-regex: pat=%s m=%s" pat m)
+    (lang/log "forward-past-regex: pat=%s m=%s" pat m)
     (if (.find m @(:pos p))
       (do
-        (kutils/log "forward-past-regex: found reg:%s at:(%d,%d,)" regex (.start m) (.end m))
+        (lang/log "forward-past-regex: found reg:%s at:(%d,%d,)" regex (.start m) (.end m))
         (reset! (:pos p) (.end m))
         @(:pos p))
       false)))
 
 (defn forward-to-regex [p regex]
-  "See also regex-util/*common-regexes*"
-  (let [pat (if (and (keyword? regex) (regex regex-util/*common-regexes*))
-              (regex regex-util/*common-regexes*)
+  "See also regex/*common-regexes*"
+  (let [pat (if (and (keyword? regex) (regex regex/*common-regexes*))
+              (regex regex/*common-regexes*)
               (Pattern/compile (str regex) (bit-or Pattern/MULTILINE Pattern/CASE_INSENSITIVE)))
         m   (.matcher pat (:doc p))]
-    (kutils/log "forward-to-regex: using pat=%s" pat)
+    (lang/log "forward-to-regex: using pat=%s" pat)
     (if (.find m @(:pos p))
       (do
         (reset! (:pos p) (.start m))
         @(:pos p))
       false)))
+
 
 (def *cmds*
      {:apply-commands        apply-commands
@@ -163,7 +175,13 @@
       :rewind-to             rewind-to
       :rt                    rewind-to
       :rewind-past           rewind-past
-      :rp                    rewind-past})
+      :rp                    rewind-past
+      :beginning             move-to-start
+      :b                     move-to-start
+      :start                 move-to-start
+      :s                     move-to-start
+      :end                   move-to-end
+      :e                     move-to-end})
 
 
 (defn doc-substr [parser cnt]
@@ -224,14 +242,14 @@
                     '(:fp "</a>")))
 
 (defn anchor->href [html]
-  (first (kutils/re-find-first #"href=\"([^\"]+)\"" html)))
+  (first (regex/re-find-first #"href=\"([^\"]+)\"" html)))
 
 (defn anchor->body [html]
-  (first (kutils/re-find-first #">(.+?)</a>" html)))
+  (first (regex/re-find-first #">(.+?)</a>" html)))
 
 (defn html-find-link-with-body [html text]
   (first
-   (kutils/re-find-first
+   (regex/re-find-first
     #"href=\"([^\"]+)\""
     (first
      (filter #(.contains % text)
@@ -264,9 +282,9 @@
 
 (defn parse-input-element [html]
   {:tag   :input
-   :type  (first (kutils/re-find-first "(?-ims:type=\"([^\"]+)\")" html))
-   :name  (first (kutils/re-find-first "(?-ims:name=\"([^\"]+)\")" html))
-   :value (first (kutils/re-find-first "(?-ims:value=\"([^\"]+)\")" html))
+   :type  (first (regex/re-find-first "(?-ims:type=\"([^\"]+)\")" html))
+   :name  (first (regex/re-find-first "(?-ims:name=\"([^\"]+)\")" html))
+   :value (first (regex/re-find-first "(?-ims:value=\"([^\"]+)\")" html))
    })
 
 ;; This technique won't work reliably...need to implement :forward-to-first-of '(:ft "<input") '(:ftfo "/>" "</input>"
@@ -281,9 +299,9 @@
 ;;(parse-form-elements (first (html->form-blocks com.github.kyleburton.sandbox.web/html)))
 
 (defn parse-form [html]
-  {:method (or (first (kutils/re-find-first "(?-ims:method=\"([^\"]+)\")" html))
+  {:method (or (first (regex/re-find-first "(?-ims:method=\"([^\"]+)\")" html))
                "GET")
-   :action (or (first (kutils/re-find-first "(?-ims:action=\"([^\"]+)\")" html))
+   :action (or (first (regex/re-find-first "(?-ims:action=\"([^\"]+)\")" html))
                nil)
    :params (vec (parse-form-elements html))
    })

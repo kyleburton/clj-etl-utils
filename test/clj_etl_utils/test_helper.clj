@@ -2,6 +2,28 @@
   (:use [clojure.contrib.str-utils :as str-utils]
         [clojure.contrib.logging :as log]))
 
+(defonce *fixture-registry* (atom {}))
+
+(defn mm-get [m k1 k2]
+  (and (contains? m k1)
+       ((m k1) k2)))
+
+(defn mm-put [m k1 k2 v]
+  (assoc m k1
+         (assoc (m k1 {})
+           k2 v)))
+
+(defn mm-contains? [m k1 k2]
+  (and (contains? m k1)
+       (contains? (m k1) k2)))
+
+(defn clear-fixture-registry []
+  (reset! *fixture-registry* (atom {})))
+
+(defn register-fixture [type k v]
+  (reset! *fixture-registry*
+          (mm-put @*fixture-registry* type k v)))
+
 ;; is this strategy good enough?
 (defn project-root []
   (if-let [location (.getLocation (.getCodeSource (.getProtectionDomain (.getClass project-root))))]
@@ -21,14 +43,11 @@
       (throw (format "Error: no such fixture file '%s' => '%s'" file fixture-path)))
     (slurp fixture-path)))
 
-;; load a fixture
+;; load/access a fixture
 (defn fixture [type key]
-  (cond (= :file type)
-        (fixture-file-contents key)
-        :else
-        (throw (format "Error: unknown fixture type: %s / %s" type key))))
-
-
+  (cond (= :file type)                                (fixture-file-contents key)
+        (mm-contains? @*fixture-registry* type key)   (mm-get @*fixture-registry* type key)
+        :else                                         (throw (RuntimeException. (format "Error: unknown fixture type: %s / %s  registry(%s)" type key (keys @*fixture-registry*))))))
 
 
 
