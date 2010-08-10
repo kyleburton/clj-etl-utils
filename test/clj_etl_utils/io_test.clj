@@ -101,5 +101,6 @@
 
 ;; (test-read-fixed-length-string)
 
-(deftest test-drain-line-reader
-  (is (= "no implemented" "")))
+;; TODO: how do you declare a pending with clojure.test?
+;; (deftest test-drain-line-reader
+;;   (is (= "no implemented" "")))

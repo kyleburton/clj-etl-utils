@@ -260,7 +260,7 @@
   (let [src (java.io.File (str src))
         dst (java.io.File (str dst))]
     (if (not (.exists src))
-      (throwf "symlink: src does not exist: %s" src))
+      (raise "symlink: src does not exist: %s" src))
     (if (.exists dst)
       (log "[INFO] symlink: dst exists %s => %s" src dst)
       (let [cmd (format "ln -s %s %s" src dst)

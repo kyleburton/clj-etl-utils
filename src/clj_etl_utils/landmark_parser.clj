@@ -1,6 +1,6 @@
 (ns clj-etl-utils.landmark-parser
   (:import [java.util.regex Pattern Matcher])
-  (:use    [clj-etl-utils.lang :only (raise seq-like?)])
+  (:use    [clj-etl-utils.lang :only (raise seq-like? log)])
   (:require
    [clj-etl-utils.regex :as regex]))
 
@@ -103,7 +103,6 @@
   (loop [[[cmd & args] & cmds] (parse-cmds cmds)]
     (if cmd
       (do
-        ;(prn (format  "cmd=%s args=%s" cmd args))
         (if (apply (*cmds* cmd) (cons parser args))
           (do
             (recur cmds))
@@ -111,16 +110,13 @@
       true)))
 
 (defn do-commands [parser cmds]
-  ;; (prn "do-commands: cmds=" cmds)
   (loop [[[cmd & args] & cmds] (parse-cmds cmds)]
     (if cmd
       (do
-        (prn (format  "pos:%d cmd=%s args=%s" @(:pos parser) cmd args))
         (if (not (*cmds* cmd))
           (raise "Error: invalid command: %s" cmd))
         (if (apply (*cmds* cmd) (cons parser args))
           (do
-            ;(prn (format  "pos:%d cmd=%s args=%s" @(:pos parser) cmd args))
             (recur cmds))
           false))
       true)))
@@ -128,15 +124,15 @@
 (defn forward-past-regex
   "See also regex/*common-regexes*"
   [p regex]
-  (lang/log "forward-past-regex regex=%s" regex)
+  (log "forward-past-regex regex=%s" regex)
   (let [pat (if (and (keyword? regex) (regex regex/*common-regexes*))
               (regex regex/*common-regexes*)
               (Pattern/compile (str regex) (bit-or Pattern/MULTILINE Pattern/CASE_INSENSITIVE)))
         m   (.matcher pat (:doc p))]
-    (lang/log "forward-past-regex: pat=%s m=%s" pat m)
+    (log "forward-past-regex: pat=%s m=%s" pat m)
     (if (.find m @(:pos p))
       (do
-        (lang/log "forward-past-regex: found reg:%s at:(%d,%d,)" regex (.start m) (.end m))
+        (log "forward-past-regex: found reg:%s at:(%d,%d,)" regex (.start m) (.end m))
         (reset! (:pos p) (.end m))
         @(:pos p))
       false)))
@@ -147,7 +143,7 @@
               (regex regex/*common-regexes*)
               (Pattern/compile (str regex) (bit-or Pattern/MULTILINE Pattern/CASE_INSENSITIVE)))
         m   (.matcher pat (:doc p))]
-    (lang/log "forward-to-regex: using pat=%s" pat)
+    (log "forward-to-regex: using pat=%s" pat)
     (if (.find m @(:pos p))
       (do
         (reset! (:pos p) (.start m))
@@ -192,10 +188,8 @@
 
 (defn extract [p start-cmds end-cmds]
   (let [orig-pos @(:pos p)]
-    ;(prn (format "running start-cmds from:%d looking for %s" orig-pos start-cmds))
     (if (do-commands p start-cmds)
       (let [spos @(:pos p)]
-        ;(prn (format "found start at:%d looking for end %s" spos end-cmds))
         (if (do-commands p end-cmds)
           (.substring (:doc p)
                       spos
