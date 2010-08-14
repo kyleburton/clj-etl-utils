@@ -12,3 +12,4 @@
 (defn seq-like? [thing]
   (or (seq? thing)
       (vector? thing)))
+
