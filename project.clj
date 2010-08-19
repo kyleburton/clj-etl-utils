@@ -1,6 +1,6 @@
 (defproject
     org.clojars.kyleburton/clj-etl-utils
-    "1.0.4-SNAPSHOT"
+    "1.0.4"
   :description "ETL Utilities"
   :url         "http://github.com/kyleburton/clj-etl-utils"
   :license {:name "Eclipse Public License - v 1.0"
@@ -12,4 +12,5 @@
   :dev-dependencies [[swank-clojure "1.2.1"]]
   :dependencies [[org.clojure/clojure "1.1.0"]
                  [org.clojure/clojure-contrib "1.1.0"]
+                 [commons-io "1.4"]
                  [log4j/log4j "1.2.14"]])
