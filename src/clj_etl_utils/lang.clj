@@ -75,6 +75,6 @@
 (defn resource-as-string [res-url]
   (let [strm (resource-as-stream res-url)]
     (if (not strm)
-      (raise ""))
-   (with-open [istr strm]
-     (IOUtils/toString istr))))
+      nil
+      (with-open [istr strm]
+        (IOUtils/toString istr)))))

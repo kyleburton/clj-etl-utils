@@ -1,6 +1,6 @@
 (defproject
     org.clojars.kyleburton/clj-etl-utils
-    "1.0.5"
+    "1.0.6"
   :description "ETL Utilities"
   :url         "http://github.com/kyleburton/clj-etl-utils"
   :license {:name "Eclipse Public License - v 1.0"
