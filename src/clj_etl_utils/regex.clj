@@ -24,15 +24,14 @@
    :net-mac #"(?xism:(?:(?:[0-9a-fA-F]{1,2}):(?:[0-9a-fA-F]{1,2}):(?:[0-9a-fA-F]{1,2}):(?:[0-9a-fA-F]{1,2}):(?:[0-9a-fA-F]{1,2}):(?:[0-9a-fA-F]{1,2})))"
    :net-domain #"(?xism:(?: |(?:[A-Za-z](?:(?:[-A-Za-z0-9]){0,61}[A-Za-z0-9])?(?:\.[A-Za-z](?:(?:[-A-Za-z0-9]){0,61}[A-Za-z0-9])?)*)))"
    :phone #"(?:1[- ]?)?\(?[2-9]\d{2}\)?[-\. ]?\d{3}[-\. ]?\d{4}(?:\s*(?:e|ex|ext|x|xtn|extension)?\s*\d*)"
-   :us-states        (Pattern/compile (format "(?xism:%s)" (str/str-join "|" (keys ref-data/*us-states*))))
-   :us-state-names   (Pattern/compile (format "(?xism:%s)" (str/str-join "|" (vals ref-data/*us-states*))))
+   :us-states        (Pattern/compile (format "(?xism:%s)" (str/str-join "|" (map first ref-data/*us-states*))))
+   :us-state-names   (Pattern/compile (format "(?xism:%s)" (str/str-join "|" (map second ref-data/*us-states*))))
    :us-airport-codes (Pattern/compile (format "(?xism:%s)" (str/str-join "|" (map #(nth % 2) ref-data/*us-airport-codes*))))
    :us-area-codes    (Pattern/compile (format "(?xism:%s)" (str/str-join "|" ref-data/*us-area-codes*)))
 
 
    :word           #"(?:[\w-]+)"
-   :punctuation    #"(?:[\.,\?/'\";:\\`~!\(\)]+)"
-   })
+   :punctuation    #"(?:[\.,\?/'\";:\\`~!\(\)]+)"})
 
 
 (defn all-groups
