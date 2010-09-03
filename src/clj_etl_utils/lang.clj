@@ -78,3 +78,21 @@
       nil
       (with-open [istr strm]
         (IOUtils/toString istr)))))
+
+(defn rest-params->map [params]
+ (reduce
+  (fn [m pair]
+    (apply assoc m pair))
+  {}
+  (partition 2 params)))
+
+;; (rest-params->map [:follow-redirects true :basic-auth {:user "bob" :pass "sekret"}])
+
+(defn assert-allowed-keys! [m allowed-keys]
+  (let [allowed-keys (apply hash-set allowed-keys)]
+    (doseq [k (keys m)]
+      (if (not (allowed-keys k))
+        (raise "Error: disallowed key: %s not in %s" k allowed-keys)))))
+
+;; (assert-allowed-keys! {:a 1 :b 2} [:a :b])
+;; (assert-allowed-keys! {:a 1 :b 2 :c 3} [:a :b])
