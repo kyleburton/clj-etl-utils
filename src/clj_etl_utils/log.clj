@@ -71,7 +71,7 @@
 (defmethod debug-fmt [:throwable :fmt-and-args] [throwable fmt & args]
   (log/debug (apply format fmt args) throwable))
 
-(defmethod debug-fmt [:fmt-and-args] [throwable fmt & args]
+(defmethod debug-fmt [:fmt-and-args] [fmt & args]
   (log/debug (apply format fmt args)))
 
 (defmethod debug-fmt :default [& stuff]
@@ -88,7 +88,7 @@
 (defmethod info-fmt [:throwable :fmt-and-args] [throwable fmt & args]
   (log/info (apply format fmt args) throwable))
 
-(defmethod info-fmt [:fmt-and-args] [throwable fmt & args]
+(defmethod info-fmt [:fmt-and-args] [fmt & args]
   (log/info (apply format fmt args)))
 
 (defmethod info-fmt :default [& stuff]
@@ -105,7 +105,7 @@
 (defmethod warn-fmt [:throwable :fmt-and-args] [throwable fmt & args]
   (log/warn (apply format fmt args) throwable))
 
-(defmethod warn-fmt [:fmt-and-args] [throwable fmt & args]
+(defmethod warn-fmt [:fmt-and-args] [fmt & args]
   (log/warn (apply format fmt args)))
 
 (defmethod warn-fmt :default [& stuff]
@@ -122,7 +122,7 @@
 (defmethod error-fmt [:throwable :fmt-and-args] [throwable fmt & args]
   (log/error (apply format fmt args) throwable))
 
-(defmethod error-fmt [:fmt-and-args] [throwable fmt & args]
+(defmethod error-fmt [:fmt-and-args] [fmt & args]
   (log/error (apply format fmt args)))
 
 (defmethod error-fmt :default [& stuff]
@@ -139,7 +139,7 @@
 (defmethod fatal-fmt [:throwable :fmt-and-args] [throwable fmt & args]
   (log/fatal (apply format fmt args) throwable))
 
-(defmethod fatal-fmt [:fmt-and-args] [throwable fmt & args]
+(defmethod fatal-fmt [:fmt-and-args] [fmt & args]
   (log/fatal (apply format fmt args)))
 
 (defmethod fatal-fmt :default [& stuff]
