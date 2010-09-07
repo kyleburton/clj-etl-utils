@@ -1,6 +1,6 @@
 (defproject
     org.clojars.kyleburton/clj-etl-utils
-    "1.0.8-SNAPSHOT"
+    "1.0.9"
   :description "ETL Utilities"
   :url         "http://github.com/kyleburton/clj-etl-utils"
   :license {:name "Eclipse Public License - v 1.0"
@@ -8,6 +8,14 @@
             :distribution :repo
             :comments "same as Clojure"}
   :warn-on-reflection true
+  :aot [clj-etl-utils.io
+        clj-etl-utils.lang
+        clj-etl-utils.regex
+        clj-etl-utils.ref-data
+        clj-etl-utils.text
+        clj-etl-utils.landmark-parser
+        clj-etl-utils.http
+        clj-etl-utils.log]
   :jvm-opts ["-Xmx512M"]
   :dev-dependencies [[swank-clojure "1.2.1"]]
   :dependencies [[org.clojure/clojure "1.1.0"]
