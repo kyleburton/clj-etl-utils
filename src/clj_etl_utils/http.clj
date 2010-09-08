@@ -1,11 +1,12 @@
 (ns clj-etl-utils.http
-  (:use [clj-etl-utils.lang :only [rest-params->map assert-allowed-keys!]])
+  (:use [clj-etl-utils.lang :only [raise assert-allowed-keys! rest-params->map]])
   (:import
    [org.apache.commons.httpclient Credentials Header HttpClient UsernamePasswordCredentials NameValuePair]
    [org.apache.commons.httpclient.auth AuthScope]
    [org.apache.commons.httpclient.methods InputStreamRequestEntity PostMethod GetMethod]
    [org.apache.commons.lang StringUtils]
    [java.io ByteArrayInputStream]))
+
 
 ;; TODO: support multiple :basic-auth - support this as a vector of
 ;; maps instead of just a single map, just have this function test
@@ -136,7 +137,7 @@
 
 (defn do-post [#^HttpClient ua #^String url & params]
   (let [post-method (PostMethod. url)
-        params      (clj-etl-utils.lang/rest-params->map params)]
+        params      (rest-params->map params)]
     (if (:params params)
       (.setRequestBody post-method (map->name-value-pair-vec (:params params))))
     (if (:body params)

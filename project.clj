@@ -8,6 +8,14 @@
             :distribution :repo
             :comments "same as Clojure"}
   :warn-on-reflection true
+  :aot [clj-etl-utils.io
+        clj-etl-utils.lang
+        clj-etl-utils.regex
+        clj-etl-utils.ref-data
+        clj-etl-utils.text
+        clj-etl-utils.landmark-parser
+        clj-etl-utils.http
+        clj-etl-utils.log]
   :jvm-opts ["-Xmx512M"]
   :dev-dependencies [[swank-clojure "1.2.1"]]
   :dependencies [[org.clojure/clojure "1.1.0"]
