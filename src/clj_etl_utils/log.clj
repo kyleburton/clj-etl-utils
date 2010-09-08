@@ -51,7 +51,6 @@
   )
 
 
-
 (defn- log-args-dispatcher [& [frst scnd thrd & rst]]
   (cond
     (and (isa? (class frst) Throwable)
