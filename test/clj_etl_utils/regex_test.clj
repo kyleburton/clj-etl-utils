@@ -1,4 +1,4 @@
-(ns regex-test
+(ns clj-etl-utils.regex-test
   (:require [clj-etl-utils.regex :as rx])
   (:use [clojure.test]
         [clj-etl-utils.test-helper]))

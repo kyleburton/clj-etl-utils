@@ -1,4 +1,4 @@
-(ns http-test
+(ns clj-etl-utils.http-test
   (:require [clj-etl-utils.http :as ua])
   (:import
       [org.apache.commons.httpclient HttpClient])
