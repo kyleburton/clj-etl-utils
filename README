@@ -19,7 +19,7 @@ UTF and BOM
 
 EncodingHeuristics
   http://downloads.atlassian.com/software/clover/samples/xom/nu/xom/xinclude/EncodingHeuristics.html
-  http://xom.dev.java.net/source/browse/xom/ 
+  http://xom.dev.java.net/source/browse/xom/
 
 ## License
 
@@ -28,7 +28,12 @@ This code is covered under the same as Clojure.
 
 ## HTTP Client
 
-This is a wrapper around Apache Jakarta Commons HttpClent.  This is yet another http client library for clojure.  This implementation is not attempting to be dependency free (as are many of the other clojure http client libraries).  It is merely a convienience wrapper around the Jakarta Commons HttpClient.  I need to utilize many of the common features that user agents typically support such as: cookies, automatically following redirects, basic authentication including realms, form encoding, etc.
+This is a wrapper around Apache Jakarta Commons HttpClent.  This is yet another http client library for clojure.  This implementation is not attempting to be dependency free (as are many of the other clojure http client libraries).  It is merely a convienience wrapper around the Jakarta Commons HttpClient.  I need to utilize many of the common features that user agents typically support such as: cookies, automatically following redirects, basic authentication including realms, automatic form encoding, posting non-form url encoded data, etc.  Jakart's HTTP Client fits this feature set very well, thought its api is not brief - this library attempts to make it more convienient to use without limiting access to any of its advanced features.
+
+
+### User Agent
+
+Creating a user agent is done by calling the @(user-agent) function.  It accepts two paramters: @:follow-redirects@ which controls whether or not it follows HTTP redirect responses to the pointed to locations; and @:basic-auth which allows you to supply authorization credentials for HTTP's basic auth system.
 
   (ws/get  (user-agent) url :params {:foo "bar"})
   (ws/post (user-agent) url :params {:foo "bar"})

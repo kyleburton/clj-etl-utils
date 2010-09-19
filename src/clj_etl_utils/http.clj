@@ -7,18 +7,20 @@
    [org.apache.commons.lang StringUtils]
    [java.io ByteArrayInputStream]))
 
+;; TODO: support follow redirects in the various get/post methods
+;; TODO: this needs to be carried as state somehow, and applied to
+;; the HttpMethod's we create and invoke...
+;; (if (:follow-redirects params)
+;;   (.setAuthenticationPreemptive (.getParams ua) (:follow-redirects params)))
 
-;; TODO: support multiple :basic-auth - support this as a vector of
-;; maps instead of just a single map, just have this function test
-;; the class of the value of :basic-auth and act appropriately
+;; TODO: :follow-redirects should default to true (as this is most
+;; frequently the desired behavior of a user agent).
+;; TODO: support specification of host/port/realm in the basic-auth structure
+;  TODO: support either a single map for basic auth, or a sequence of maps
 (defn user-agent [& params]
   (let [params (rest-params->map params)
         ua (HttpClient.)]
     (assert-allowed-keys! params [:follow-redirects :basic-auth])
-    ;; TODO: this needs to be carried as state somehow, and applied to
-    ;; the HttpMethod's we create and invoke...
-    ;; (if (:follow-redirects params)
-    ;;   (.setAuthenticationPreemptive (.getParams ua) (:follow-redirects params)))
     (if-let [auth-info (:basic-auth params)]
       (do
         (.setAuthenticationPreemptive (.getParams ua) true)
@@ -32,83 +34,7 @@
          (UsernamePasswordCredentials. (:user auth-info) (:pass auth-info)))))
     (assoc params :ua ua)))
 
-;; (user-agent)
-;; (user-agent :follow-redirects false)
-;; (user-agent :basic-auth {:user "bob" :pass "0xB0B"})
-
-
-;; (defn http-method-dispatcher [& args]
-;;   (cond
-;;     (and (isa? (class (first args))
-;;                HttpClient)
-;;          (isa? (class (second args))
-;;                java.net.URL))
-;;     :ua-url-and-params
-
-
-;;     (and (isa? (class (first args))
-;;                HttpClient)
-;;          (isa? (class (second args))
-;;                java.net.URI))
-;;     :ua-uri-and-params
-
-;;     (and (isa? (class (first args))
-;;                HttpClient)
-;;          (isa? (class (second args))
-;;                String))
-;;     :ua-url-str-and-params
-
-;;     (and (isa? (class (first args))
-;;                java.net.URL))
-;;     :url-and-params
-
-;;     (and (isa? (class (first args))
-;;                java.net.URI))
-;;     :uri-and-params
-
-;;     (and (isa? (class (first args))
-;;                String))
-;;     :url-str-and-params
-
-;;     :else       :default))
-
-
-;; (defmulti do-get http-method-dispatcher)
-
-;; (defmulti do-post http-method-dispatcher)
-
-;; (defmethod do-get :ua-url-and-params [ua url & params]
-;;   (prn "do-get :ua-url-and-params")
-;; )
-
-;; (defmethod do-get :ua-uri-and-params [ua uri & params]
-;;   (prn "do-get :ua-uri-and-params"))
-
-;; (defmethod do-get :ua-url-str-and-params [ua url & params]
-;;   (let [get               (GetMethod. url)
-;;         name-value-pairs  (map->name-value-pair-vec (second params))]
-;;     (.setQueryString get (to-array name-value-pairs))
-;;     (println (format "Return Code: %s" (.executeMethod ua get )))
-;;     (println (format "Respone: %s" (.getResponeBodyAsString get))))
-;;   (prn "do-get :ua-url-str-and-params"))
-
-
-
-;; (defmethod do-get :url-and-params [url & params]
-;;   (prn "do-get :url-and-params")
-;;   (apply do-get (user-agent) url))
-
-;; (defmethod do-get :uri-and-params [& args]
-;;   (prn "do-get :uri-and-params")
-;;   (apply do-get (user-agent) args))
-
-;; (defmethod do-get :url-str-and-params [& args]
-;;   (prn "do-get :url-str-and-params")
-;;   (apply do-get (user-agent) args))
-
-;; (defmethod do-get :default [& params]
-;;   (prn "do-get :default"))
-
+;; TODO: this helper fn belongs in lang.clj
 (defn map->name-value-pair-vec [params]
   (into-array NameValuePair
    (reduce
@@ -120,7 +46,6 @@
 ;;; (map->name-value-pair-vec { :foo "bar" :chicken "turkey" })
 ;;; (map->name-value-pair-vec {})
 
-
 (defn do-get [#^HttpClient ua #^String url & params]
   (let [get-method        (GetMethod. url)
         name-value-pairs  (map->name-value-pair-vec (second params))]
@@ -130,11 +55,14 @@
           response-body (.getResponseBodyAsString get-method)]
       (println (format "Return Code: %s" return-code))
       (println (format "Respone: %s" response-body ))
-      {:return-code return-code
+      {:return-code   return-code
        :response-body response-body
-       :http-method get-method})))
+       :http-method   get-method})))
 
-
+;; If a :body is passed, it will be the body of the post, with a
+;; default content type of "text/plain; charset=ISO-8859-1".  If
+;; :params is passed (as a map) then it will be assigned as a map of
+;; form parameters and used as
 (defn do-post [#^HttpClient ua #^String url & params]
   (let [post-method (PostMethod. url)
         params      (rest-params->map params)]
@@ -152,9 +80,9 @@
           response-body (.getResponseBodyAsString post-method)]
       (println (format "Return Code: %s" return-code))
       (println (format "Respone: %s" response-body ))
-      {:return-code return-code
+      {:return-code   return-code
        :response-body response-body
-       :http-method post-method})))
+       :http-method   post-method})))
 
 
 ;;   (do-post (user-agent) "http://localhost:10001" :body "some stuff!")
