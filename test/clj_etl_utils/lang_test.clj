@@ -8,7 +8,7 @@
                                             (fn [count val]
                                               (swap! stat conj val)))]
     (dotimes [ii 100]
-      (trigger ii))
+      (trigger :hit ii))
     (is (= 10 (count @stat)))))
 
 ;; (test-make-periodic-invoker)
@@ -19,10 +19,33 @@
                                             (fn [count val]
                                               (swap! stat conj [count val])))]
     (dotimes [ii 100]
-      (trigger ii))
+      (trigger :hit ii))
     @stat)
 
 
-  (take 100 (iterate inc 1))
+  (def *timer* (lang/make-periodic-invoker
+                10
+                (fn [val & args]
+                  (printf "triggered: val=%s args=%s\n" val args))))
+
+  (dotimes [ii 10] (*timer*))
+  (*timer* :final)
+  (*timer* :invoke 1 2 3)
+  (*timer* :state)
+  (*timer* :set 19)
+  (*timer* :reset)
+
+  (let [total    1000
+        period     100
+        progress (lang/make-periodic-invoker
+                  period
+                  (fn [val & [is-done]]
+                    (if (= is-done :done)
+                      (printf "All Done! %d\n" val)
+                      (printf "So far we did %d, we are  %3.2f%% complete.\n" val (* 100.0 (/ val 1.0 total))))))]
+    (dotimes [ii total]
+      (progress))
+    (progress :final :done))
+
 
   )

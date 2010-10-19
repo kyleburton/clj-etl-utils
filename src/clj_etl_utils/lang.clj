@@ -99,10 +99,10 @@
 
 (defn make-periodic-invoker
     "Takes a count `count' and a function `f'.  Returns a function
-that takes any number of arguments after `count' invocations will
-invoke the originally supplied function `f'.  `f' will be invoked with
-the current 'count' value and will be passed any arguments passed into
-the returned function.
+that takes an optional 'action' and number of arguments.  After
+`count' invocations it will invoke the originally supplied function
+`f'.  `f' will be invoked with the current 'count' value and will be
+passed any arguments passed into the returned function.
 
 Useful for 'long' running processes where you would like to
 periodically see a progress update.  For example:
@@ -112,11 +112,45 @@ periodically see a progress update.  For example:
       (progress-bar \".\")
       (process-line line)))
 
+Actions: actions are used to interact with the returned function.  The
+following actions are supported:
+
+ :final or :invoke
+   Causes the wrapped function `f' to be invoked immediately.  Does not
+   modify the value of the counter.
+
+ :state
+   Returns the current value of the counter.
+
+ :reset
+   Sets the counter back to zero.  Allows the periodic function to be re-used.
+
+ :set
+   Set the counter to the supplied value.
+
 "
  [count f]
   (let [ctr (java.util.concurrent.atomic.AtomicLong.)]
     (fn [& args]
-      (let [nextval (.incrementAndGet ctr)]
-        (if (= 0 (mod nextval count))
-          (apply f nextval args))))))
+      (let [action (first args)]
+       (cond
+         (or (= :final action)
+             (= :invoke action))
+         (apply f (.get ctr) (rest args))
+
+         (= :state action)
+         (.get ctr)
+
+         (= :reset action)
+         (.set ctr 0)
+
+         (= :set action)
+         (.set ctr (second args))
+
+         :else
+         (let [nextval (.incrementAndGet ctr)]
+           (if (= 0 (mod nextval count))
+             (apply f nextval args))))))))
+
+
 
