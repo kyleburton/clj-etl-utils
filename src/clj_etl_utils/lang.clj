@@ -96,3 +96,27 @@
 
 ;; (assert-allowed-keys! {:a 1 :b 2} [:a :b])
 ;; (assert-allowed-keys! {:a 1 :b 2 :c 3} [:a :b])
+
+(defn make-periodic-invoker
+    "Takes a count `count' and a function `f'.  Returns a function
+that takes any number of arguments after `count' invocations will
+invoke the originally supplied function `f'.  `f' will be invoked with
+the current 'count' value and will be passed any arguments passed into
+the returned function.
+
+Useful for 'long' running processes where you would like to
+periodically see a progress update.  For example:
+
+  (let [progress-bar (make-periodic-invoker 10000 (fn [count chr] (.print System/err chr))]
+    (doseq [line (clojure.contrib.duck-streams/read-lines \"some/file\")]
+      (progress-bar \".\")
+      (process-line line)))
+
+"
+ [count f]
+  (let [ctr (java.util.concurrent.atomic.AtomicLong.)]
+    (fn [& args]
+      (let [nextval (.incrementAndGet ctr)]
+        (if (= 0 (mod nextval count))
+          (apply f nextval args))))))
+
