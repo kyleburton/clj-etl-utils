@@ -8,7 +8,7 @@
                                             (fn [count val]
                                               (swap! stat conj val)))]
     (dotimes [ii 100]
-      (trigger :hit ii))
+      (trigger ii))
     (is (= 10 (count @stat)))))
 
 ;; (test-make-periodic-invoker)
