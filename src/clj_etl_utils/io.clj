@@ -365,3 +365,79 @@
     (.write gzout (.getBytes s))
     (.finish gzout)
     (.toByteArray bout)))
+
+(defn file-size [f]
+  (.length (java.io.File. (str f))))
+
+(defn byte-partitions-at-line-boundaries [file-name desired-block-size-bytes]
+  (let [fp (java.io.RandomAccessFile. file-name "r")
+        file-length (.length fp)]
+    (loop [byte-positions []
+           next-seek-point desired-block-size-bytes]
+      (if (>= next-seek-point file-length)
+        byte-positions
+        (do
+          (.seek fp next-seek-point)
+          (if (nil? (.readLine fp))
+            byte-positions
+            (recur (conj byte-positions (.getFilePointer fp))
+                   (max (+ (.getFilePointer fp) desired-block-size-bytes)
+                        (.getFilePointer fp)))))))))
+
+(defn byte-partitions-at-line-boundaries [file-name desired-block-size-bytes]
+  (let [fp (java.io.RandomAccessFile. file-name "r")
+        file-length (.length fp)]
+    (loop [byte-positions [0]
+           next-seek-point desired-block-size-bytes]
+      (if (>= next-seek-point file-length)
+        (conj byte-positions file-length)
+        (do
+          (.seek fp next-seek-point)
+          (if (nil? (.readLine fp))
+            byte-positions
+            (recur (conj byte-positions (.getFilePointer fp))
+                   (+ (.getFilePointer fp) desired-block-size-bytes))))))))
+
+;; (count (byte-partitions-at-line-boundaries "/tmp/test-file.txt" 100))
+
+(defn- random-access-file-line-seq-with-limit [fp end]
+  (if (>= (.getFilePointer fp) end)
+    (do
+      (.close fp)
+      nil)
+    (lazy-cat
+     [(.readLine fp)]
+     (random-access-file-line-seq-with-limit fp end))))
+
+;; (read-lines-from-file-segment file-name start end)
+(defn read-lines-from-file-segment [file-name start end]
+  (let [fp (java.io.RandomAccessFile. file-name "r")]
+    (.seek fp start)
+    (random-access-file-line-seq-with-limit fp end)))
+
+
+(comment
+  (byte-partitions-at-line-boundaries "/tmp/test-file.txt" 100)
+  (extract-lines-from-coordinates "/tmp/test-file.txt" [0 129])
+  (extract-lines-from-coordinates "/tmp/test-file.txt" [129 258])
+
+  (extract-lines-from-coordinates "/tmp/test-file.txt" [4347 4392])
+
+  (=
+   (apply
+    concat
+    (map (fn [[start end]] (read-lines-from-file-segment "/tmp/test-file.txt" start end))
+         (partition 2 1 (byte-partitions-at-line-boundaries "/tmp/test-file.txt" 100))))
+   (clojure.contrib.duck-streams/read-lines "/tmp/test-file.txt"))
+
+
+  )
+
+
+
+
+
+
+
+
+
