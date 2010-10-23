@@ -58,3 +58,33 @@ the random sampling process.
 
  )
 
+(defn group-with [f s]
+  "
+  (grouped-seq identity [1 1 2 3 4 5 5 5 6 1 1])
+  ;; => [[1 1] [2] [3] [4] [5 5 5] [6] [1 1]]
+  "
+  (if (empty? s)
+    nil
+    (let [k            (f (first s))
+          pred         #(= k (f %))
+          [grp rst]  (split-with pred s)]
+      (lazy-cat
+       [grp]
+       (grouped-seq f rst)))))
+
+
+(comment
+
+  (group-with identity [1 1 2 3 3 4 4 4 5 6 7 8 9 9 9 9 9 9 9])
+  ([1 1] [2] [3 3] [4 4 4] [5] [6] [7] [8] [9 9 9 9 9 9 9])
+
+  (group-with
+   (fn [#^String s]
+     (.charAt s 0))
+   ["this" "that" "other" "othello" "flub" "flubber" "flugelhorn" "potatoe"])
+
+
+)
+
+
+
