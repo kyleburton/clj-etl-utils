@@ -1,10 +1,15 @@
 (ns clj-etl-utils.indexer
   (:require [clojure.contrib.duck-streams :as ds]
             [clojure.contrib.shell-out    :as sh]
-            [clj-etl-utils.sequences      :as sequences])
+            [clj-etl-utils.sequences      :as sequences]
+            [clj-etl-utils.io             :as io])
   (:import [java.io RandomAccessFile]))
 
 ;; index line oriented files
+
+;; TODO: convention for escaping the key (URI?), handling null or empty values, when the key fn throws an exception, etc.
+
+;; TODO: consider updating or refreshing - incrementally, the indicies
 
 (defn line-index-seq [#^RandomAccessFile fp key-fn]
   (let [start-pos (.getFilePointer fp)
@@ -65,23 +70,59 @@
 )
 
 (defn index-blocks-seq [#^String index-file]
-  (sequences/group-with (fn [l]
-                          (first (.split l "\t")))
-                        (ds/read-lines index-file)))
+  (map (fn [grp]
+         (map (fn [l]
+                (let [[val spos epos] (.split l "\t")]
+                  [val (Integer/parseInt spos) (Integer/parseInt epos)]))
+              grp))
+       (sequences/group-with (fn [l]
+                               (first (.split l "\t")))
+                             (ds/read-lines index-file))))
 
 (comment
   (index-blocks-seq ".file.txt.id-idx")
+  ((["1" 24 48]) (["2" 48 65]) (["3" 65 88]) (["99" 0 24] ["99" 88 115]))
 )
 
+
+(defn records-for-idx-block #^String [inp-file idx-block]
+  (loop [recs []
+         [[k start-pos end-pos] & idx-block] idx-block]
+    (if (not k)
+      recs
+      (recur
+       ;; NB: range should be 1 and only 1 line/record
+       (conj recs (first (io/read-lines-from-file-segment inp-file start-pos end-pos)))
+       idx-block))))
+
+(comment
+
+  (records-for-idx-block "file.txt" [["99" 0 24] ["99" 88 115]])
+
+)
+
+;; TODO: building an index has to stream the recors, if we are to
+;; build N indicies we will have to stream the records N times, modify
+;; the implementation such that we can create multiple indicies by
+;; streaming only one time...
 
 ;; TODO: Implement returning groups of records based on clustered
 ;; index values (remember, multiple records can have the same index
 ;; value).
 
 (defn record-blocks-via-index [#^String inp-file #^String index-file]
-  (raise "implement this..."))
+  "Given an data file and an index file, this stream through the distinct
+index values returning records from the data file."
+  (map (partial records-for-idx-block inp-file)
+       (index-blocks-seq index-file)))
 
+;;   ((["1" 24 48]) (["2" 48 65]) (["3" 65 88]) (["99" 0 24] ["99" 88 115]))
 
+(comment
+
+  (record-blocks-via-index "file.txt" ".file.txt.id-idx")
+
+)
 
 ;; TODO: Implement the binary search on the index
 
@@ -95,4 +136,4 @@
   (["99" 0 24] ["1" 24 48] ["2" 48 65] ["3" 65 88])
 
 
-)
+  )
