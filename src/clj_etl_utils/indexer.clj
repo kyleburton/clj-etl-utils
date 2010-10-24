@@ -7,9 +7,11 @@
 
 ;; index line oriented files
 
-;; TODO: convention for escaping the key (URI?), handling null or empty values, when the key fn throws an exception, etc.
+;; TODO: convention for escaping the key (URI? - it could contain a
+;; tab character...), handling null or empty values, when the key fn
+;; throws an exception, etc.
 
-;; TODO: consider updating or refreshing - incrementally, the indicies
+;; TODO: consider updating or refreshing - incrementally, the index files
 
 (defn line-index-seq [#^RandomAccessFile fp key-fn]
   (let [start-pos (.getFilePointer fp)
@@ -79,6 +81,7 @@
                                (first (.split l "\t")))
                              (ds/read-lines index-file))))
 
+
 (comment
   (index-blocks-seq ".file.txt.id-idx")
   ((["1" 24 48]) (["2" 48 65]) (["3" 65 88]) (["99" 0 24] ["99" 88 115]))
@@ -101,14 +104,10 @@
 
 )
 
-;; TODO: building an index has to stream the recors, if we are to
+;; TODO: building an index has to stream the records, if we are to
 ;; build N indicies we will have to stream the records N times, modify
 ;; the implementation such that we can create multiple indicies by
 ;; streaming only one time...
-
-;; TODO: Implement returning groups of records based on clustered
-;; index values (remember, multiple records can have the same index
-;; value).
 
 (defn record-blocks-via-index [#^String inp-file #^String index-file]
   "Given an data file and an index file, this stream through the distinct
@@ -124,16 +123,22 @@ index values returning records from the data file."
 
 )
 
-;; TODO: Implement the binary search on the index
-
 ;; TODO: Implement mutiple index block streaming (grouping across
 ;; mutiple data files).
 
 (comment
 
-  (extract-range (RandomAccessFile. "file.txt" "r") 0 24)
-  (file-index-seq "file.txt" #(first (.split % "\t")))
-  (["99" 0 24] ["1" 24 48] ["2" 48 65] ["3" 65 88])
 
+  (index-file! "file.txt" ".file.txt.id-idx" #(first (.split % "\t")))
+  (record-blocks-via-index "file.txt" ".file.txt.id-idx")
 
   )
+
+;; TODO: Implement the binary search on the index
+
+(comment
+
+  (index-search "file.txt" ".file.txt.id-idx" "99")
+
+)
+

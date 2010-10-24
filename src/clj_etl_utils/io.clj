@@ -372,21 +372,6 @@
 (defn byte-partitions-at-line-boundaries [file-name desired-block-size-bytes]
   (let [fp (java.io.RandomAccessFile. file-name "r")
         file-length (.length fp)]
-    (loop [byte-positions []
-           next-seek-point desired-block-size-bytes]
-      (if (>= next-seek-point file-length)
-        byte-positions
-        (do
-          (.seek fp next-seek-point)
-          (if (nil? (.readLine fp))
-            byte-positions
-            (recur (conj byte-positions (.getFilePointer fp))
-                   (max (+ (.getFilePointer fp) desired-block-size-bytes)
-                        (.getFilePointer fp)))))))))
-
-(defn byte-partitions-at-line-boundaries [file-name desired-block-size-bytes]
-  (let [fp (java.io.RandomAccessFile. file-name "r")
-        file-length (.length fp)]
     (loop [byte-positions [0]
            next-seek-point desired-block-size-bytes]
       (if (>= next-seek-point file-length)
