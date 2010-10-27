@@ -14,6 +14,14 @@
 ;; TODO: consider updating or refreshing - incrementally, the index files
 
 (defn line-index-seq [#^RandomAccessFile fp key-fn]
+  "Given a random access file (which may not be positioned at the start), and
+a key function (run on the line to produce the key value), this will return
+ a sequence of:
+
+   ([key-value line-start-pos line-end-pos] ...)
+
+For all the lines in the file.
+"
   (let [start-pos (.getFilePointer fp)
         line      (.readLine fp)
         end-pos   (.getFilePointer fp)
@@ -71,6 +79,7 @@
 
 )
 
+;; TODO: this is splitting multiple times, rework to only split 1x
 (defn index-blocks-seq [#^String index-file]
   (map (fn [grp]
          (map (fn [l]
@@ -80,6 +89,17 @@
        (sequences/group-with (fn [l]
                                (first (.split l "\t")))
                              (ds/read-lines index-file))))
+
+;; This is the new form of above (only call split 1x), needs to be tested
+#_(defn index-blocks-seq [#^String index-file]
+    (sequences/group-with
+     first
+     (map
+      (fn [l]
+        (let [[val spos epos] (.split l "\t")]
+          [val (Long/parseLong spos) (Long/parseLong epos)]))
+      (ds/read-lines index-file))))
+
 
 
 (comment
