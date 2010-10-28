@@ -14,8 +14,7 @@ h4. User Agent
 
 Creating a user agent is done by calling the @(user-agent) function.  It accepts two paramters: @:follow-redirects@ which controls whether or not it follows HTTP redirect responses to the pointed to locations; and @:basic-auth which allows you to supply authorization credentials for HTTP's basic auth system.
 
-pre.
-    (ws/get  (user-agent) url :params {:foo "bar"})
+pre.     (ws/get  (user-agent) url :params {:foo "bar"})
     (ws/post (user-agent) url :params {:foo "bar"})
     (ws/post (user-agent) url :body "this is the body" :content-type "text/plain")
     (ws/post (user-agent) url :body "<xml? ...>"       :content-type "text/xml")
@@ -50,14 +49,14 @@ Given the tab delimited file @file.txt@:
 
 We can create an index on the @id@ column id:
 
-    (index-file! "file.txt" ".file.txt.id-idx" #(first (.split % "\t")))
+.pre    (index-file! "file.txt" ".file.txt.id-idx" #(first (.split % "\t")))
 
 That index can then be used to read groups of records from the file with
 the same key values:
 
-    (record-blocks-via-index "file.txt" ".file.txt.id-idx")
+.pre    (record-blocks-via-index "file.txt" ".file.txt.id-idx")
 
-    ( [ "1\tis is the second line" ]
+.pre    ( [ "1\tis is the second line" ]
       [ "2\tthis is a line" ]
       [ "3\tthis is another line" ]
       [ "99\tline with larger key"
@@ -175,8 +174,7 @@ h3. Periodic Invoker
 
 lang/make-periodic-invoker can be used to easily create 'progress' indicators or bars:
 
-pre.
-    (let [total    1000
+pre.    (let [total    1000
           period     100
           progress (lang/make-periodic-invoker
                     period
@@ -191,8 +189,7 @@ pre.
 
 Produces the following output:
 
-pre.
-    So far we did 100, we are  10.00% complete.
+pre.    So far we did 100, we are  10.00% complete.
     So far we did 200, we are  20.00% complete.
     So far we did 300, we are  30.00% complete.
     So far we did 400, we are  40.00% complete.
