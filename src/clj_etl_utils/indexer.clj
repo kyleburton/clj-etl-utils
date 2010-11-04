@@ -13,6 +13,17 @@
 
 ;; TODO: consider updating or refreshing - incrementally, the index files
 
+(defn line-position-seq [#^RandomAccessFile fp]
+  (let [start-pos (.getFilePointer fp)
+        line      (.readLine fp)
+        end-pos   (.getFilePointer fp)]
+    (if (nil? line)
+      (do (.close fp)
+          nil)
+      (lazy-cat
+       [[line start-pos end-pos]]
+       (line-position-seq fp)))))
+
 (defn line-index-seq [#^RandomAccessFile fp key-fn]
   "Given a random access file (which may not be positioned at the start), and
 a key function (run on the line to produce the key value), this will return
@@ -27,20 +38,7 @@ If a sequence is returned, indicating that multiple index values were
 identified for the given line, each will be written as a distinct
 value into the index file.
 "
-  (let [start-pos (.getFilePointer fp)
-        line      (.readLine fp)
-        end-pos   (.getFilePointer fp)
-        key       (if (nil? line) nil (key-fn line))]
-    (if (nil? line)
-      (do (.close fp)
-          nil)
-      (lazy-cat
-       (map (fn [k] [k start-pos end-pos])
-            (if (seq? key)
-              key
-              [key]))
-       (line-index-seq fp key-fn)))))
-
+  (pmap key-fn (line-position-seq fp)))
 
 ;; returns a sequnce of [key line-start-byte-pos line-endbyte-pos]
 ;; given a key-fn that takes a line of text and returns a string key that represents the line.
