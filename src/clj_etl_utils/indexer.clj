@@ -13,6 +13,17 @@
 
 ;; TODO: consider updating or refreshing - incrementally, the index files
 
+(defn line-position-seq [#^RandomAccessFile fp]
+  (let [start-pos (.getFilePointer fp)
+        line      (.readLine fp)
+        end-pos   (.getFilePointer fp)]
+    (if (nil? line)
+      (do (.close fp)
+          nil)
+      (lazy-cat
+       [[line start-pos end-pos]]
+       (line-position-seq fp)))))
+
 (defn line-index-seq [#^RandomAccessFile fp key-fn]
   "Given a random access file (which may not be positioned at the start), and
 a key function (run on the line to produce the key value), this will return
@@ -21,18 +32,13 @@ a key function (run on the line to produce the key value), this will return
    ([key-value line-start-pos line-end-pos] ...)
 
 For all the lines in the file.
-"
-  (let [start-pos (.getFilePointer fp)
-        line      (.readLine fp)
-        end-pos   (.getFilePointer fp)
-        key       (if (nil? line) nil (key-fn line))]
-    (if (nil? line)
-      (do (.close fp)
-          nil)
-      (lazy-cat
-       [[key start-pos end-pos]]
-       (line-index-seq fp key-fn)))))
 
+Note: the key-fn may return either a singleton value, or a sequence.
+If a sequence is returned, indicating that multiple index values were
+identified for the given line, each will be written as a distinct
+value into the index file.
+"
+  (pmap key-fn (line-position-seq fp)))
 
 ;; returns a sequnce of [key line-start-byte-pos line-endbyte-pos]
 ;; given a key-fn that takes a line of text and returns a string key that represents the line.
@@ -48,7 +54,7 @@ For all the lines in the file.
 
 ;; NB: decide on sort behavior - string collation or numeric?  we're
 ;; going to shell out to GNU sort for this so that is a concern...
-(defn create-index-file [#^String input-file #^String index-file #^IFn key-fn ]
+(defn create-index-file [#^String input-file #^String index-file #^IFn key-fn]
   ;; run the indexer (seq), emit to index-file
   ;; sort index-file
   (with-open [outp (ds/writer index-file)]
