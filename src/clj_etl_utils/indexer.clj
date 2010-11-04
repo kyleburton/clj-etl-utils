@@ -48,7 +48,7 @@ For all the lines in the file.
 
 ;; NB: decide on sort behavior - string collation or numeric?  we're
 ;; going to shell out to GNU sort for this so that is a concern...
-(defn create-index-file [#^String input-file #^String index-file #^IFn key-fn ]
+(defn create-index-file [#^String input-file #^String index-file #^IFn key-fn]
   ;; run the indexer (seq), emit to index-file
   ;; sort index-file
   (with-open [outp (ds/writer index-file)]

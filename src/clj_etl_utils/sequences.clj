@@ -62,7 +62,7 @@ the random sampling process.
 ;; is in the core in clojure 1.2
 (defn group-with [f s]
   "
-  (grouped-seq identity [1 1 2 3 4 5 5 5 6 1 1])
+  (group-seq identity [1 1 2 3 4 5 5 5 6 1 1])
   ;; => [[1 1] [2] [3] [4] [5 5 5] [6] [1 1]]
   "
   (if (empty? s)
@@ -72,7 +72,7 @@ the random sampling process.
           [grp rst]  (split-with pred s)]
       (lazy-cat
        [grp]
-       (grouped-seq f rst)))))
+       (group-with f rst)))))
 
 
 (comment
@@ -84,7 +84,6 @@ the random sampling process.
    (fn [#^String s]
      (.charAt s 0))
    ["this" "that" "other" "othello" "flub" "flubber" "flugelhorn" "potatoe"])
-
 
 )
 
