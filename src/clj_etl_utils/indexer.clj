@@ -21,6 +21,11 @@ a key function (run on the line to produce the key value), this will return
    ([key-value line-start-pos line-end-pos] ...)
 
 For all the lines in the file.
+
+Note: the key-fn may return either a singleton value, or a sequence.
+If a sequence is returned, indicating that multiple index values were
+identified for the given line, each will be written as a distinct
+value into the index file.
 "
   (let [start-pos (.getFilePointer fp)
         line      (.readLine fp)
@@ -30,7 +35,10 @@ For all the lines in the file.
       (do (.close fp)
           nil)
       (lazy-cat
-       [[key start-pos end-pos]]
+       (map (fn [k] [k start-pos end-pos])
+            (if (seq? key)
+              key
+              [key]))
        (line-index-seq fp key-fn)))))
 
 
