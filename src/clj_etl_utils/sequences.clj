@@ -95,6 +95,27 @@ set of sequences with the minimal value dropped from the sequence it was identif
     [(first (first sqs))
      (filter (complement empty?) (conj (drop 1 sqs) (drop 1 (first sqs))))]))
 
+(comment
+
+  (minval-from-seqs
+   (fn [a b]
+     (cond (< a b) -1
+           (= a b)  0
+           :else    1))
+   [[2 2 4 6 8 10 12 14 16 18]])
+
+
+  (minval-from-seqs
+   (fn [a b]
+     (cond (< a b) -1
+           (= a b)  0
+           :else    1))
+   [[2 2 4 6 8 10 12 14 16 18]
+    [1 2 3 3 3 9 9 9 14 15 16 20 20 20]
+    [-5 0 0 0 99 999]])
+
+)
+
 
 (defn merge-seqs [cmpfn & sequences]
   "Given a comparator function and one or more sequences, this function will merge them
