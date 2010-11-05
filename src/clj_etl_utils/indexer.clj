@@ -25,20 +25,27 @@
        (line-position-seq fp)))))
 
 (defn line-index-seq [#^RandomAccessFile fp key-fn]
-  "Given a random access file (which may not be positioned at the start), and
-a key function (run on the line to produce the key value), this will return
- a sequence of:
+  "Given a random access file (need not be positioned at the start)
+and a key function (run on the line to compute the keys for the line)
+this will return a sequence of:
 
-   ([key-value line-start-pos line-end-pos] ...)
+   ([[key-value ...] line-start-pos line-end-pos] ...)
 
 For all the lines in the file.
 
-Note: the key-fn may return either a singleton value, or a sequence.
-If a sequence is returned, indicating that multiple index values were
-identified for the given line, each will be written as a distinct
-value into the index file.
 "
-  (pmap key-fn (line-position-seq fp)))
+  (pmap (fn [[line start-pos end-pos]]
+          [(key-fn line) start-pos end-pos])
+        (line-position-seq fp)))
+
+(comment
+
+  (take 10 (line-index-seq
+            (RandomAccessFile. "/home/superg/data/citi/relay_incremental_9_2010-10k-sample.rpt.fix" "r")
+            (fn [line]
+              [(str (.charAt line 0))])))
+
+)
 
 ;; returns a sequnce of [key line-start-byte-pos line-endbyte-pos]
 ;; given a key-fn that takes a line of text and returns a string key that represents the line.
@@ -58,12 +65,14 @@ value into the index file.
   ;; run the indexer (seq), emit to index-file
   ;; sort index-file
   (with-open [outp (ds/writer index-file)]
-    (loop [[[val start end] & vals] (file-index-seq input-file key-fn)]
-      (if (nil? val)
+    (loop [[[kvals start end] & vals] (file-index-seq input-file key-fn)]
+      (if (or (nil? kvals)
+              (empty? kvals))
         true
         (do
-         (.println outp (format "%s\t%s\t%s" val start end))
-         (recur vals))))))
+          (doseq [val kvals]
+           (.println outp (format "%s\t%s\t%s" val start end)))
+          (recur vals))))))
 
 ;; NB: return value isn't taking into account error statuses
 ;; NB: will not work on platforms that don't have sort and mv, fix this...
