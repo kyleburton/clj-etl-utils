@@ -85,7 +85,74 @@ the random sampling process.
      (.charAt s 0))
    ["this" "that" "other" "othello" "flub" "flubber" "flugelhorn" "potatoe"])
 
-)
+  )
+
+(defn minval-from-seqs [cmpfn sequences]
+  "Given a comparator function (-1, 0, 1) and a set of sequences, this function
+will return the minimal head value across all of the given sequences, and the
+set of sequences with the minimal value dropped from the sequence it was identified within."
+  (let [sqs (sort #(cmpfn (first %1) (first %2)) (filter (complement empty?) sequences))]
+    [(first (first sqs))
+     (filter (complement empty?) (conj (drop 1 sqs) (drop 1 (first sqs))))]))
 
 
+(defn merge-seqs [cmpfn & sequences]
+  "Given a comparator function and one or more sequences, this function will merge them
+taking the next most minimal value from each of the given sequences.  A good way to think
+about this is: if you have a set of already sorted sequences, this function will produce
+a merged, sorted sequence that combines the given sequences.
 
+Example:
+
+  (merge-seqs
+   (fn [a b]
+     (cond (< a b) -1
+           (= a b)  0
+           :else    1))
+   [2 2 4 6 8 10 12 14 16 18]
+   [1 2 3 3 3 9 9 9 14 15 16 20 20 20]
+   [-5 0 0 0 99 999])
+
+  (-5 0 0 0 1 2 2 2 3 3 3 4 6 8 9 9 9 10 12 14 14 15 16 16 18 20 20 20 99 999)
+
+"
+  (if (or (empty? sequences)
+          (every? empty? sequences))
+    nil
+    (let [[minval rest-seqs] (minval-from-seqs cmpfn sequences)]
+      (lazy-cat
+       [minval]
+       (apply merge-seqs cmpfn rest-seqs)))))
+
+(comment
+
+  (merge-seqs
+   (fn [a b]
+     (cond (< a b) -1
+           (= a b)  0
+           :else    1))
+   [2 2 4 6 8 10 12 14 16 18]
+   [1 2 3 3 3 9 9 9 14 15 16 20 20 20]
+   [-5 0 0 0 99 999])
+
+  (-5 0 0 0 1 2 2 2 3 3 3 4 6 8 9 9 9 10 12 14 14 15 16 16 18 20 20 20 99 999)
+
+  (merge-seqs
+   (fn [a b]
+     (cond (< a b) -1
+           (= a b)  0
+           :else    1))
+   [2 2 4 6 8 10 12 14 16 18]
+   [1 2 3 3 3 9 9 9 14 15 16 20 20 20])
+
+  (merge-seqs
+   (fn [a b]
+     (cond (< a b) -1
+           (= a b)  0
+           :else    1))
+   []
+   []
+   [1])
+
+
+  )
