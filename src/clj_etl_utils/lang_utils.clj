@@ -154,3 +154,32 @@ following actions are supported:
 
 
 
+(defmacro prog1 [res & body]
+  `(let [res# ~res]
+     ~@body
+     res#))
+
+
+(defmacro aprog1 [res & body]
+  `(let [~'it ~res]
+     ~@body
+     ~'it))
+
+
+
+(defmacro prog2 [fst res & body]
+  `(do
+     ~fst
+     (let [res# ~res]
+       ~@body
+       res#)))
+
+
+(defmacro aprog2 [fst res & body]
+  `(do
+     ~fst
+     (let [~'it ~res]
+       ~@body
+       ~'it)))
+
+
