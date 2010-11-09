@@ -18,15 +18,18 @@ SET default_with_oids = false;
 
 CREATE TABLE h_<(:table-name params)> (
        id bigint primary key,
-       created timestamp,
+       created_at timestamp without time zone,
+       updated_at timestamp without time zone,
        action character varying (10),
        h_id bigint NOT NULL,
 <(clojure.contrib.string/join ",\n"
-          (map (fn [col-info] (format "       h_%s %s (%s)"
+         (map (fn [col-info] (format "       h_%s %s%s"
                                  (.toLowerCase #^String (:name col-info))
                                  (:type col-info)
-                                 (:length col-info)))
-               (:columns params)))>
+                                 (if (:length col-info)
+                                   (format " (%s)" (:length col-info))
+                                   "")))
+               (filter :name (:columns params))))>
 );
 
 ALTER TABLE public.h_<(:table-name params)> OWNER TO <(:owner params)>;

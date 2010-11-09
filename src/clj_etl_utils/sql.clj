@@ -36,30 +36,54 @@
 
 (comment
 
-  (println
-   (create-table-ddl
-    :postgresql
-    [{:name "name",      :type "character varying", :length 255}]
-    "clients"
-    {:owner "rails"}))
+  (ds/with-out-writer "/tmp/tables.sql"
+    (doseq [[table-name table-def]
+            [["campaign_ivr_routing"
+              [{:name "campaign_id",      :type "bigint"}
+               {:name "ivr_phone_number", :type "character varying", :length 15}
+               {:name "dnis_id",          :type "character varying", :length 10}
+               {:constraint "campaign_ivr_routing_campaign_id_fk FOREIGN KEY (campaign_id) REFERENCES campaigns (id)"}]]]]
+      (println
+       (create-table-ddl
+        :postgresql
+        table-def
+        table-name
+        {:owner "rails"}))
+      (println
+       (create-history-table-ddl
+        :postgresql
+        table-def
+        table-name
+        {:owner "rails"}))
+      (println (apply str (repeat 80 "-"))))
 
-  (println
-   (create-table-ddl
-    :postgresql
-    [{:name "name",      :type "character varying", :length 255}
-     {:name "client_id", :type "bigint", :length 1}]
-    "campaigns"
-    {:owner "rails"}))
+    (doseq [[table-name table-def]
+            [["billers"
+              [{:name "name"          :type "character varying" :length 255}
+               {:name "address1"      :type "character varying" :length 255}
+               {:name "address2"      :type "character varying" :length 255}
+               {:name "city"          :type "character varying" :length 255}
+               {:name "state"         :type "character varying" :length 255}
+               {:name "zipcode"       :type "character varying" :length 255}
+               {:name "created_at"    :type "timestamp without time zone"}
+               {:name "updated_at"    :type "timestamp without time zone"}
+               {:name "cs_number"     :type "character varying" :length 255}
+               {:name "support_email" :type "character varying" :length 255}
+               {:name "url"           :type "character varying" :length 255}
+               {:name "logo_name"     :type "character varying" :length 255}]]
+             ["campaigns"
+              [{:name "biller_id"  :type "integer"}
+               {:name "product_id" :type "integer"}
+               {:name "created_at" :type "timestamp without time zone"}
+               {:name "updated_at" :type "timestamp without time zone"}]]]]
+      (println
+       (create-history-table-ddl
+        :postgresql
+        table-def
+        table-name
+        {:owner "rails"}))
+      (println (apply str (repeat 80 "-")))))
 
-  (println
-   (create-table-ddl
-    :postgresql
-    [{:name "campaign_id",      :type "bigint", :length 255}
-     {:name "ivr_phone_number", :type "character varying", :length 15}
-     {:name "dnis_id",          :type "character varying", :length 10}]
-    "campaign_ivr_routing"
-    {:owner "rails"}))
 
 
-
-)
+  )

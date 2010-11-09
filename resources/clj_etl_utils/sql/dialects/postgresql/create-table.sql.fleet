@@ -19,15 +19,24 @@ SET default_with_oids = false;
 
 CREATE TABLE <(:table-name params)> (
        id bigint primary key,
+       created_at timestamp without time zone,
+       updated_at timestamp without time zone,
 <(clojure.contrib.string/join ",\n"
-          (map (fn [col-info] (format "       %s %s (%s)%s"
+  (concat
+          (map (fn [col-info] (format "       %s %s%s%s"
                                  (.toLowerCase #^String (:name col-info))
                                  (:type col-info)
-                                 (:length col-info)
+                                 (if (:length col-info)
+                                   (format " (%s)" (:length col-info))
+                                   "")
                                  (if (:not-null col-info)
                                      " NOT NULL"
                                      "")))
-               (:columns params)))>
+               (filter :name (:columns params)))
+          (map
+              (fn [constraint-info]
+                (format "       CONSTRAINT %s" (:constraint constraint-info)))
+              (filter :constraint (:columns params)))))>
 );
 
 ALTER TABLE public.<(:table-name params)> OWNER TO <(:owner params)>;
