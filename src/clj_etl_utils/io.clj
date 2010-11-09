@@ -1,6 +1,7 @@
 (ns clj-etl-utils.io
-  (:use clj-etl-utils.lang)
+  (:use [clj-etl-utils.lang-utils :only (raise log)])
   (:require [clojure.contrib.shell-out           :as sh])
+
   (:import [java.io InputStream FileInputStream File InputStreamReader]))
 
 ;;

@@ -1,5 +1,5 @@
 (ns clj-etl-utils.http
-  (:use [clj-etl-utils.lang :only [raise assert-allowed-keys! rest-params->map]])
+  (:use [clj-etl-utils.lang-utils :only [raise assert-allowed-keys! rest-params->map]])
   (:import
    [org.apache.commons.httpclient Credentials Header HttpClient UsernamePasswordCredentials NameValuePair]
    [org.apache.commons.httpclient.auth AuthScope]

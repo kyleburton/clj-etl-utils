@@ -4,6 +4,7 @@ ETL Utilities for Clojure.  This library was created as a collecitng point for
 various utilities for handling a multitude of file encodings, record formats
 and other ETL activities.
 
+
 h2. Modules
 
 h3. clj-etl-utils.http
@@ -200,4 +201,3 @@ pre.    So far we did 100, we are  10.00% complete.
     So far we did 900, we are  90.00% complete.
     So far we did 1000, we are  100.00% complete.
     All Done! 1000
-

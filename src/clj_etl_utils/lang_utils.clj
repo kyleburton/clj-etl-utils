@@ -1,4 +1,4 @@
-(ns clj-etl-utils.lang
+(ns clj-etl-utils.lang-utils
   (:import [org.apache.commons.io IOUtils]))
 
 (defmulti raise

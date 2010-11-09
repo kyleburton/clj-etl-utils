@@ -1,6 +1,6 @@
 (ns clj-etl-utils.landmark-parser
   (:import [java.util.regex Pattern Matcher])
-  (:use    [clj-etl-utils.lang :only (raise seq-like? log)])
+  (:use    [clj-etl-utils.lang-utils :only (raise seq-like? log)])
   (:require
    [clj-etl-utils.regex :as regex]))
 

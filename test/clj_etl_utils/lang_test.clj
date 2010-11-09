@@ -1,10 +1,10 @@
 (ns clj-etl-utils.lang-test
-  (:require [clj-etl-utils.lang :as lang])
+  (:require [clj-etl-utils.lang-utils :as lang-utils])
   (:use [clojure.test]))
 
 (deftest test-make-periodic-invoker
   (let [stat    (atom [])
-        trigger (lang/make-periodic-invoker 10
+        trigger (lang-utils/make-periodic-invoker 10
                                             (fn [count val]
                                               (swap! stat conj val)))]
     (dotimes [ii 100]
@@ -15,7 +15,7 @@
 
 (comment
   (let [stat    (atom [])
-        trigger (lang/make-periodic-invoker 10
+        trigger (lang-utils/make-periodic-invoker 10
                                             (fn [count val]
                                               (swap! stat conj [count val])))]
     (dotimes [ii 100]
@@ -23,7 +23,7 @@
     @stat)
 
 
-  (def *timer* (lang/make-periodic-invoker
+  (def *timer* (lang-utils/make-periodic-invoker
                 10
                 (fn [val & args]
                   (printf "triggered: val=%s args=%s\n" val args))))
@@ -37,7 +37,7 @@
 
   (let [total    1000
         period     100
-        progress (lang/make-periodic-invoker
+        progress (lang-utils/make-periodic-invoker
                   period
                   (fn [val & [is-done]]
                     (if (= is-done :done)
