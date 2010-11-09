@@ -39,18 +39,27 @@
   (println
    (create-table-ddl
     :postgresql
-    [{:name "name",      :type "character varying", :length 15}
-     {:name "client_id", :type "character varying", :length 16}]
+    [{:name "name",      :type "character varying", :length 255}]
+    "clients"
+    {:owner "rails"}))
+
+  (println
+   (create-table-ddl
+    :postgresql
+    [{:name "name",      :type "character varying", :length 255}
+     {:name "client_id", :type "bigint", :length 1}]
     "campaigns"
     {:owner "rails"}))
 
   (println
-   (create-history-table-ddl
+   (create-table-ddl
     :postgresql
-    [{:name "name",      :type "character varying", :length 15}
-     {:name "client_id", :type "character varying", :length 16}]
-    "campaigns"
+    [{:name "campaign_id",      :type "bigint", :length 255}
+     {:name "ivr_phone_number", :type "character varying", :length 15}
+     {:name "dnis_id",          :type "character varying", :length 10}]
+    "campaign_ivr_routing"
     {:owner "rails"}))
+
 
 
 )

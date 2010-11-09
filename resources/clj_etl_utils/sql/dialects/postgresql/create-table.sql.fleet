@@ -18,7 +18,7 @@ SET default_with_oids = false;
 
 
 CREATE TABLE <(:table-name params)> (
-       id bigint NOT NULL,
+       id bigint primary key,
 <(clojure.contrib.string/join ",\n"
           (map (fn [col-info] (format "       %s %s (%s)%s"
                                  (.toLowerCase #^String (:name col-info))
