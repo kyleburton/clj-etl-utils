@@ -2,6 +2,7 @@
   (:use
    [clj-etl-utils.lang-utils :only (raise aprog1)])
   (:require
+   clojure.contrib.string
    [clojure.contrib.duck-streams :as ds]
    [clj-etl-utils.lang-utils :as lang-utils]
    fleet))

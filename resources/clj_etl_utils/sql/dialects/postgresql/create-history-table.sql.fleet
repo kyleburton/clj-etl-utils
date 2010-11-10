@@ -15,9 +15,20 @@ SET default_tablespace = '';
 
 SET default_with_oids = false;
 
+--
+-- Name: h_<(:table-name params)>_id_seq; Type: SEQUENCE; Schema: public; Owner: <(:owner params)>
+--
+
+CREATE SEQUENCE h_<(:table-name params)>_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
 
 CREATE TABLE h_<(:table-name params)> (
-       id bigint primary key,
+       id bigint primary key DEFAULT nextval('<(:table-name params)>_id_seq'),
        created_at timestamp without time zone,
        updated_at timestamp without time zone,
        action character varying (10),
@@ -33,17 +44,6 @@ CREATE TABLE h_<(:table-name params)> (
 );
 
 ALTER TABLE public.h_<(:table-name params)> OWNER TO <(:owner params)>;
-
---
--- Name: h_<(:table-name params)>_id_seq; Type: SEQUENCE; Schema: public; Owner: <(:owner params)>
---
-
-CREATE SEQUENCE h_<(:table-name params)>_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
 
 ALTER TABLE public.h_<(:table-name params)>_id_seq OWNER TO <(:owner params)>;
 
