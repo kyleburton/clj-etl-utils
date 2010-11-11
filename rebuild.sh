@@ -1,6 +1,8 @@
 set -eu
 test -f pom.xml && rm pom.xml
-test -f *.jar && rm *.jar
+for f in *.jar; do
+  test -f $f && rm $f
+done
 lein clean
 lein deps
 lein test
