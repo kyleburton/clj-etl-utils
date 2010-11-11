@@ -4,7 +4,7 @@
   (:import
    [java.io
     InputStream FileInputStream File InputStreamReader RandomAccessFile
-    Reader FileReader]
+    BufferedReader Reader FileReader]
    [org.apache.commons.io.input BoundedInputStream]))
 
 ;;
@@ -389,61 +389,24 @@
             (recur (conj byte-positions (.getFilePointer fp))
                    (+ (.getFilePointer fp) desired-block-size-bytes))))))))
 
-;; (count (byte-partitions-at-line-boundaries "/tmp/test-file.txt" 100))
 
-;; see: http://webcache.googleusercontent.com/search?q=cache:WK2by6blKLQJ:forums.sun.com/thread.jspa%3FthreadID%3D466733+java+randomaccessfile+slow&cd=2&hl=en&ct=clnk&gl=us
-;; seek, then create a (FileReader. (.getFD fp))
-;; and wrap it in a BufferedReader
-;; that should allow faster readLine, then still consult fp.getFilePointer() for
-;; the current seek point to stop reading perhaps?  needs to be thought out some more...
+(defn- bounded-input-stream-line-seq [#^BufferedReader bis]
+  (let [line (.readLine bis)]
+    (if-not line
+      nil
+      (lazy-cat
+       [line]
+       (bounded-input-stream-line-seq bis)))))
 
-;; org.apache.commons.io.input.BoundedInputStream
-;; (let [bis (BoundedInputStream. (doto
-;;                                    (FileInputStream. fname)
-;;                                  ))])
-
-
-(defn- random-access-file-line-seq-with-limit [#^RandomAccessFile fp end]
-  (if (>= (.getFilePointer fp) end)
-    (do
-      (.close fp)
-      nil)
-    (lazy-cat
-     (loop [line (.readLine fp)
-            lines []
-            max 1]
-       (if (or (not line)
-               (= max 0))
-         (conj lines line)
-         (recur (.readLine fp)
-                (conj lines line)
-                (dec max))))
-     (random-access-file-line-seq-with-limit fp end))))
-
-;; (read-lines-from-file-segment file-name start end)
 (defn read-lines-from-file-segment [#^String file-name start end]
-  (let [fp (RandomAccessFile. file-name "r")]
-    (.seek fp start)
-    (random-access-file-line-seq-with-limit fp end)))
+  (let [bis (BoundedInputStream.
+             (doto (FileInputStream. file-name)
+               (.skip start))
+             (- end start))]
+    (bounded-input-stream-line-seq (BufferedReader. (InputStreamReader. bis)))))
 
 
 
-(comment
-  (byte-partitions-at-line-boundaries "/tmp/test-file.txt" 100)
-  (extract-lines-from-coordinates "/tmp/test-file.txt" [0 129])
-  (extract-lines-from-coordinates "/tmp/test-file.txt" [129 258])
-
-  (extract-lines-from-coordinates "/tmp/test-file.txt" [4347 4392])
-
-  (=
-   (apply
-    concat
-    (map (fn [[start end]] (read-lines-from-file-segment "/tmp/test-file.txt" start end))
-         (partition 2 1 (byte-partitions-at-line-boundaries "/tmp/test-file.txt" 100))))
-   (clojure.contrib.duck-streams/read-lines "/tmp/test-file.txt"))
-
-
-  )
 
 
 
