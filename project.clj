@@ -9,6 +9,7 @@
   :aot [clj-etl-utils.io
         clj-etl-utils.lang-utils
         clj-etl-utils.regex
+        clj-etl-utils.sequences
         clj-etl-utils.ref-data
         clj-etl-utils.text
         clj-etl-utils.landmark-parser

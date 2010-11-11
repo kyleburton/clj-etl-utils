@@ -10,11 +10,9 @@ initial population sequence.  The random sample will be evenly
 distributed over the given population-size.  The sample will terminate
 when the sequence runs out or the requested sample size has been
 reached.  NB: Given the probabalistic nature of the random sampling
-process the sample size may not been precisely met.  If an `update-fn'
+process the sample size may not been precisely met.  If an update-fn
 is supplied, it will be invoked every time an element is selected by
-the random sampling process.
-
-"}
+the random sampling process."} ;"
  random-sample-seq
      (let [rnd (java.util.Random.)]
        (fn myself [[item & population :as population-seq]
@@ -183,11 +181,11 @@ Example:
     (for [that (remove #(= this %1) things)]
       [this that])))
 
-(defun n-choose-2 (n)
-  (loop
-     for ii from 1 upto n
-     for total = 0 then (+ total (- ii 1))
-     finally (return total)))
+;; (defun n-choose-2 (n)
+;;   (loop
+;;      for ii from 1 upto n
+;;      for total = 0 then (+ total (- ii 1))
+;;      finally (return total)))
 
 (defn n-choose-2 [n]
   (apply + (range 1 n)))
