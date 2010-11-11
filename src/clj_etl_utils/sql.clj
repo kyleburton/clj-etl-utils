@@ -66,17 +66,14 @@
                {:name "city"          :type "character varying" :length 255}
                {:name "state"         :type "character varying" :length 255}
                {:name "zipcode"       :type "character varying" :length 255}
-               {:name "created_at"    :type "timestamp without time zone"}
-               {:name "updated_at"    :type "timestamp without time zone"}
                {:name "cs_number"     :type "character varying" :length 255}
                {:name "support_email" :type "character varying" :length 255}
                {:name "url"           :type "character varying" :length 255}
                {:name "logo_name"     :type "character varying" :length 255}]]
              ["campaigns"
-              [{:name "biller_id"  :type "integer"}
-               {:name "product_id" :type "integer"}
-               {:name "created_at" :type "timestamp without time zone"}
-               {:name "updated_at" :type "timestamp without time zone"}]]]]
+              [{:name "name"       :type "character varying"    :length 255}
+               {:name "biller_id"  :type "integer"}
+               {:name "product_id" :type "integer"}]]]]
       (println
        (create-history-table-ddl
         :postgresql
