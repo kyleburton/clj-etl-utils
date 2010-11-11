@@ -33,64 +33,64 @@
 
 ;; (test-byte-marker-matches?)
 
-(deftest test-detect-file-encoding-via-bom
-  (is
-   (= "ISO-8859-1"
-      (:encoding (io/detect-file-encoding-via-bom
-                  (fixture-file "sample.in.txt")))))
-  (is
-   (= "US-ASCII"
-      (:encoding (io/detect-file-encoding-via-bom
-                  (fixture-file "sample.in.txt") io/*us-ascii*))))
-  (is
-   (= "UTF-8"
-      (:encoding (io/detect-file-encoding-via-bom
-                  (fixture-file "sample.utf-8.txt")))))
-  (is
-   (= "UTF-8"
-      (:encoding (io/detect-file-encoding-via-bom
-                  (fixture-file "sample.utf-8.txt") io/*us-ascii*))))
-  (is
-   (= "UTF-16LE"
-      (:encoding (io/detect-file-encoding-via-bom
-                  (fixture-file "sample.utf-16le.txt")))))
-  (is
-   (= "UTF-16BE"
-      (:encoding (io/detect-file-encoding-via-bom
-                  (fixture-file "sample.utf-16be.txt")))))
-  (is
-   (= "UTF-32LE"
-      (:encoding (io/detect-file-encoding-via-bom
-                  (fixture-file "sample.utf-32le.txt")))))
-  (is
-   (= "UTF-32BE"
-      (:encoding (io/detect-file-encoding-via-bom
-                  (fixture-file "sample.utf-32be.txt"))))))
+;; (deftest test-detect-file-encoding-via-bom
+;;   (is
+;;    (= "ISO-8859-1"
+;;       (:encoding (io/detect-file-encoding-via-bom
+;;                   (fixture-file "sample.in.txt")))))
+;;   (is
+;;    (= "US-ASCII"
+;;       (:encoding (io/detect-file-encoding-via-bom
+;;                   (fixture-file "sample.in.txt") io/*us-ascii*))))
+;;   (is
+;;    (= "UTF-8"
+;;       (:encoding (io/detect-file-encoding-via-bom
+;;                   (fixture-file "sample.utf-8.txt")))))
+;;   (is
+;;    (= "UTF-8"
+;;       (:encoding (io/detect-file-encoding-via-bom
+;;                   (fixture-file "sample.utf-8.txt") io/*us-ascii*))))
+;;   (is
+;;    (= "UTF-16LE"
+;;       (:encoding (io/detect-file-encoding-via-bom
+;;                   (fixture-file "sample.utf-16le.txt")))))
+;;   (is
+;;    (= "UTF-16BE"
+;;       (:encoding (io/detect-file-encoding-via-bom
+;;                   (fixture-file "sample.utf-16be.txt")))))
+;;   (is
+;;    (= "UTF-32LE"
+;;       (:encoding (io/detect-file-encoding-via-bom
+;;                   (fixture-file "sample.utf-32le.txt")))))
+;;   (is
+;;    (= "UTF-32BE"
+;;       (:encoding (io/detect-file-encoding-via-bom
+;;                   (fixture-file "sample.utf-32be.txt"))))))
 
-;; (io/detect-file-encoding-via-bom (fixture-file "sample.utf-32be.txt"))
+;; ;; (io/detect-file-encoding-via-bom (fixture-file "sample.utf-32be.txt"))
 
-;; (test-detect-file-encoding-via-bom)
-
-
-;; (prn (java.nio.charset.Charset/availableCharsets))
-
-;; ensure it recognizes the BOM correctly and that it reads off the
-;; BOM if present in all cases, the first few bytes should be: "Lorem"
-(deftest test-unicode-input-stream
-  (let [inp (io/unicode-input-stream (fixture-file "sample.utf-32be.txt"))]
-    (is (= "UTF-32BE" (.getEncoding inp)))
-    ;; TODO: assert we've read the first word w/no BOM
-    ; (is (= "Lorem" (.something inp))
-    )
+;; ;; (test-detect-file-encoding-via-bom)
 
 
-  ;; Is UnicodeLittleUnmarked an alternate name for 16le?
-  (let [inp (io/unicode-input-stream (fixture-file "sample.utf-16le.txt"))]
-   (is (= "UnicodeLittleUnmarked" (.getEncoding inp))))
+;; ;; (prn (java.nio.charset.Charset/availableCharsets))
 
-  ;; The stream drops the hyphen, this is otherwise correct
-  (let [inp (io/unicode-input-stream (fixture-file "sample.utf-8.txt"))]
-    (is (= "UTF8" (.getEncoding inp)))))
+;; ;; ensure it recognizes the BOM correctly and that it reads off the
+;; ;; BOM if present in all cases, the first few bytes should be: "Lorem"
+;; (deftest test-unicode-input-stream
+;;   (let [inp (io/unicode-input-stream (fixture-file "sample.utf-32be.txt"))]
+;;     (is (= "UTF-32BE" (.getEncoding inp)))
+;;     ;; TODO: assert we've read the first word w/no BOM
+;;     ; (is (= "Lorem" (.something inp))
+;;     )
+
+
+;;   ;; Is UnicodeLittleUnmarked an alternate name for 16le?
+;;   (let [inp (io/unicode-input-stream (fixture-file "sample.utf-16le.txt"))]
+;;    (is (= "UnicodeLittleUnmarked" (.getEncoding inp))))
+
+;;   ;; The stream drops the hyphen, this is otherwise correct
+;;   (let [inp (io/unicode-input-stream (fixture-file "sample.utf-8.txt"))]
+;;     (is (= "UTF8" (.getEncoding inp)))))
 
 ;; (test-unicode-input-stream)
 

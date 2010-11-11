@@ -1,0 +1,5 @@
+1.0.17 :: Wed Nov 10 22:39:44 EST 2010
+  * upgrade to commons-io 2.0 to use BoundedInputStream
+
+  * deprecated all the BOM/Unicode functions, these are handled by the current
+  version of commons-io
