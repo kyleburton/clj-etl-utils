@@ -1,4 +1,7 @@
-(ns clj-etl-utils.http
+(ns
+    ^{:doc "Wrapper around Jakarta's HTTP Client."
+      :author "Kyle Burton"}
+  clj-etl-utils.http
   (:use [clj-etl-utils.lang-utils :only [raise assert-allowed-keys! rest-params->map]])
   (:import
    [org.apache.commons.httpclient Credentials Header HttpClient UsernamePasswordCredentials NameValuePair]
@@ -17,7 +20,19 @@
 ;; frequently the desired behavior of a user agent).
 ;; TODO: support specification of host/port/realm in the basic-auth structure
 ;  TODO: support either a single map for basic auth, or a sequence of maps
-(defn user-agent [& params]
+(defn ^{:doc "Construct a new user agent (HttpClient).
+
+   :follow-redirects [optional] true/false defaults to true
+
+   :basic-auth [optional] a map of:
+     :auth-host  the host for authentication, defaults to AuthScope/ANY_HOST
+     :auth-port  the port for authentication, defaults to AuthScope/ANY_PORT
+     :auth-realm the authentication realm for authentication, defaults to AuthScope/ANY_REALM
+     :user [required] the username
+     :pass [required] the password
+"
+        :added "1.0.0"}
+  user-agent [& params]
   (let [params (rest-params->map params)
         ua (HttpClient.)]
     (assert-allowed-keys! params [:follow-redirects :basic-auth])

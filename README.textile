@@ -1,9 +1,6 @@
 h1. clj-etl-utils
 
-ETL Utilities for Clojure.  This library was created as a collecitng point for
-various utilities for handling a multitude of file encodings, record formats
-and other ETL activities.
-
+ETL Utilities for Clojure.  These are mostly centered around functions that work with data on disk, such as database dumps and log files.  At least that was the original purpose of the library, it has since grown to include other utilities.
 
 h2. Modules
 
@@ -34,62 +31,15 @@ pre.     (ws/get  (user-agent) url :params {:foo "bar"})
     (ws/post *ua* url :body "this is the body" :content-type "text/plain")
 
 
-h3. clj-etl-utils.indexer
-
-Module for working with line-oriented data files in-situ on disk.  These tools allow you to create (somewhat) arbitrary indexes into a file and walk through the indexed values.
-
-h4. Example
-
-Given the tab delimited file @file.txt@:
-
-    99	line with larger key
-    1	is is the second line
-    2	this is a line
-    3	this is another line
-    99	duplicated line for key
-
-We can create an index on the @id@ column id:
-
-.pre    (index-file! "file.txt" ".file.txt.id-idx" #(first (.split % "\t")))
-
-That index can then be used to read groups of records from the file with
-the same key values:
-
-.pre    (record-blocks-via-index "file.txt" ".file.txt.id-idx")
-
-.pre    ( [ "1\tis is the second line" ]
-      [ "2\tthis is a line" ]
-      [ "3\tthis is another line" ]
-      [ "99\tline with larger key"
-        "99\tduplicated line for key" ] )
-
 h3. clj-etl-utils.io
 
 IO and File utilities.
 
-h4. first-n-bytes-available
-
-Helper method that attempts to read the first N bytes from a stream, resetting the stream so the bytes can be read again.  Note that this does not work with all stream types, as not all of them supports being marked and resetting.
-
-h4. byte-marker-matches?
-
-Given the bytes of a marker and the bytes from a file, tests to see if the marker matches what was pulled from the file.  This can be thought of as an equality test.
-
-h4. detect-stream-encoding-via-bom
-
-Looks at the first few bytes in the file to determine what the file's encoding is.  The detected encoding is returned as a map.
-
-h4. detect-file-encoding-via-bom
-
-Returns the encoding map for the file by inspecting the first few bytes of the file.
-
-h4. unicode-input-stream
-
-Given a path to a file, this will detect and then open a FileInputStream with the detected encoding set on the reader.
-
-h4. string-reader, string-input-stream
+h4. @string-reader, string-input-stream@
 
 Returns a Reader or an InputStream, respectively, that will read from the given string.
+
+h4. @read-fixed-length-string@
 
 h4. chmod
 
@@ -146,31 +96,6 @@ h3. clj-etl-utils.sequences
 h3. clj-etl-utils.text
 
 
-
-h2. Installation
-
-Leiningen and Maven repository / depdencney inforamtion using Clojars.
-
-h2. References
-
-UTF and BOM
-
-  http://unicode.org/faq/utf_bom.html
-
-EncodingHeuristics
-
-  http://downloads.atlassian.com/software/clover/samples/xom/nu/xom/xinclude/EncodingHeuristics.html
-  http://xom.dev.java.net/source/browse/xom/
-
-h2. Random Sampling
-
-  "How to pick a random sample from a list":http://www.javamex.com/tutorials/random_numbers/random_sample.shtml
-
-h2. License
-
-This code is covered under the same as Clojure.
-
-
 h3. Periodic Invoker
 
 lang/make-periodic-invoker can be used to easily create 'progress' indicators or bars:
@@ -201,3 +126,52 @@ pre.    So far we did 100, we are  10.00% complete.
     So far we did 900, we are  90.00% complete.
     So far we did 1000, we are  100.00% complete.
     All Done! 1000
+h3. clj-etl-utils.indexer
+
+Module for working with line-oriented data files in-situ on disk.  These tools allow you to create (somewhat) arbitrary indexes into a file and walk through the indexed values.
+
+h4. Example
+
+Given the tab delimited file @file.txt@:
+
+    99	line with larger key
+    1	is is the second line
+    2	this is a line
+    3	this is another line
+    99	duplicated line for key
+
+We can create an index on the @id@ column id:
+
+.pre    (index-file! "file.txt" ".file.txt.id-idx" #(first (.split % "\t")))
+
+That index can then be used to read groups of records from the file with
+the same key values:
+
+.pre    (record-blocks-via-index "file.txt" ".file.txt.id-idx")
+
+.pre    ( [ "1\tis is the second line" ]
+      [ "2\tthis is a line" ]
+      [ "3\tthis is another line" ]
+      [ "99\tline with larger key"
+        "99\tduplicated line for key" ] )
+
+
+h2. Installation
+
+Leiningen and Maven repository / depdencney inforamtion using Clojars.
+
+h2. References
+
+UTF and BOM
+
+  http://unicode.org/faq/utf_bom.html
+
+h2. Random Sampling
+
+  "How to pick a random sample from a list":http://www.javamex.com/tutorials/random_numbers/random_sample.shtml
+
+
+
+h2. License
+
+This code is covered under the same as Clojure.

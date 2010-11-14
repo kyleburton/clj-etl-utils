@@ -1,4 +1,7 @@
-(ns clj-etl-utils.io
+(ns
+    ^{:doc "I/O Utilities"
+      :author "Kyle Burton"}
+    clj-etl-utils.io
   (:use [clj-etl-utils.lang-utils :only (raise log)])
   (:require [clojure.contrib.shell-out           :as sh])
   (:import
@@ -12,7 +15,11 @@
 ;; FAIL: use the BOM stuff from commons-io!o
 
 ;; TODO: can fail for streams that don't support marking
-(defn first-n-bytes-available [#^Reader stream n-bytes]
+(defn
+  ^{:doc "Read the first n-bytes available in the stream, if the stream supports
+marking, it will be reset back so that the bytes are not actually read."
+    :added "1.0.0"}
+  first-n-bytes-available [#^Reader stream n-bytes]
   (let [res (atom [])]
     (try
      (if (.markSupported stream)
@@ -83,7 +90,11 @@
 ;; (def *default-encoding* *iso-8851-1*)
 
 
-(defn byte-marker-matches? [marker-bytes file-bytes]
+(defn ^{:doc "Test if a given marker is equivalent to the given set of
+  bytes from the file.  This is a prefix test, and will return true of
+  the shorter marker matches the beginning of the longer marker."
+        :added "1.0.0"}
+  byte-marker-matches? [marker-bytes file-bytes]
   (cond
     (empty? marker-bytes) false
     (empty? file-bytes)   false
@@ -132,20 +143,30 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn string-reader [s]
+(defn ^{:doc "Wraps a StringReader around the given string."
+        :added "1.0.0"}
+  string-reader [^String s]
   (java.io.StringReader. s))
 
-(defn string-input-stream [#^String s]
+(defn
+  ^{:doc "Creates an InputStream (ByteArrayInputStream) for the given string."
+    :added "1.0.0"}
+  string-input-stream [^String s]
   (java.io.ByteArrayInputStream. (.getBytes s)))
 
-(defn read-fixed-length-string [#^InputStream inp nchars]
-  "Read a specific number of characters from the InputStream, return a string."
+(defn
+  ^{:doc "Read a specific number of characters from the InputStream, return a string."
+    :added "1.0.0"
+  read-fixed-length-string [#^InputStream inp nchars]
+
   (let [dest #^bytes (make-array Byte/TYPE nchars)
         nread (.read inp dest 0 nchars)]
     (String. dest 0 nread)))
 
-(defn drain-line-reader
-  "Drain a buffered reader into a sequence."
+(defn
+  ^{:doc   "Drain a buffered reader into a sequence."
+    :added "1.0.0"}
+    drain-line-reader
   [#^java.io.BufferedReader rdr]
   (loop [res []
          line (.readLine rdr)]
@@ -154,8 +175,10 @@
              (.readLine rdr))
       res)))
 
-(defn exec
-  "Simple wrapper around Runtime.exec - not intended to compete with clojure.contrib.shell-out"
+(defn
+  ^{:doc   "Simple wrapper around Runtime.exec - not intended to compete with clojure.contrib.shell-out"
+    :added "1.0.0"}
+  exec
   [#^String cmd]
   (let [proc #^Process (.exec (Runtime/getRuntime) cmd)
         rv (.waitFor proc)]
@@ -163,8 +186,10 @@
      :output (drain-line-reader (java.io.BufferedReader. (java.io.InputStreamReader. (.getInputStream proc))))
      :exit rv}))
 
-(defn chmod
-  "Change a file or directory's permissions.  Shells out to perform the chmod."
+(defn
+  ^{:doc "Change a file or directory's permissions.  Shells out to perform the chmod."
+    :added "1.0.0"}
+  chmod
   [perms file]
   (let [cmd (format "chmod %s %s" perms file)
         res (exec cmd)]

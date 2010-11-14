@@ -1,4 +1,7 @@
-(ns clj-etl-utils.sequences)
+(ns
+    ^{:doc "Sequences helpers and extension functions."
+      :author "Kyle Burton"}
+  clj-etl-utils.sequences)
 
 
 (def

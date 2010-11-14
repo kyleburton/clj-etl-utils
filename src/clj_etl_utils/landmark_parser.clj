@@ -1,4 +1,14 @@
-(ns clj-etl-utils.landmark-parser
+(ns ^{:doc "Semi-structured Text parsing library.  The library uses an
+    automation and a command set to extract portions of a document.
+    Atomic commands are instructions such as: start, end,
+    forward-char, backward-char, forward-past, rewind-to and so on.
+    The landmarks can be either literal or logical (regular
+    expressions, 'types', etc).  This extractor can often succeed in
+    situations where there is mixed media, or inconsisten structure.
+    It should be able to operate on a document as long as there are
+    identifiable sets of landmarks."
+      :author "Kyle Burton"}
+  clj-etl-utils.landmark-parser
   (:import [java.util.regex Pattern Matcher])
   (:use    [clj-etl-utils.lang-utils :only (raise seq-like? log)])
   (:require

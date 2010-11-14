@@ -1,4 +1,7 @@
-(ns clj-etl-utils.regex
+(ns
+    ^{:doc "Collection of commonly used regular expressions."
+      :author "Kyle Burton"}
+  clj-etl-utils.regex
   (:import
    [java.util.regex Pattern Matcher])
   (:require

@@ -1,4 +1,7 @@
-(ns clj-etl-utils.sql
+(ns
+    ^{:doc "Utilities for doing DDL and other database maintenance."
+      :author "Kyle Burton"}
+    clj-etl-utils.sql
   (:use
    [clj-etl-utils.lang-utils :only (raise aprog1)])
   (:require
