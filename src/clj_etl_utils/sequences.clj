@@ -61,11 +61,14 @@ the random sampling process."} ;"
 
 ;; TODO: remove this, it is a re-implementation of partition-by which
 ;; is in the core in clojure 1.2
-(defn group-with [f s]
-  "
+(defn
+  ^{:doc  "
   (group-seq identity [1 1 2 3 4 5 5 5 6 1 1])
   ;; => [[1 1] [2] [3] [4] [5 5 5] [6] [1 1]]
   "
+    :added "1.0.0"}
+group-with [f s]
+
   (if (empty? s)
     nil
     (let [k            (f (first s))
