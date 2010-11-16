@@ -80,11 +80,11 @@
         (IOUtils/toString istr)))))
 
 (defn rest-params->map [params]
- (reduce
-  (fn [m pair]
-    (apply assoc m pair))
-  {}
-  (partition 2 params)))
+  (reduce
+   (fn [m pair]
+     (apply assoc m pair))
+   {}
+   (partition 2 params)))
 
 ;; (rest-params->map [:follow-redirects true :basic-auth {:user "bob" :pass "sekret"}])
 
@@ -98,7 +98,7 @@
 ;; (assert-allowed-keys! {:a 1 :b 2 :c 3} [:a :b])
 
 (defn make-periodic-invoker
-    "Takes a count `count' and a function `f'.  Returns a function
+  "Takes a count `count' and a function `f'.  Returns a function
 that takes an optional 'action' and number of arguments.  After
 `count' invocations it will invoke the originally supplied function
 `f'.  `f' will be invoked with the current 'count' value and will be
@@ -129,28 +129,28 @@ following actions are supported:
    Set the counter to the supplied value.
 
 "
- [count f]
+  [count f]
   (let [ctr (java.util.concurrent.atomic.AtomicLong.)]
     (fn [& args]
       (let [action (first args)]
-       (cond
-         (or (= :final action)
-             (= :invoke action))
-         (apply f (.get ctr) (rest args))
+        (cond
+          (or (= :final action)
+              (= :invoke action))
+          (apply f (.get ctr) (rest args))
 
-         (= :state action)
-         (.get ctr)
+          (= :state action)
+          (.get ctr)
 
-         (= :reset action)
-         (.set ctr 0)
+          (= :reset action)
+          (.set ctr 0)
 
-         (= :set action)
-         (.set ctr (second args))
+          (= :set action)
+          (.set ctr (second args))
 
-         :else
-         (let [nextval (.incrementAndGet ctr)]
-           (if (= 0 (mod nextval count))
-             (apply f nextval args))))))))
+          :else
+          (let [nextval (.incrementAndGet ctr)]
+            (if (= 0 (mod nextval count))
+              (apply f nextval args))))))))
 
 
 
@@ -183,3 +183,21 @@ following actions are supported:
        ~'it)))
 
 
+(def rec-bean
+     (let [primitive? #{Class
+                        String
+                        clojure.lang.Keyword
+                        clojure.lang.Symbol
+                        Number
+                        java.util.Map
+                        clojure.lang.IFn}]
+       (fn rec-bean [thing]
+         (if (or (nil? thing)
+                 (seq? thing)
+                 (primitive? (class thing)))
+           thing
+           (let [bn (bean thing)]
+             (reduce (fn [res k]
+                       (assoc res k (rec-bean (get bn k))))
+                     {}
+                     (keys bn)))))))
