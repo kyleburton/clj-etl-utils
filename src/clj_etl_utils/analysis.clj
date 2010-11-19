@@ -1,9 +1,17 @@
-(ns clj-etl-utils.analysis
+(ns ^{:doc "Data and Text file analysis functions.  These functions
+    work with delimited and fixed width files, such as database dumps,
+    log data and other exports."
+      :author "Kyle Burton"}
+  clj-etl-utils.analysis
   (:require
    [clojure.contrib.duck-streams :as ds]
    [fleet :as fleet]))
 
-(defn max-col-lens [rec-seq]
+(defn ^{:doc "Given a sequence of records (a sequence of vectors),
+  this function will track the maximum length string seen in each column
+of the records of the sequence."
+    :added "1.0.0"}
+  max-col-lens [rec-seq]
   (letfn [(track-counts
            [m rec]
            (reduce (fn [m idx]
@@ -29,7 +37,11 @@ the quick brown\t fox jumped over\t the lazy\t toad
 
 )
 
-(defn translate-to-header-names-vec [counts-map fields]
+(defn
+  ^{:doc "Given a counts map (see: max-col-lens), and a vector of the header
+names, this function replaces the numeric column indicies in the map returned by max-col-lens into their names based on the fields vector."
+    :added "1.0.0"}
+  translate-to-header-names-vec [counts-map fields]
   (map (fn [idx]
          [(fields idx)
           (counts-map idx)])
@@ -42,8 +54,8 @@ the quick brown\t fox jumped over\t the lazy\t toad
 
 )
 
-(defn analyze-column-data [[hdr & recs]]
-  "Takes a sequences, returns a seq of column info, one per column.
+(defn
+  ^{:doc "Takes a sequences, returns a seq of column info, one per column.
 The column info will contain the following:
 
   {:name field-name
@@ -58,6 +70,8 @@ to 'character varying').
 
 max-size is the maximum detected width of data values from the
 remainder of the stream (not the header)."
+    :added "1.0.0"}
+  analyze-column-data [[hdr & recs]]
   (for [[field-name max-size]
         (translate-to-header-names-vec
          (max-col-lens recs)

@@ -1,4 +1,7 @@
-(ns clj-etl-utils.ref-data)
+(ns
+    ^{:doc "Commonly used reference data, such as US state codes and area codes."
+      :author "Kyle Burton"}
+    clj-etl-utils.ref-data)
 
 (def *us-states*
      (partition 2

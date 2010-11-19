@@ -1,4 +1,7 @@
-(ns clj-etl-utils.text)
+(ns
+    ^{:doc "Text manipulation utilities not yet in Clojure or Contrib."
+      :author "Kyle Burton"}
+    clj-etl-utils.text)
 
 (defn uc [#^String s] (.toUpperCase s))
 (defn lc [#^String s] (.toLowerCase s))

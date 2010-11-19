@@ -1,4 +1,7 @@
-(ns clj-etl-utils.log
+(ns
+    ^{:doc "Wrapper functions for clojure.contrib.logging that allow for printf style format strings."
+      :author "Kyle Burton"}
+  clj-etl-utils.log
   (:require
    [clojure.contrib.logging :as log]))
 

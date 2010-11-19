@@ -1,4 +1,7 @@
-(ns clj-etl-utils.sequences)
+(ns
+    ^{:doc "Sequences helpers and extension functions."
+      :author "Kyle Burton"}
+  clj-etl-utils.sequences)
 
 
 (def
@@ -10,11 +13,9 @@ initial population sequence.  The random sample will be evenly
 distributed over the given population-size.  The sample will terminate
 when the sequence runs out or the requested sample size has been
 reached.  NB: Given the probabalistic nature of the random sampling
-process the sample size may not been precisely met.  If an `update-fn'
+process the sample size may not been precisely met.  If an update-fn
 is supplied, it will be invoked every time an element is selected by
-the random sampling process.
-
-"}
+the random sampling process."} ;"
  random-sample-seq
      (let [rnd (java.util.Random.)]
        (fn myself [[item & population :as population-seq]
@@ -60,11 +61,14 @@ the random sampling process.
 
 ;; TODO: remove this, it is a re-implementation of partition-by which
 ;; is in the core in clojure 1.2
-(defn group-with [f s]
-  "
+(defn
+  ^{:doc  "
   (group-seq identity [1 1 2 3 4 5 5 5 6 1 1])
   ;; => [[1 1] [2] [3] [4] [5 5 5] [6] [1 1]]
   "
+    :added "1.0.0"}
+group-with [f s]
+
   (if (empty? s)
     nil
     (let [k            (f (first s))
@@ -87,10 +91,12 @@ the random sampling process.
 
   )
 
-(defn minval-from-seqs [cmpfn sequences]
-  "Given a comparator function (-1, 0, 1) and a set of sequences, this function
-will return the minimal head value across all of the given sequences, and the
-set of sequences with the minimal value dropped from the sequence it was identified within."
+(defn ^{:doc "Given a comparator function (-1, 0, 1) and a set of
+sequences, this function will return the minimal head value across all
+of the given sequences, and the set of sequences with the minimal
+value dropped from the sequence it was identified within."
+    :added "1.0.0"}
+  minval-from-seqs [cmpfn sequences]
   (let [sqs (sort #(cmpfn (first %1) (first %2)) (filter (complement empty?) sequences))]
     [(first (first sqs))
      (filter (complement empty?) (conj (drop 1 sqs) (drop 1 (first sqs))))]))
@@ -117,11 +123,12 @@ set of sequences with the minimal value dropped from the sequence it was identif
 )
 
 
-(defn merge-seqs [cmpfn & sequences]
-  "Given a comparator function and one or more sequences, this function will merge them
-taking the next most minimal value from each of the given sequences.  A good way to think
-about this is: if you have a set of already sorted sequences, this function will produce
-a merged, sorted sequence that combines the given sequences.
+(defn ^{:doc "Given a comparator function and one or more sequences,
+  this function will merge them taking the next most minimal value
+  from each of the given sequences.  A good way to think about this
+  is: if you have a set of already sorted sequences, this function
+  will produce a merged, sorted sequence that combines the given
+  sequences.
 
 Example:
 
@@ -137,7 +144,9 @@ Example:
   (-5 0 0 0 1 2 2 2 3 3 3 4 6 8 9 9 9 10 12 14 14 15 16 16 18 20 20 20 99 999)
 
 "
-  (if (or (empty? sequences)
+        :added "1.0.0"}
+  merge-seqs [cmpfn & sequences]
+    (if (or (empty? sequences)
           (every? empty? sequences))
     nil
     (let [[minval rest-seqs] (minval-from-seqs cmpfn sequences)]
@@ -178,12 +187,15 @@ Example:
 
   )
 
-(defn all-pairs [things]
+(defn
+  ^{:doc "Enumerates all pairs of items.
+
+"
+    :added "1.0.0"}
+  all-pairs [things]
   (for [this things]
     (for [that (remove #(= this %1) things)]
       [this that])))
-
-
 
 (defn n-choose-2 [n]
   (apply + (range 1 n)))

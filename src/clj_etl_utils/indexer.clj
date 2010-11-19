@@ -1,4 +1,9 @@
-(ns clj-etl-utils.indexer
+(ns ^{:doc "Indexing functions for working with delimited and fixed
+    width files in situ, allowing them to be searched and iterated
+    through in other than natural order, without having to load the
+    data into a database."
+      :author "Kyle Burton"}
+  clj-etl-utils.indexer
   (:require [clojure.contrib.duck-streams :as ds]
             [clojure.contrib.shell-out    :as sh]
             [clj-etl-utils.sequences      :as sequences]
