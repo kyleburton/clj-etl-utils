@@ -126,6 +126,7 @@ pre.    So far we did 100, we are  10.00% complete.
     So far we did 900, we are  90.00% complete.
     So far we did 1000, we are  100.00% complete.
     All Done! 1000
+
 h3. clj-etl-utils.indexer
 
 Module for working with line-oriented data files in-situ on disk.  These tools allow you to create (somewhat) arbitrary indexes into a file and walk through the indexed values.
@@ -175,3 +176,9 @@ h2. Random Sampling
 h2. License
 
 This code is covered under the same as Clojure.
+
+h1. Authors
+
+Kyle Burton <kyle.burton@gmail.com>
+
+Paul Santa Clara <kesserich1@gmail.com>
