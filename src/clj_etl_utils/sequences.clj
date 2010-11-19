@@ -183,11 +183,7 @@ Example:
     (for [that (remove #(= this %1) things)]
       [this that])))
 
-(defun n-choose-2 (n)
-  (loop
-     for ii from 1 upto n
-     for total = 0 then (+ total (- ii 1))
-     finally (return total)))
+
 
 (defn n-choose-2 [n]
   (apply + (range 1 n)))

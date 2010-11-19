@@ -37,7 +37,7 @@ CREATE TABLE h_<(:table-name params)> (
        h_updated_at timestamp without time zone,
 <(clojure.contrib.string/join ",\n"
          (map (fn [col-info] (format "       h_%s %s%s"
-                                 (.toLowerCase #^String (:name col-info))
+                                 (.toLowerCase #^String (rn.db/sqlize-col-name (:name col-info)))
                                  (:type col-info)
                                  (if (:length col-info)
                                    (format " (%s)" (:length col-info))
