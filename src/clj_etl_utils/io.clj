@@ -407,12 +407,60 @@
 
 
 
+;; (defn #^{:doc "Map over the lines of a file - in parallel.  This
+;; function will partition the given file into blocks of lines (where
+;; each block size is approximately equal to `block-size', which defaults
+;; to 8Mb).  "
+;;      :added "1.0.18"}
+;;   pmap-file-lines [file-name f & [block-size]]
+;;   (mapcat identity
+;;           (pmap (fn [[start end]]
+;;                   (map f (read-lines-from-file-segment inf start end)))
+;;                 (partition 2 1 (byte-partitions-at-line-boundaries inf (or block-size (* 8 1024 1024)))))))
 
 
+(defn recursive-find-files [path]
+  (loop [[path & paths] [path]
+         res []]
+    (if (not path)
+      res
+      (if (.isDirectory (File. path))
+        (recur (concat paths (map (partial str path "/") (seq (.list (File. path)))))
+               res)
+        (recur paths
+               (conj res path))))))
 
+(defn list-files [f]
+  (map str (.listFiles (java.io.File. f))))
 
+(defmulti ensure-directory! class)
 
+(defmethod ensure-directory! String [path]
+  (ensure-directory! (File. path)))
 
+(defmethod ensure-directory! File [path]
+  (if (not (.exists path))
+    (.mkdirs path)))
 
+(defmethod ensure-directory! :default [path]
+  (raise "Error: ensure-directory!, don't know how to handle path=%s of type:%s"
+         path (class type)))
 
+(comment
+  (ensure-directory! "/tmp")
+
+)
+
+(defmulti ensure-directory-for-file! class)
+
+(defmethod ensure-directory-for-file! String [path]
+  (ensure-directory! (.getParentFile (File. path))))
+
+(defmethod ensure-directory-for-file! File [path]
+  (ensure-directory! (.getParentFile path)))
+
+(comment
+  (ensure-directory-for-file! "/tmp/foo/bar")
+
+)
 
