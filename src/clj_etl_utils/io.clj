@@ -156,9 +156,8 @@ marking, it will be reset back so that the bytes are not actually read."
 
 (defn
   ^{:doc "Read a specific number of characters from the InputStream, return a string."
-    :added "1.0.0"
+    :added "1.0.0"}
   read-fixed-length-string [#^InputStream inp nchars]
-
   (let [dest #^bytes (make-array Byte/TYPE nchars)
         nread (.read inp dest 0 nchars)]
     (String. dest 0 nread)))
