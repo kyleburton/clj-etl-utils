@@ -1,0 +1,279 @@
+<html>
+  <head>
+    <title>clj-etl-utils - Overview</title>
+    <link href="static/favicon.png" rel="icon" />
+    <link href="static/favicon.png" rel="shortcut icon" />
+    <link media="all" type="text/css" href="static/clojure.css" rel="stylesheet" />
+    <link media="all" type="text/css" href="static/wiki.css" rel="stylesheet" />
+    <link media="all" type="text/css" href="static/internal.css" rel="stylesheet" />
+    <!-- TODO: are we using these (from clojure.org)? If so, add the files -->
+    <script src="file/view/code_highlighter.js" type="text/javascript"></script>
+    <script src="file/view/clojure.js" type="text/javascript"></script>
+    <style>.menuWrapper{height: 36px;}</style>
+    <!--[if lte IE 6]>
+    <link rel="stylesheet" href="http://www.wikispaces.com/_/2009051601/s/internal_ie.css" type="text/css" />
+    <![endif]-->
+  </head>
+<!--
+This document was auto-generated from the source by the clojure autodoc system.
+To report errors or ask questions about the overall documentation structure, formatting,
+etc., contact Tom Faulhaber (google mail name: tomfaulhaber).
+For errors in the documentation of a particular namespace, contact the author of that
+namespace.
+-->
+  <body>
+    <div id="AllContentContainer">
+      <div id="Header">
+	<a id="Logo" href="index.html"><img alt="Clojure" height="100" width="100" src="static/clojure-icon.gif" /></a>
+	<h1><a title="page header title" id="page-header" href="index.html">clj-etl-utils: API Documentation</a></h1>
+      </div>
+      <div id="leftcolumn"><div style="text-align: center;"></div>
+<div class="menu">
+  <div class="WikiCustomNav WikiElement wiki">
+    <a class="wiki_link" href="index.html">Overview</a><br />
+    <a class="wiki_link" href="api-index.html">API Index</a><br />
+    <a class="wiki_link" href="#">Namespaces:</a>
+    <ul id="left-sidebar-list">
+      <li><a href="clj-etl-utils.analysis-api.html" class="wiki_link">clj-etl-utils.analysis</a></li><li><a href="clj-etl-utils.collections-api.html" class="wiki_link">clj-etl-utils.collections</a></li><li><a href="clj-etl-utils.http-api.html" class="wiki_link">clj-etl-utils.http</a></li><li><a href="clj-etl-utils.indexer-api.html" class="wiki_link">clj-etl-utils.indexer</a></li><li><a href="clj-etl-utils.io-api.html" class="wiki_link">clj-etl-utils.io</a></li><li><a href="clj-etl-utils.landmark-parser-api.html" class="wiki_link">clj-etl-utils.landmark-parser</a></li><li><a href="clj-etl-utils.lang-utils-api.html" class="wiki_link">clj-etl-utils.lang-utils</a></li><li><a href="clj-etl-utils.log-api.html" class="wiki_link">clj-etl-utils.log</a></li><li><a href="clj-etl-utils.ref-data-api.html" class="wiki_link">clj-etl-utils.ref-data</a></li><li><a href="clj-etl-utils.regex-api.html" class="wiki_link">clj-etl-utils.regex</a></li><li><a href="clj-etl-utils.sequences-api.html" class="wiki_link">clj-etl-utils.sequences</a></li><li><a href="clj-etl-utils.sql-api.html" class="wiki_link">clj-etl-utils.sql</a></li><li><a href="clj-etl-utils.text-api.html" class="wiki_link">clj-etl-utils.text</a></li>
+    </ul>
+  </div>
+</div>
+</div>
+      <div id="rightcolumn">
+	<div id="Content">
+	  <div class="contentBox"><div class="innerContentBox">
+              <div id="content_view" class="wiki wikiPage">
+                <div id="right-sidebar"><div id="toc">
+  <h1 class="nopad">Table of Contents</h1>
+  <div style="margin-left: 1em;" class="toc-section">
+    <a href="#clj-etl-utils.analysis">clj-etl-utils.analysis</a>
+    
+    <br />
+  </div><div style="margin-left: 1em;" class="toc-section">
+    <a href="#clj-etl-utils.collections">clj-etl-utils.collections</a>
+    
+    <br />
+  </div><div style="margin-left: 1em;" class="toc-section">
+    <a href="#clj-etl-utils.http">clj-etl-utils.http</a>
+    
+    <br />
+  </div><div style="margin-left: 1em;" class="toc-section">
+    <a href="#clj-etl-utils.indexer">clj-etl-utils.indexer</a>
+    
+    <br />
+  </div><div style="margin-left: 1em;" class="toc-section">
+    <a href="#clj-etl-utils.io">clj-etl-utils.io</a>
+    
+    <br />
+  </div><div style="margin-left: 1em;" class="toc-section">
+    <a href="#clj-etl-utils.landmark-parser">clj-etl-utils.landmark-parser</a>
+    
+    <br />
+  </div><div style="margin-left: 1em;" class="toc-section">
+    <a href="#clj-etl-utils.lang-utils">clj-etl-utils.lang-utils</a>
+    
+    <br />
+  </div><div style="margin-left: 1em;" class="toc-section">
+    <a href="#clj-etl-utils.log">clj-etl-utils.log</a>
+    
+    <br />
+  </div><div style="margin-left: 1em;" class="toc-section">
+    <a href="#clj-etl-utils.ref-data">clj-etl-utils.ref-data</a>
+    
+    <br />
+  </div><div style="margin-left: 1em;" class="toc-section">
+    <a href="#clj-etl-utils.regex">clj-etl-utils.regex</a>
+    
+    <br />
+  </div><div style="margin-left: 1em;" class="toc-section">
+    <a href="#clj-etl-utils.sequences">clj-etl-utils.sequences</a>
+    
+    <br />
+  </div><div style="margin-left: 1em;" class="toc-section">
+    <a href="#clj-etl-utils.sql">clj-etl-utils.sql</a>
+    
+    <br />
+  </div><div style="margin-left: 1em;" class="toc-section">
+    <a href="#clj-etl-utils.text">clj-etl-utils.text</a>
+    
+    <br />
+  </div>
+</div>
+</div>
+                <div id="content-tag"><h1 id="toc0">An Overview of the <span id="header-project">clj-etl-utils</span> API</h1>
+<br />
+<div id="project-description">ETL Utilites for Clojure</div>
+<br />
+<div id="namespace-entry">
+  <br />
+  <hr />
+  <h2 id="clj-etl-utils.analysis">clj-etl-utils.analysis</h2>
+  by <span id="author">Kyle Burton</span><br />
+  <a href="clj-etl-utils.analysis-api.html" id="api-link">Detailed API documentation</a><br />
+  <pre id="namespace-docstr">Data and Text file analysis functions.  These functions
+work with delimited and fixed width files, such as database dumps,
+log data and other exports.</pre>
+  
+  Public variables and functions:
+  <span id="var-link"><a href="clj-etl-utils.analysis-api.html#clj-etl-utils.analysis/analyze-column-data" id="var-tag">analyze-column-data</a> </span><span id="var-link"><a href="clj-etl-utils.analysis-api.html#clj-etl-utils.analysis/max-col-lens" id="var-tag">max-col-lens</a> </span><span id="var-link"><a href="clj-etl-utils.analysis-api.html#clj-etl-utils.analysis/translate-to-header-names-vec" id="var-tag">translate-to-header-names-vec</a> </span><br />
+  
+</div><div id="namespace-entry">
+  <br />
+  <hr />
+  <h2 id="clj-etl-utils.collections">clj-etl-utils.collections</h2>
+  by <span id="author">Kyle Burton</span><br />
+  <a href="clj-etl-utils.collections-api.html" id="api-link">Detailed API documentation</a><br />
+  <pre id="namespace-docstr">Collections extensions.</pre>
+  
+  Public variables and functions:
+  <span id="var-link"><a href="clj-etl-utils.collections-api.html#clj-etl-utils.collections/fill-map-defaults" id="var-tag">fill-map-defaults</a> </span><br />
+  
+</div><div id="namespace-entry">
+  <br />
+  <hr />
+  <h2 id="clj-etl-utils.http">clj-etl-utils.http</h2>
+  by <span id="author">Kyle Burton</span><br />
+  <a href="clj-etl-utils.http-api.html" id="api-link">Detailed API documentation</a><br />
+  <pre id="namespace-docstr">Wrapper around Jakarta's HTTP Client.</pre>
+  
+  Public variables and functions:
+  <span id="var-link"><a href="clj-etl-utils.http-api.html#clj-etl-utils.http/user-agent" id="var-tag">user-agent</a> </span><br />
+  
+</div><div id="namespace-entry">
+  <br />
+  <hr />
+  <h2 id="clj-etl-utils.indexer">clj-etl-utils.indexer</h2>
+  by <span id="author">Kyle Burton</span><br />
+  <a href="clj-etl-utils.indexer-api.html" id="api-link">Detailed API documentation</a><br />
+  <pre id="namespace-docstr">Indexing functions for working with delimited and fixed
+width files in situ, allowing them to be searched and iterated
+through in other than natural order, without having to load the
+data into a database.</pre>
+  
+  Public variables and functions:
+  <br />
+  
+</div><div id="namespace-entry">
+  <br />
+  <hr />
+  <h2 id="clj-etl-utils.io">clj-etl-utils.io</h2>
+  by <span id="author">unknown author</span><br />
+  <a href="clj-etl-utils.io-api.html" id="api-link">Detailed API documentation</a><br />
+  <pre id="namespace-docstr"></pre>
+  
+  Public variables and functions:
+  <span id="var-link"><a href="clj-etl-utils.io-api.html#clj-etl-utils.io/$HOME" id="var-tag">$HOME</a> </span><span id="var-link"><a href="clj-etl-utils.io-api.html#clj-etl-utils.io/basename" id="var-tag">basename</a> </span><span id="var-link"><a href="clj-etl-utils.io-api.html#clj-etl-utils.io/byte-marker-matches?" id="var-tag">byte-marker-matches?</a> </span><span id="var-link"><a href="clj-etl-utils.io-api.html#clj-etl-utils.io/chmod" id="var-tag">chmod</a> </span><span id="var-link"><a href="clj-etl-utils.io-api.html#clj-etl-utils.io/delete" id="var-tag">delete</a> </span><span id="var-link"><a href="clj-etl-utils.io-api.html#clj-etl-utils.io/deltree" id="var-tag">deltree</a> </span><span id="var-link"><a href="clj-etl-utils.io-api.html#clj-etl-utils.io/drain-line-reader" id="var-tag">drain-line-reader</a> </span><span id="var-link"><a href="clj-etl-utils.io-api.html#clj-etl-utils.io/ensure-directory" id="var-tag">ensure-directory</a> </span><span id="var-link"><a href="clj-etl-utils.io-api.html#clj-etl-utils.io/exec" id="var-tag">exec</a> </span><span id="var-link"><a href="clj-etl-utils.io-api.html#clj-etl-utils.io/expand-file-name" id="var-tag">expand-file-name</a> </span><span id="var-link"><a href="clj-etl-utils.io-api.html#clj-etl-utils.io/first-n-bytes-available" id="var-tag">first-n-bytes-available</a> </span><span id="var-link"><a href="clj-etl-utils.io-api.html#clj-etl-utils.io/get-user-home" id="var-tag">get-user-home</a> </span><span id="var-link"><a href="clj-etl-utils.io-api.html#clj-etl-utils.io/mkdir" id="var-tag">mkdir</a> </span><span id="var-link"><a href="clj-etl-utils.io-api.html#clj-etl-utils.io/read-fixed-length-string" id="var-tag">read-fixed-length-string</a> </span><span id="var-link"><a href="clj-etl-utils.io-api.html#clj-etl-utils.io/string-input-stream" id="var-tag">string-input-stream</a> </span><span id="var-link"><a href="clj-etl-utils.io-api.html#clj-etl-utils.io/string-reader" id="var-tag">string-reader</a> </span><span id="var-link"><a href="clj-etl-utils.io-api.html#clj-etl-utils.io/symlink" id="var-tag">symlink</a> </span><span id="var-link"><a href="clj-etl-utils.io-api.html#clj-etl-utils.io/url-download" id="var-tag">url-download</a> </span><span id="var-link"><a href="clj-etl-utils.io-api.html#clj-etl-utils.io/url-get" id="var-tag">url-get</a> </span><br />
+  
+</div><div id="namespace-entry">
+  <br />
+  <hr />
+  <h2 id="clj-etl-utils.landmark-parser">clj-etl-utils.landmark-parser</h2>
+  by <span id="author">Kyle Burton</span><br />
+  <a href="clj-etl-utils.landmark-parser-api.html" id="api-link">Detailed API documentation</a><br />
+  <pre id="namespace-docstr">Semi-structured Text parsing library.  The library uses an
+automation and a command set to extract portions of a document.
+Atomic commands are instructions such as: start, end,
+forward-char, backward-char, forward-past, rewind-to and so on.
+The landmarks can be either literal or logical (regular
+expressions, 'types', etc).  This extractor can often succeed in
+situations where there is mixed media, or inconsisten structure.
+It should be able to operate on a document as long as there are
+identifiable sets of landmarks.</pre>
+  
+  Public variables and functions:
+  <span id="var-link"><a href="clj-etl-utils.landmark-parser-api.html#clj-etl-utils.landmark-parser/forward-past-regex" id="var-tag">forward-past-regex</a> </span><br />
+  
+</div><div id="namespace-entry">
+  <br />
+  <hr />
+  <h2 id="clj-etl-utils.lang-utils">clj-etl-utils.lang-utils</h2>
+  by <span id="author">unknown author</span><br />
+  <a href="clj-etl-utils.lang-utils-api.html" id="api-link">Detailed API documentation</a><br />
+  <pre id="namespace-docstr"></pre>
+  
+  Public variables and functions:
+  <span id="var-link"><a href="clj-etl-utils.lang-utils-api.html#clj-etl-utils.lang-utils/make-periodic-invoker" id="var-tag">make-periodic-invoker</a> </span><br />
+  
+</div><div id="namespace-entry">
+  <br />
+  <hr />
+  <h2 id="clj-etl-utils.log">clj-etl-utils.log</h2>
+  by <span id="author">Kyle Burton</span><br />
+  <a href="clj-etl-utils.log-api.html" id="api-link">Detailed API documentation</a><br />
+  <pre id="namespace-docstr">Wrapper functions for clojure.contrib.logging that allow for printf style format strings.</pre>
+  
+  Public variables and functions:
+  <br />
+  
+</div><div id="namespace-entry">
+  <br />
+  <hr />
+  <h2 id="clj-etl-utils.ref-data">clj-etl-utils.ref-data</h2>
+  by <span id="author">unknown author</span><br />
+  <a href="clj-etl-utils.ref-data-api.html" id="api-link">Detailed API documentation</a><br />
+  <pre id="namespace-docstr"></pre>
+  
+  Public variables and functions:
+  <br />
+  
+</div><div id="namespace-entry">
+  <br />
+  <hr />
+  <h2 id="clj-etl-utils.regex">clj-etl-utils.regex</h2>
+  by <span id="author">unknown author</span><br />
+  <a href="clj-etl-utils.regex-api.html" id="api-link">Detailed API documentation</a><br />
+  <pre id="namespace-docstr"></pre>
+  
+  Public variables and functions:
+  <span id="var-link"><a href="clj-etl-utils.regex-api.html#clj-etl-utils.regex/all-groups" id="var-tag">all-groups</a> </span><span id="var-link"><a href="clj-etl-utils.regex-api.html#clj-etl-utils.regex/re-find-all" id="var-tag">re-find-all</a> </span><span id="var-link"><a href="clj-etl-utils.regex-api.html#clj-etl-utils.regex/re-find-first" id="var-tag">re-find-first</a> </span><br />
+  
+</div><div id="namespace-entry">
+  <br />
+  <hr />
+  <h2 id="clj-etl-utils.sequences">clj-etl-utils.sequences</h2>
+  by <span id="author">unknown author</span><br />
+  <a href="clj-etl-utils.sequences-api.html" id="api-link">Detailed API documentation</a><br />
+  <pre id="namespace-docstr"></pre>
+  
+  Public variables and functions:
+  <span id="var-link"><a href="clj-etl-utils.sequences-api.html#clj-etl-utils.sequences/all-pairs" id="var-tag">all-pairs</a> </span><span id="var-link"><a href="clj-etl-utils.sequences-api.html#clj-etl-utils.sequences/group-with" id="var-tag">group-with</a> </span><span id="var-link"><a href="clj-etl-utils.sequences-api.html#clj-etl-utils.sequences/merge-seqs" id="var-tag">merge-seqs</a> </span><span id="var-link"><a href="clj-etl-utils.sequences-api.html#clj-etl-utils.sequences/minval-from-seqs" id="var-tag">minval-from-seqs</a> </span><span id="var-link"><a href="clj-etl-utils.sequences-api.html#clj-etl-utils.sequences/random-sample-seq" id="var-tag">random-sample-seq</a> </span><br />
+  
+</div><div id="namespace-entry">
+  <br />
+  <hr />
+  <h2 id="clj-etl-utils.sql">clj-etl-utils.sql</h2>
+  by <span id="author">Kyle Burton</span><br />
+  <a href="clj-etl-utils.sql-api.html" id="api-link">Detailed API documentation</a><br />
+  <pre id="namespace-docstr">Utilities for doing DDL and other database maintenance.</pre>
+  
+  Public variables and functions:
+  <br />
+  
+</div><div id="namespace-entry">
+  <br />
+  <hr />
+  <h2 id="clj-etl-utils.text">clj-etl-utils.text</h2>
+  by <span id="author">Kyle Burton</span><br />
+  <a href="clj-etl-utils.text-api.html" id="api-link">Detailed API documentation</a><br />
+  <pre id="namespace-docstr">Text manipulation utilities not yet in Clojure or Contrib.</pre>
+  
+  Public variables and functions:
+  <br />
+  
+</div>
+</div>
+              </div>
+            </div>
+          </div>
+	</div>
+	<div id="foot">
+	  <div style="text-align: center;" id="copyright">No copyright info </div>
+	</div>
+      </div>
+      <div id="DesignedBy">Logo &amp; site design by <a title="Visit Tom Hickey's website." href="http://www.tomhickey.com">Tom Hickey</a>.<br />
+      Clojure auto-documentation system by Tom Faulhaber.</div>
+    </div>
+    <!-- /AllContentContainer -->
+  </body>
+
+</html>

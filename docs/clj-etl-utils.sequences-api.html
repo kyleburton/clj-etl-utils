@@ -1,0 +1,174 @@
+<html>
+  <head>
+    <title>clj-etl-utils.sequences API reference (clj-etl-utils)</title>
+    <link href="static/favicon.png" rel="icon" />
+    <link href="static/favicon.png" rel="shortcut icon" />
+    <link media="all" type="text/css" href="static/clojure.css" rel="stylesheet" />
+    <link media="all" type="text/css" href="static/wiki.css" rel="stylesheet" />
+    <link media="all" type="text/css" href="static/internal.css" rel="stylesheet" />
+    <!-- TODO: are we using these (from clojure.org)? If so, add the files -->
+    <script src="file/view/code_highlighter.js" type="text/javascript"></script>
+    <script src="file/view/clojure.js" type="text/javascript"></script>
+    <style>.menuWrapper{height: 36px;}</style>
+    <!--[if lte IE 6]>
+    <link rel="stylesheet" href="http://www.wikispaces.com/_/2009051601/s/internal_ie.css" type="text/css" />
+    <![endif]-->
+  </head>
+<!--
+This document was auto-generated from the source by the clojure autodoc system.
+To report errors or ask questions about the overall documentation structure, formatting,
+etc., contact Tom Faulhaber (google mail name: tomfaulhaber).
+For errors in the documentation of a particular namespace, contact the author of that
+namespace.
+-->
+  <body>
+    <div id="AllContentContainer">
+      <div id="Header">
+	<a id="Logo" href="index.html"><img alt="Clojure" height="100" width="100" src="static/clojure-icon.gif" /></a>
+	<h1><a title="page header title" id="page-header" href="index.html">clj-etl-utils: API Documentation</a></h1>
+      </div>
+      <div id="leftcolumn"><div style="text-align: center;"></div>
+<div class="menu">
+  <div class="WikiCustomNav WikiElement wiki">
+    <a class="wiki_link" href="index.html">Overview</a><br />
+    <a class="wiki_link" href="api-index.html">API Index</a><br />
+    <a class="wiki_link" href="#">Namespaces:</a>
+    <ul id="left-sidebar-list">
+      <li><a href="clj-etl-utils.analysis-api.html" class="wiki_link">clj-etl-utils.analysis</a></li><li><a href="clj-etl-utils.collections-api.html" class="wiki_link">clj-etl-utils.collections</a></li><li><a href="clj-etl-utils.http-api.html" class="wiki_link">clj-etl-utils.http</a></li><li><a href="clj-etl-utils.indexer-api.html" class="wiki_link">clj-etl-utils.indexer</a></li><li><a href="clj-etl-utils.io-api.html" class="wiki_link">clj-etl-utils.io</a></li><li><a href="clj-etl-utils.landmark-parser-api.html" class="wiki_link">clj-etl-utils.landmark-parser</a></li><li><a href="clj-etl-utils.lang-utils-api.html" class="wiki_link">clj-etl-utils.lang-utils</a></li><li><a href="clj-etl-utils.log-api.html" class="wiki_link">clj-etl-utils.log</a></li><li><a href="clj-etl-utils.ref-data-api.html" class="wiki_link">clj-etl-utils.ref-data</a></li><li><a href="clj-etl-utils.regex-api.html" class="wiki_link">clj-etl-utils.regex</a></li><li><a href="clj-etl-utils.sequences-api.html" class="wiki_link">clj-etl-utils.sequences</a></li><li><a href="clj-etl-utils.sql-api.html" class="wiki_link">clj-etl-utils.sql</a></li><li><a href="clj-etl-utils.text-api.html" class="wiki_link">clj-etl-utils.text</a></li>
+    </ul>
+  </div>
+</div>
+</div>
+      <div id="rightcolumn">
+	<div id="Content">
+	  <div class="contentBox"><div class="innerContentBox">
+              <div id="content_view" class="wiki wikiPage">
+                <div id="right-sidebar"><div id="toc">
+  <h1 class="nopad">Table of Contents</h1>
+  <div style="margin-left: 1em;" class="toc-section">
+    <a href="#toc0">Overview</a>
+    <div style="margin-left: 1em;" class="toc-entry">
+      <a href="#clj-etl-utils.sequences/all-pairs">all-pairs</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#clj-etl-utils.sequences/group-with">group-with</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#clj-etl-utils.sequences/merge-seqs">merge-seqs</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#clj-etl-utils.sequences/minval-from-seqs">minval-from-seqs</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#clj-etl-utils.sequences/random-sample-seq">random-sample-seq</a>
+    </div>
+    <br />
+  </div>
+</div>
+</div>
+                <div id="content-tag"><h1 id="overview">API for <span id="namespace-name">clj-etl-utils.sequences</span></h1>
+by <span id="author">Unknown</span><br />
+<br />Usage:
+<pre>
+(ns your-namespace
+  (:require <span id="long-name">clj-etl-utils.sequences</span>))
+</pre><pre>
+</pre><h2>Overview</h2>
+<pre id="namespace-docstr"></pre>
+<br />
+<h2>Public Variables and Functions</h2>
+<div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="clj-etl-utils.sequences/all-pairs">all-pairs</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (all-pairs things)
+</pre>
+  <pre id="var-docstr">Enumerates all pairs of items.
+
+</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="clj-etl-utils.sequences/group-with">group-with</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (group-with f s)
+</pre>
+  <pre id="var-docstr">
+(group-seq identity [1 1 2 3 4 5 5 5 6 1 1])
+;; =&gt; [[1 1] [2] [3] [4] [5 5 5] [6] [1 1]]
+</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="clj-etl-utils.sequences/merge-seqs">merge-seqs</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (merge-seqs cmpfn &amp; sequences)
+</pre>
+  <pre id="var-docstr">Given a comparator function and one or more sequences,
+  this function will merge them taking the next most minimal value
+  from each of the given sequences.  A good way to think about this
+  is: if you have a set of already sorted sequences, this function
+  will produce a merged, sorted sequence that combines the given
+  sequences.
+
+Example:
+
+  (merge-seqs
+   (fn [a b]
+     (cond (&lt; a b) -1
+           (= a b)  0
+           :else    1))
+   [2 2 4 6 8 10 12 14 16 18]
+   [1 2 3 3 3 9 9 9 14 15 16 20 20 20]
+   [-5 0 0 0 99 999])
+
+  (-5 0 0 0 1 2 2 2 3 3 3 4 6 8 9 9 9 10 12 14 14 15 16 16 18 20 20 20 99 999)</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="clj-etl-utils.sequences/minval-from-seqs">minval-from-seqs</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (minval-from-seqs cmpfn sequences)
+</pre>
+  <pre id="var-docstr">Given a comparator function (-1, 0, 1) and a set of
+sequences, this function will return the minimal head value across all
+of the given sequences, and the set of sequences with the minimal
+value dropped from the sequence it was identified within.</pre>
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="clj-etl-utils.sequences/random-sample-seq">random-sample-seq</h2>
+  <span id="var-type">var</span><br />
+  <pre id="var-usage"></pre>
+  <pre id="var-docstr">random-sample-seq
+(population-seq population-size num-samples-needed &amp; [update-fn])
+
+Filters a sequence taking a random sample of the elements from the
+initial population sequence.  The random sample will be evenly
+distributed over the given population-size.  The sample will terminate
+when the sequence runs out or the requested sample size has been
+reached.  NB: Given the probabalistic nature of the random sampling
+process the sample size may not been precisely met.  If an update-fn
+is supplied, it will be invoked every time an element is selected by
+the random sampling process.</pre>
+  
+</div>
+
+
+</div>
+              </div>
+            </div>
+          </div>
+	</div>
+	<div id="foot">
+	  <div style="text-align: center;" id="copyright">No copyright info </div>
+	</div>
+      </div>
+      <div id="DesignedBy">Logo &amp; site design by <a title="Visit Tom Hickey's website." href="http://www.tomhickey.com">Tom Hickey</a>.<br />
+      Clojure auto-documentation system by Tom Faulhaber.</div>
+    </div>
+    <!-- /AllContentContainer -->
+  </body>
+
+</html>
