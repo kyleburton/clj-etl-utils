@@ -443,17 +443,6 @@ marking, it will be reset back so that the bytes are not actually read."
 ;;                 (partition 2 1 (byte-partitions-at-line-boundaries inf (or block-size (* 8 1024 1024)))))))
 
 
-(defn recursive-find-files [path]
-  (loop [[path & paths] [path]
-         res []]
-    (if (not path)
-      res
-      (if (.isDirectory (File. path))
-        (recur (concat paths (map (partial str path "/") (seq (.list (File. path)))))
-               res)
-        (recur paths
-               (conj res path))))))
-
 (defn list-files [f]
   (map str (.listFiles (java.io.File. f))))
 
