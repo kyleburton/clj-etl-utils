@@ -123,7 +123,7 @@ value dropped from the sequence it was identified within."
 )
 
 
-(defn ^{:doc "Given a comparator function and one or more sequences,
+(defn ^{:doc "Given a comparator function and one or more sequences
   this function will merge them taking the next most minimal value
   from each of the given sequences.  A good way to think about this
   is: if you have a set of already sorted sequences, this function
@@ -205,3 +205,35 @@ Example:
   (all-pairs [1 2 3])
 
 )
+
+
+(defn
+  ^{:doc "Given a sequence of numeric values, results in a lazy
+  sequence of the running averge of those values.
+
+
+
+"
+    :added "1.0.20"}
+  running-avg-seq [s]
+  (letfn [(averager
+           [s items-seen total]
+           (if (or (nil? s)
+                   (empty? s))
+             nil
+            (lazy-cat
+             [(/ (+ total (first s)) (inc items-seen))]
+             (averager
+              (drop 1 s)
+              (inc items-seen)
+              (+ total (first s))))))]
+    (averager s 0 0)))
+
+(comment
+
+  (running-avg-seq [])
+  (running-avg-seq [1])
+  (running-avg-seq [1 2 3])
+  (running-avg-seq [1 2 3 4 5 6 7 8 9 9 8 7 6 5 4 3 2 1])
+
+  )
