@@ -67,7 +67,7 @@ the random sampling process."} ;"
   ;; => [[1 1] [2] [3] [4] [5 5 5] [6] [1 1]]
   "
     :added "1.0.0"}
-group-with [f s]
+  group-with [f s]
 
   (if (empty? s)
     nil
@@ -210,23 +210,28 @@ Example:
 (defn
   ^{:doc "Given a sequence of numeric values, results in a lazy
   sequence of the running averge of those values.
+  (running-avg-seq [1 2 3 4 5 6 7 8 9 9 8 7 6 5 4 3 2 1])
+    => (1 3/2 2 5/2 3 7/2 4 9/2 5 27/5 62/11 23/4
+        75/13 40/7 28/5 87/16 89/17 5)
 
-
-
+  (running-avg-seq [1.0 2 3 4 5 6 7 8 9 9 8 7 6 5 4 3 2 1])
+    => (1.0 1.5 2.0 2.5 3.0 3.5 4.0 4.5 5.0 5.4
+        5.636363636363637 5.75 5.769230769230769
+        5.714285714285714 5.6 5.4375 5.235294117647059
+        5.0)
 "
     :added "1.0.20"}
   running-avg-seq [s]
   (letfn [(averager
            [s items-seen total]
-           (if (or (nil? s)
-                   (empty? s))
+           (if (empty? s)
              nil
-            (lazy-cat
-             [(/ (+ total (first s)) (inc items-seen))]
-             (averager
-              (drop 1 s)
-              (inc items-seen)
-              (+ total (first s))))))]
+             (lazy-cat
+              [(/ (+ total (first s)) (inc items-seen))]
+              (averager
+               (drop 1 s)
+               (inc items-seen)
+               (+ total (first s))))))]
     (averager s 0 0)))
 
 (comment
@@ -237,3 +242,35 @@ Example:
   (running-avg-seq [1 2 3 4 5 6 7 8 9 9 8 7 6 5 4 3 2 1])
 
   )
+
+(defn
+  ^{:doc "Given a numeric sequence, results in a lazy sequence
+of the average of the `n' elements from the sequence - averaging over
+a window of size `n'.
+
+    (windowed-avg-seq 3 [1 1 1 1 2 2 2 2 2])
+      => (1 1 4/3 5/3 2 2)
+
+    (map #(* 1.0 %) (windowed-avg-seq 3 [1 1 1 1 2 2 2 2 2]))
+      => (1.0 1.0 1.333333333333333 1.666666666666667 2.0 2.0)
+
+"
+    :added "1.0.20"}
+  windowed-avg-seq [n s]
+  (letfn [(averager
+           [s buffer]
+           (if (empty? s)
+             nil
+             (lazy-cat
+              [(/ (apply + buffer)
+                  (count buffer))]
+              (averager (drop 1 s)
+                        (concat (drop 1 buffer)
+                                [(first s)])))))]
+    (averager (drop n s)
+              (take n s))))
+
+(comment
+  (windowed-avg-seq 3 [1 1 1 1 2 2 2 2 2])
+
+)
