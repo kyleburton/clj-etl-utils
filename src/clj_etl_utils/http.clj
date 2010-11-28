@@ -65,11 +65,11 @@
   (let [get-method        (GetMethod. url)
         name-value-pairs  (map->name-value-pair-vec (second params))]
     (.setQueryString get-method name-value-pairs)
-    (printf "do-get: qs=%s" (.getQueryString get-method))
+    ;;(printf "do-get: qs=%s" (.getQueryString get-method))
     (let [return-code   (.executeMethod (:ua ua) get-method )
           response-body (.getResponseBodyAsString get-method)]
-      (println (format "Return Code: %s" return-code))
-      (println (format "Respone: %s" response-body ))
+      ;;(println (format "Return Code: %s" return-code))
+      ;;(println (format "Respone: %s" response-body ))
       {:return-code   return-code
        :response-body response-body
        :http-method   get-method})))
@@ -93,8 +93,8 @@
           (long (.length (:body params)))))))
     (let [return-code   (.executeMethod (:ua ua) post-method)
           response-body (.getResponseBodyAsString post-method)]
-      (println (format "Return Code: %s" return-code))
-      (println (format "Respone: %s" response-body ))
+      ;;(println (format "Return Code: %s" return-code))
+      ;;(println (format "Respone: %s" response-body ))
       {:return-code   return-code
        :response-body response-body
        :http-method   post-method})))
