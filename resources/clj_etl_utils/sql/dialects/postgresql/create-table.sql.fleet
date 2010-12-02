@@ -28,8 +28,6 @@ CREATE SEQUENCE <(:table-name params)>_id_seq
 
 CREATE TABLE <(:table-name params)> (
        id bigint primary key DEFAULT nextval('<(:table-name params)>_id_seq'),
-       created_at timestamp without time zone,
-       updated_at timestamp without time zone,
 <(clojure.contrib.string/join ",\n"
   (concat
           (map (fn [col-info] (format "       %s %s%s%s"
