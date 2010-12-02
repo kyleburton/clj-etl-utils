@@ -30,11 +30,14 @@ CREATE TABLE <(:table-name params)> (
        id bigint primary key DEFAULT nextval('<(:table-name params)>_id_seq'),
 <(clojure.contrib.string/join ",\n"
   (concat
-          (map (fn [col-info] (format "       %s %s%s%s"
+          (map (fn [col-info] (format "       %s %s%s%s%s"
                                  (.toLowerCase #^String (rn.db/sqlize-col-name (:name col-info)))
                                  (:type col-info)
                                  (if (:length col-info)
                                    (format " (%s)" (:length col-info))
+                                   "")
+                                 (if (:default col-info)
+                                   (format " DEFAULT %s" (:default col-info))
                                    "")
                                  (if (:not-null col-info)
                                      " NOT NULL"
