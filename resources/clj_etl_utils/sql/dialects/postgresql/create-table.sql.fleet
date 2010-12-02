@@ -30,7 +30,7 @@ CREATE TABLE <(:table-name params)> (
        id bigint primary key DEFAULT nextval('<(:table-name params)>_id_seq'),
 <(clojure.contrib.string/join ",\n"
   (concat
-          (map (fn [col-info] (format "       %s %s%s%s%s"
+          (map (fn [col-info] (format "       %s %s%s%s%s%s"
                                  (.toLowerCase #^String (rn.db/sqlize-col-name (:name col-info)))
                                  (:type col-info)
                                  (if (:length col-info)
@@ -41,6 +41,9 @@ CREATE TABLE <(:table-name params)> (
                                    "")
                                  (if (:not-null col-info)
                                      " NOT NULL"
+                                     "")
+                                 (if (:unique col-info)
+                                     " UNIQUE"
                                      "")))
                (filter :name (:columns params)))
           (map
