@@ -14,11 +14,13 @@
                  {:templates
                   {:create-table         "/clj_etl_utils/sql/dialects/postgresql/create-table.sql.fleet"
                    :create-history-table "/clj_etl_utils/sql/dialects/postgresql/create-history-table.sql.fleet"}}})
+;; (clj-etl-utils.lang-utils/resource-as-string "/clj_etl_utils/sql/dialects/postgresql/create-table.sql.fleet")
 
 (defn render-create-ddl [dialect template column-defs table-name & [params]]
   (if-not (get *dialects* dialect)
     (raise "Error: unknown dialect='%s'" dialect))
-  (if (empty? column-defs)
+  (if (and (not (:empty-table-ok params))
+           (empty? column-defs))
     (raise "Error: can't %s with no columns!" template))
   (if-not table-name
     (raise "Error: can't %s with no name!" template))
@@ -29,7 +31,9 @@
         tmpl-res          (lang-utils/resource-as-string tmpl-res-url)
         create-table-tmpl (fleet/fleet [params] tmpl-res)]
     (str (create-table-tmpl {:table-name table-name
-                             :columns    column-defs
+                             :columns    (concat [{:name "created_at"  :type "timestamp without time zone"}
+                                                  {:name "updated_at"  :type "timestamp without time zone"}]
+                                                 column-defs)
                              :owner      (get params :owner)}))))
 
 (defn create-table-ddl [dialect column-defs table-name & [params]]
