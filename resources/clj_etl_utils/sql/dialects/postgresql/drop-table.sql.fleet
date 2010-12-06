@@ -1,0 +1,7 @@
+<(clojure.contrib.string/join "\n"
+                              (map (fn [constraint]
+                                       (format "ALTER TABLE %s DROP CONSTRAINT %s;" (:table constraint) (:name constraint)))
+                              (get params :constraints)) )>
+
+DROP TABLE <(:table-name params)>;
+
