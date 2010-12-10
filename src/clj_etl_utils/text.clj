@@ -43,7 +43,10 @@
   (cond
     (and (< start 0)
          (not end))
-    (.substring s (+ (count s) start))
+    (let [start (+ (count s) start)]
+      (if (< start 0)
+        ""
+        (.substring s (+ (count s) start))))
 
     (> start (count s))
     ""
@@ -67,5 +70,4 @@
   (= ""   (substr "a"    99 199))
   (= "a"  (substr "a"    -1))
   (= "bc" (substr "abc"  -2))
-
-)
+  (= ""   (substr "abc"  -9)))
