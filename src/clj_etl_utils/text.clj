@@ -39,6 +39,33 @@
   (.getTime (java.util.Date.)))
 
 
+(defn substr [^String s start & [end]]
+  (cond
+    (and (< start 0)
+         (not end))
+    (.substring s (+ (count s) start))
+
+    (> start (count s))
+    ""
+    (or (not end)
+        (> end (count s)))
+    (.substring s start)
+
+    :else
+    (.substring s start end)))
 
 
 
+(comment
+
+  (= ""   (substr ""     0     0))
+  (= ""   (substr "a"    0     0))
+  (= "a"  (substr "a"    0))
+  (= "a"  (substr "a"    0     1))
+  (= "a"  (substr "a"    0    99))
+  (= ""   (substr "a"    99))
+  (= ""   (substr "a"    99 199))
+  (= "a"  (substr "a"    -1))
+  (= "bc" (substr "abc"  -2))
+
+)
