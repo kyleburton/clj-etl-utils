@@ -400,18 +400,18 @@ marking, it will be reset back so that the bytes are not actually read."
   (.length (java.io.File. (str f))))
 
 (defn byte-partitions-at-line-boundaries [#^String file-name desired-block-size-bytes]
-  (let [fp (RandomAccessFile. file-name "r")
-        file-length (.length fp)]
-    (loop [byte-positions [0]
-           next-seek-point desired-block-size-bytes]
-      (if (>= next-seek-point file-length)
-        (conj byte-positions file-length)
-        (do
-          (.seek fp next-seek-point)
-          (if (nil? (.readLine fp))
-            byte-positions
-            (recur (conj byte-positions (.getFilePointer fp))
-                   (+ (.getFilePointer fp) desired-block-size-bytes))))))))
+  (with-open [fp (RandomAccessFile. file-name "r")]
+   (let [file-length (.length fp)]
+     (loop [byte-positions [0]
+            next-seek-point desired-block-size-bytes]
+       (if (>= next-seek-point file-length)
+         (conj byte-positions file-length)
+         (do
+           (.seek fp next-seek-point)
+           (if (nil? (.readLine fp))
+             byte-positions
+             (recur (conj byte-positions (.getFilePointer fp))
+                    (+ (.getFilePointer fp) desired-block-size-bytes)))))))))
 
 
 (defn- bounded-input-stream-line-seq [#^BufferedReader bis]
@@ -540,39 +540,39 @@ marking, it will be reset back so that the bytes are not actually read."
 
 ;; makes the assumption that a line starts with the index value and a tab and is sorted(!)
 (defn binary-search-index [^String value ^String idx-file]
-  (loop [fp (RandomAccessFile. idx-file "r")
-         spos      0
-         epos      (.length fp)
-         max       256]
-    (.seek fp (/ (+ epos spos) 2))
-    (rewind-to-line-boundary fp)
-    (let [mid-point (long (/ (+ spos epos) 2))
-          [val-from-idx] (.split (.readLine fp) "\t")]
-      (cond
-        (zero? max)
-        nil
+  (with-open [fp (RandomAccessFile. idx-file "r")]
+   (loop [spos      0
+          epos      (.length fp)
+          max       256]
+     (.seek fp (/ (+ epos spos) 2))
+     (rewind-to-line-boundary fp)
+     (let [mid-point (long (/ (+ spos epos) 2))
+           [val-from-idx] (.split (.readLine fp) "\t")]
+       (cond
+         (zero? max)
+         nil
 
-        (= epos spos) ;; nowhere else to seek to
-        nil
+         (= epos spos) ;; nowhere else to seek to
+         nil
 
-        (= spos (.length fp))
-        nil
+         (= spos (.length fp))
+         nil
 
-        (= value val-from-idx)
-        (do
-          (seek-to-before-segment fp value)
-          (stream-segment-lines
-           idx-file
-           (.getFilePointer fp)
-           value))
+         (= value val-from-idx)
+         (do
+           (seek-to-before-segment fp value)
+           (stream-segment-lines
+            idx-file
+            (.getFilePointer fp)
+            value))
 
-        (< (.compareTo value val-from-idx) 0)
-        (recur fp spos      (long mid-point) (dec max))
+         (< (.compareTo value val-from-idx) 0)
+         (recur spos      (long mid-point) (dec max))
 
-        (= 1 (- epos spos))
-        nil
+         (= 1 (- epos spos))
+         nil
 
-        :else
-        (recur fp mid-point (long epos) (dec max))))))
+         :else
+         (recur mid-point (long epos) (dec max)))))))
 
 
