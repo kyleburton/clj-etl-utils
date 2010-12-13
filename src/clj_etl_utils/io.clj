@@ -417,7 +417,10 @@ marking, it will be reset back so that the bytes are not actually read."
 (defn- bounded-input-stream-line-seq [#^BufferedReader bis]
   (let [line (.readLine bis)]
     (if-not line
-      nil
+      (do
+        (.close bis)
+        nil)
+
       (lazy-cat
        [line]
        (bounded-input-stream-line-seq bis)))))
