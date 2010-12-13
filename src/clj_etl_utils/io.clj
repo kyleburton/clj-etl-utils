@@ -443,15 +443,15 @@ marking, it will be reset back so that the bytes are not actually read."
 ;;                 (partition 2 1 (byte-partitions-at-line-boundaries inf (or block-size (* 8 1024 1024)))))))
 
 
-(defn list-files [f]
+(defn list-files [^String f]
   (map str (.listFiles (java.io.File. f))))
 
 (defmulti ensure-directory! class)
 
-(defmethod ensure-directory! String [path]
+(defmethod ensure-directory! String [^String path]
   (ensure-directory! (File. path)))
 
-(defmethod ensure-directory! File [path]
+(defmethod ensure-directory! File [^File path]
   (if (not (.exists path))
     (.mkdirs path)))
 
@@ -466,14 +466,110 @@ marking, it will be reset back so that the bytes are not actually read."
 
 (defmulti ensure-directory-for-file! class)
 
-(defmethod ensure-directory-for-file! String [path]
+(defmethod ensure-directory-for-file! String [^String path]
   (ensure-directory! (.getParentFile (File. path))))
 
 (defmethod ensure-directory-for-file! File [path]
-  (ensure-directory! (.getParentFile path)))
+  (ensure-directory! (.getParentFile ^File path)))
 
 (comment
   (ensure-directory-for-file! "/tmp/foo/bar")
 
 )
+
+(defn rewind-to-line-boundary [^java.io.RandomAccessFile fp]
+  (loop [fp fp]
+    (cond
+      (= 0 (.getFilePointer fp))
+      fp
+
+      (= (.length fp) (.getFilePointer fp))
+      (do
+        (.seek fp (- (.getFilePointer fp) 1))
+        (recur fp))
+
+      (let [byte (.readByte fp)]
+        (= \newline (char byte)))
+      fp
+
+      :else
+      (do
+        (.seek fp (- (.getFilePointer fp) 2))
+        (recur fp)))))
+
+(comment
+  (char (first (.getBytes "\n")))
+
+  (let [fp (RandomAccessFile. "/home/relay/b" "r")]
+    (.seek fp 3)
+    (rewind-to-line-boundary fp)
+    (printf "line=%s\n" (.readLine fp)))
+
+)
+
+(defn seek-to-before-segment [^RandomAccessFile fp ^String value]
+  (let [seek-size (* 1024 1024 1)]
+   (loop [curr-val (.readLine ^RandomAccessFile (rewind-to-line-boundary fp))]
+     (cond
+       (< (.compareTo ^String curr-val value) 0)
+       fp
+
+       (< (.getFilePointer fp) seek-size)
+       (do
+         (.seek fp 0)
+         fp)
+
+       :else
+       (do
+         (.seek fp (- (.getFilePointer fp)
+                      seek-size))
+         (recur (.readLine ^RandomAccessFile (rewind-to-line-boundary fp))))))))
+
+
+(defn stream-segment-lines [^String file-name start ^String value]
+  (printf "stream-segment-lines: file-name:%s start=%s value=%s\n" file-name start value)
+  (filter #(.startsWith ^String % value)
+   (bounded-input-stream-line-seq
+    (BufferedReader.
+     (InputStreamReader.
+      (doto (FileInputStream. file-name)
+        (.skip start)))))))
+
+;; makes the assumption that a line starts with the index value and a tab and is sorted(!)
+(defn binary-search-index [^String value ^String idx-file]
+  (loop [fp (RandomAccessFile. idx-file "r")
+         spos      0
+         epos      (.length fp)
+         max       256]
+    (.seek fp (/ (+ epos spos) 2))
+    (rewind-to-line-boundary fp)
+    (let [mid-point (long (/ (+ spos epos) 2))
+          [val-from-idx] (.split (.readLine fp) "\t")]
+      (cond
+        (zero? max)
+        nil
+
+        (= epos spos) ;; nowhere else to seek to
+        nil
+
+        (= spos (.length fp))
+        nil
+
+        (= value val-from-idx)
+        (do
+          (seek-to-before-segment fp value)
+          (stream-segment-lines
+           idx-file
+           (.getFilePointer fp)
+           value))
+
+        (< (.compareTo value val-from-idx) 0)
+        (recur fp spos      (long mid-point) (dec max))
+
+        (= 1 (- epos spos))
+        nil
+
+        :else
+        (recur fp mid-point (long epos) (dec max))))))
+
 
