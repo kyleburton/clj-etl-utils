@@ -530,7 +530,6 @@ marking, it will be reset back so that the bytes are not actually read."
 
 
 (defn stream-segment-lines [^String file-name start ^String value]
-  (printf "stream-segment-lines: file-name:%s start=%s value=%s\n" file-name start value)
   (filter #(.startsWith ^String % value)
    (bounded-input-stream-line-seq
     (BufferedReader.
