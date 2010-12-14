@@ -45,8 +45,8 @@
          (not end))
     (let [start (+ (count s) start)]
       (if (< start 0)
-        ""
-        (.substring s (+ (count s) start))))
+        s
+        (.substring s start)))
 
     (> start (count s))
     ""
@@ -56,7 +56,6 @@
 
     :else
     (.substring s start end)))
-
 
 
 (comment
@@ -69,5 +68,5 @@
   (= ""   (substr "a"    99))
   (= ""   (substr "a"    99 199))
   (= "a"  (substr "a"    -1))
-  (= "bc" (substr "abc"  -2))
+  (= "bc" (clj-etl-utils.text/substr "abc"  -2))
   (= ""   (substr "abc"  -9)))
