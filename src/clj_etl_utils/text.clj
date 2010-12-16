@@ -70,3 +70,42 @@
   (= "a"  (substr "a"    -1))
   (= "bc" (clj-etl-utils.text/substr "abc"  -2))
   (= ""   (substr "abc"  -9)))
+
+
+
+;; "public static String humanReadableByteCount(long bytes, boolean si) {
+;;     int unit = si ? 1000 : 1024;
+;;     if (bytes < unit) return bytes + " B ";
+;;     int exp = (int) (Math.log(bytes) / Math.log(unit));
+;;     String pre = (si ? "kMGTPE " : "KMGTPE ").charAt(exp-1) + (si ? " " : "i ");
+;;     return String.format("%.1f %sB ", bytes / Math.pow(unit, exp), pre);
+;; }"
+
+(defn human-readable-byte-count
+  ([bytes]
+     (human-readable-byte-count bytes false))
+  ([bytes use-si]
+     "Taken from: http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-into-human-readable-format-in-java"
+     (let [unit (if use-si 1000 1024)
+           exp (int (/ (Math/log bytes) (Math/log unit)))]
+       (if (< bytes unit)
+         (str bytes "B")
+         (format "%.2f%sB"
+                 (/ bytes (Math/pow unit exp))
+                 (str
+                  (.charAt
+                   (if use-si
+                     "kMGTPE"
+                     "KMGTPE")
+                   (dec exp))
+                  (if use-si
+                    ""
+                    "i")))))))
+
+(comment
+
+  (human-readable-byte-count 1024)
+  (human-readable-byte-count 1024 true)
+  (human-readable-byte-count (* 3 1024 1024))
+  (human-readable-byte-count (* 3 1024 1024) true)
+  )
