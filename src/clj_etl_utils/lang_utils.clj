@@ -4,8 +4,41 @@
   clj-etl-utils.lang-utils
   (:import [org.apache.commons.io IOUtils]))
 
-(defmulti raise
-  (fn [& [fst snd thrd & rst]]
+(defn- raise-dispatch-fn [& [fst snd thrd & rst]]
+  (cond
+    ;;       (and (isa? (class fst) Exception)
+    ;;            (isa? (class snd) Class)
+    ;;            (isa? (class thrd) String))
+    ;;       [:type-to-throw :caused-by :fmt-and-args]
+
+    ;;       (and (isa? (class fst) Class)
+    ;;            (isa? (class snd) Exception)
+    ;;            (isa? (class thrd) String))
+    ;;       [:caused-by :type-to-throw :fmt-and-args]
+
+    (and
+     (isa? (class fst) Throwable)
+     (isa? (class snd) String)
+     thrd)
+    [:caused-by :fmt-and-args]
+
+    (and
+     (isa? (class fst) Throwable)
+     (isa? (class snd) String)
+     (not thrd))
+    [:caused-by :msg]
+
+    (and
+     (isa? (class fst) String)
+     snd)
+    [:fmt-and-args]
+
+    :else
+    :default))
+
+
+(defmulti raise raise-dispatch-fn
+  #_(fn [& [fst snd thrd & rst]]
     (cond
       ;;       (and (isa? (class fst) Exception)
       ;;            (isa? (class snd) Class)
@@ -41,7 +74,7 @@
 (defmethod raise
   [:caused-by :fmt-and-args]
   [#^Throwable caused-by #^String fmt & args]
-  (throw (RuntimeException. (apply format args) caused-by)))
+  (throw (RuntimeException. (apply format fmt args) caused-by)))
 
 (defmethod raise
   [:caused-by :msg]
@@ -58,11 +91,6 @@
   [& stuff]
   (throw (RuntimeException. (apply str stuff))))
 
-
-;; (raise "foof!")
-;; (raise "foof!: %s" "blarf")
-;; (raise (Exception. "root") "another")
-;; (raise (Exception. "root") "another: %s" "thing!")
 
 ;; TODO: get rid of 'log'
 (defn log [& args]
