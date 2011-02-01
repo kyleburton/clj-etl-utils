@@ -17,6 +17,14 @@
                    :drop-table           "/clj_etl_utils/sql/dialects/postgresql/drop-table.sql.fleet"}}})
 ;; (clj-etl-utils.lang-utils/resource-as-string "/clj_etl_utils/sql/dialects/postgresql/create-table.sql.fleet")
 
+(defn sqlize-table-name [^clojure.lang.Keyword n]
+  (-> n
+      name
+      .toLowerCase
+      (.replaceAll "\\W" "_")))
+
+(def sqlize-col-name sqlize-table-name)
+
 (defn render-drop-table-ddl [dialect template table-name & [params]]
   (if-not (get *dialects* dialect)
     (raise "Error: unknown dialect='%s'" dialect))

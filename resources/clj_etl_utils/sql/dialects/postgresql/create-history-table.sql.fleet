@@ -35,7 +35,7 @@ CREATE TABLE h_<(:table-name params)> (
        h_id bigint NOT NULL,
 <(clojure.contrib.string/join ",\n"
          (map (fn [col-info] (format "       h_%s %s%s"
-                                 (.toLowerCase #^String (rn-db.core/sqlize-col-name (:name col-info)))
+                                 (.toLowerCase #^String (clj-etl-utils.sql/sqlize-col-name (:name col-info)))
                                  (:type col-info)
                                  (if (:length col-info)
                                    (format " (%s)" (:length col-info))
