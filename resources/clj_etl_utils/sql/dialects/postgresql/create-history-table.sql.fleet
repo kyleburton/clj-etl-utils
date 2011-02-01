@@ -28,13 +28,11 @@ CREATE SEQUENCE h_<(:table-name params)>_id_seq
 
 
 CREATE TABLE h_<(:table-name params)> (
-       id bigint primary key DEFAULT nextval('<(:table-name params)>_id_seq'),
+       id bigint primary key DEFAULT nextval('h_<(:table-name params)>_id_seq'),
        created_at timestamp without time zone,
        updated_at timestamp without time zone,
        action character varying (10),
        h_id bigint NOT NULL,
-       h_created_at timestamp without time zone,
-       h_updated_at timestamp without time zone,
 <(clojure.contrib.string/join ",\n"
          (map (fn [col-info] (format "       h_%s %s%s"
                                  (.toLowerCase #^String (clj-etl-utils.sql/sqlize-col-name (:name col-info)))

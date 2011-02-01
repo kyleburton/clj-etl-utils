@@ -1,7 +1,9 @@
 <(clojure.contrib.string/join "\n"
                               (map (fn [constraint]
-                                       (format "ALTER TABLE %s DROP CONSTRAINT %s;" (:table constraint) (:name constraint)))
+                                       (format "ALTER TABLE %s DROP CONSTRAINT %s;" (:table-name params) (:name constraint)))
                               (get params :constraints)) )>
+
+DROP SEQUENCE <(:table-name params)>_id_seq;
 
 DROP TABLE <(:table-name params)>;
 
