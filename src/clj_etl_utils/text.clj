@@ -1,7 +1,9 @@
 (ns
     ^{:doc "Text manipulation utilities not yet in Clojure or Contrib."
       :author "Kyle Burton"}
-    clj-etl-utils.text)
+    clj-etl-utils.text
+    (:use [clj-etl-utils.lang-utils  :only [raise]])
+    (:import [org.apache.commons.lang WordUtils]))
 
 (defn uc [#^String s] (.toUpperCase s))
 (defn lc [#^String s] (.toLowerCase s))
@@ -101,6 +103,23 @@
                   (if use-si
                     ""
                     "i")))))))
+
+
+(defn word-split
+  ([str size]
+     (word-split str size "\0"))
+  ([str size delim]
+     (if (>= (.indexOf str delim) 0)
+       (raise "Input string must not contain delimiter string (%s). Unable to split (input string=%s" delim str)
+       (seq
+        (.split
+         (WordUtils/wrap
+          str
+          size
+          delim
+          false)
+         delim)))))
+
 
 (comment
 
