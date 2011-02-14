@@ -1,7 +1,14 @@
 (ns
-    ^{:doc "Commonly used reference data, such as US state codes and area codes."
+    ^{:doc "Commonly used reference data, such as US state codes and area codes.
+
+Some of the sources:
+
+  http://www.usps.com/ncsc/lookups/abbreviations.html
+
+"
       :author "Kyle Burton"}
     clj-etl-utils.ref-data)
+
 
 (def *us-states*
      (partition 2
@@ -1693,3 +1700,58 @@
       [ "YE"  "YEMEN" ]
       [ "ZM"  "ZAMBIA" ]
       [ "ZW"  "ZIMBABWE" ]])
+
+
+;;
+
+(comment
+
+  (def *page* (slurp  "http://www.usps.com/ncsc/lookups/abbreviations.html"))
+
+  (require 'clj-etl-utils.landmark-parser)
+
+  (def *abbrs-segment*
+    (clj-etl-utils.landmark-parser/extract
+     (clj-etl-utils.landmark-parser/make-parser *page*)
+     [[:fp "Street Suffixes"]
+      [:ft "Street Suffixes"]
+      [:rp "<table"]]
+     [[:fp "United States Postal Service"]
+      [:fp "</table>"]]))
+
+
+  (require 'clojure.contrib.pprint)
+
+  (def *rows*
+   (map
+    (fn [s]
+      (.. s
+          (replaceAll "<[^>]+?>" "")
+          (replaceAll "&nbsp;" " ")
+          (replaceAll "\t" " ")
+          (replaceAll "[\r\n]+" "")
+          (replaceAll "(?i:</tr)$" "")
+          (trim)))
+    (filter
+     (fn [l]
+       (and
+        (not (.contains l "Street Suffixes"))))
+     (clj-etl-utils.landmark-parser/table-rows *abbrs-segment*))))
+
+  (require 'clojure.contrib.duck-streams)
+  (require 'clojure.contrib.string)
+
+  (with-open [outp (clojure.contrib.duck-streams/writer "resources/clj_etl_utils/ref_data/usps-abbreviations.tab")]
+    (let [write-rec (fn [r]
+                      (.println outp (clojure.contrib.string/join "\t" r)))]
+      (write-rec ["PRIMARY_NAME" "COMMON_ABBREVIATION" "USPS_ABBREVIATION"])
+      (doseq [rec (map
+                   #(vec (.split %1 "\\s+" 3))
+                   (filter
+                    #(.matches % "^[A-Z]+\\s+[A-Z]+\\s+[A-Z]+$")
+                    *rows*))]
+        (write-rec rec))))
+
+
+
+  )
