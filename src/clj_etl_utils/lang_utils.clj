@@ -232,3 +232,12 @@ following actions are supported:
                        (assoc res k (rec-bean (get bn k))))
                      {}
                      (keys bn)))))))
+
+(defn get-stack-trace [ex]
+  (format "Exception Message: %s, Stack Trace: %s"
+          (.getMessage ex)
+          (with-out-str
+            (.printStackTrace
+             ex
+             (java.io.PrintWriter. *out*)))))
+
