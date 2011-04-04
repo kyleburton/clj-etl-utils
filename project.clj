@@ -6,17 +6,8 @@
             :distribution :repo
             :comments "same as Clojure"}
   :warn-on-reflection true
-  :aot [clj-etl-utils.io
-        clj-etl-utils.lang-utils
-        clj-etl-utils.regex
-        clj-etl-utils.sequences
-        clj-etl-utils.ref-data
-        clj-etl-utils.text
-        clj-etl-utils.landmark-parser
-        clj-etl-utils.http
-        clj-etl-utils.log]
   :jvm-opts ["-Xmx512M"]
-  :dev-dependencies [[swank-clojure "1.2.1"]
+  :dev-dependencies [[swank-clojure "1.3.0"]
                      ;;[autodoc "0.7.1"]
                      ]
   :dependencies [[org.clojure/clojure "1.2.0"]
