@@ -171,6 +171,13 @@ h2. Random Sampling
 
   "How to pick a random sample from a list":http://www.javamex.com/tutorials/random_numbers/random_sample.shtml
 
+h2. Reference Data
+
+h3. US Zip5 Codes
+
+"Fun with Zip Codes":http://www.mattcutts.com/blog/fun-with-zip-codes/
+
+"US Census Tigerline Data: Zip Codes":http://www.census.gov/tiger/tms/gazetteer/zips.txt
 
 
 h2. License
