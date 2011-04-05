@@ -1760,7 +1760,7 @@ Some of the sources:
 
 (defn generate-iso-3-xsd []
     (with-open [outp (clojure.contrib.duck-streams/writer "resources/xsd/iso-3-country-codes.xsd")]
-    (.println outp "<?xml version=\"1.0 \" encoding=\"UTF-8 \"?>")
+    (.println outp "<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
     (.println outp (str "<!--
 See: http://en.wikipedia.org/w/index.php?title=ISO_3166-1_alpha-3&oldid=422511645
 Generated: " (java.util.Date.) "
@@ -1797,7 +1797,7 @@ Generated: " (java.util.Date.) "
 
 (defn generate-iso-2-xsd []
     (with-open [outp (clojure.contrib.duck-streams/writer "resources/xsd/iso-2-country-codes.xsd")]
-    (.println outp "<?xml version=\"1.0 \" encoding=\"UTF-8 \"?>")
+    (.println outp "<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
     (.println outp (str "<!--
 See: http://en.wikipedia.org/w/index.php?title=ISO_3166-2&oldid=419867458
 Generated: " (java.util.Date.) "
