@@ -241,3 +241,6 @@ following actions are supported:
              ex
              (java.io.PrintWriter. *out*)))))
 
+(defmacro ..?
+  ([x form] `(if (nil? ~x) nil (. ~x ~form)))
+  ([x form & more] `(..? (if (nil? ~x) nil (. ~x ~form)) ~@more)))
