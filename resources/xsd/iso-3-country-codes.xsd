@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 See: http://en.wikipedia.org/w/index.php?title=ISO_3166-1_alpha-3&oldid=422511645
-Generated: Tue Apr 05 11:09:34 EDT 2011
+Generated: Tue Apr 05 11:12:02 EDT 2011
 -->
 
 <xs:schema version="1.0"
@@ -12,7 +12,7 @@ Generated: Tue Apr 05 11:09:34 EDT 2011
   xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
   jxb:version="1.0">
 
-<xs:simpleType name="ANIClassType">
+<xs:simpleType name="ISO3CountryCode">
     <xs:annotation>
       <xs:documentation><![CDATA[http://en.wikipedia.org/w/index.php?title=ISO_3166-1_alpha-3&oldid=422511645]]></xs:documentation>
     </xs:annotation>

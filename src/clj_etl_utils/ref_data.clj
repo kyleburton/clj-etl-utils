@@ -1774,7 +1774,7 @@ Generated: " (java.util.Date.) "
   xmlns:jxb=\"http://java.sun.com/xml/ns/jaxb\"
   jxb:version=\"1.0\">
 
-<xs:simpleType name=\"ANIClassType\">
+<xs:simpleType name=\"ISO3CountryCode\">
     <xs:annotation>
       <xs:documentation><![CDATA[http://en.wikipedia.org/w/index.php?title=ISO_3166-1_alpha-3&oldid=422511645]]></xs:documentation>
     </xs:annotation>
@@ -1811,7 +1811,7 @@ Generated: " (java.util.Date.) "
   xmlns:jxb=\"http://java.sun.com/xml/ns/jaxb\"
   jxb:version=\"1.0\">
 
-<xs:simpleType name=\"ANIClassType\">
+<xs:simpleType name=\"ISO2CountryCode\">
     <xs:annotation>
       <xs:documentation><![CDATA[http://en.wikipedia.org/w/index.php?title=ISO_3166-2&oldid=419867458]]></xs:documentation>
     </xs:annotation>
