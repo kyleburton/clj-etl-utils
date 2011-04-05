@@ -7,7 +7,10 @@ Some of the sources:
 
 "
       :author "Kyle Burton"}
-    clj-etl-utils.ref-data)
+    clj-etl-utils.ref-data
+    (:require
+     clojure.contrib.duck-streams))
+
 
 
 (def *us-states*
@@ -1711,32 +1714,32 @@ Some of the sources:
   (require 'clj-etl-utils.landmark-parser)
 
   (def *abbrs-segment*
-    (clj-etl-utils.landmark-parser/extract
-     (clj-etl-utils.landmark-parser/make-parser *page*)
-     [[:fp "Street Suffixes"]
-      [:ft "Street Suffixes"]
-      [:rp "<table"]]
-     [[:fp "United States Postal Service"]
-      [:fp "</table>"]]))
+       (clj-etl-utils.landmark-parser/extract
+        (clj-etl-utils.landmark-parser/make-parser *page*)
+        [[:fp "Street Suffixes"]
+         [:ft "Street Suffixes"]
+         [:rp "<table"]]
+        [[:fp "United States Postal Service"]
+         [:fp "</table>"]]))
 
 
   (require 'clojure.contrib.pprint)
 
   (def *rows*
-   (map
-    (fn [s]
-      (.. s
-          (replaceAll "<[^>]+?>" "")
-          (replaceAll "&nbsp;" " ")
-          (replaceAll "\t" " ")
-          (replaceAll "[\r\n]+" "")
-          (replaceAll "(?i:</tr)$" "")
-          (trim)))
-    (filter
-     (fn [l]
-       (and
-        (not (.contains l "Street Suffixes"))))
-     (clj-etl-utils.landmark-parser/table-rows *abbrs-segment*))))
+       (map
+        (fn [s]
+          (.. s
+              (replaceAll "<[^>]+?>" "")
+              (replaceAll "&nbsp;" " ")
+              (replaceAll "\t" " ")
+              (replaceAll "[\r\n]+" "")
+              (replaceAll "(?i:</tr)$" "")
+              (trim)))
+        (filter
+         (fn [l]
+           (and
+            (not (.contains l "Street Suffixes"))))
+         (clj-etl-utils.landmark-parser/table-rows *abbrs-segment*))))
 
   (require 'clojure.contrib.duck-streams)
   (require 'clojure.contrib.string)
@@ -1753,5 +1756,81 @@ Some of the sources:
         (write-rec rec))))
 
 
-
   )
+
+(defn generate-iso-3-xsd []
+    (with-open [outp (clojure.contrib.duck-streams/writer "resources/xsd/iso-3-country-codes.xsd")]
+    (.println outp "<?xml version=\"1.0 \" encoding=\"UTF-8 \"?>")
+    (.println outp (str "<!--
+See: http://en.wikipedia.org/w/index.php?title=ISO_3166-1_alpha-3&oldid=422511645
+Generated: " (java.util.Date.) "
+-->"))
+    (.print outp  "
+<xs:schema version=\"1.0\"
+  xmlns=\"http://github.com/kyleburton/clj-etl-utils/iso-3-country-codes\"
+  targetNamespace=\"http://github.com/kyleburton/clj-etl-utils/iso-3-country-codes\"
+  xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"
+  elementFormDefault=\"qualified\"
+  xmlns:jxb=\"http://java.sun.com/xml/ns/jaxb\"
+  jxb:version=\"1.0\">
+
+<xs:simpleType name=\"ANIClassType\">
+    <xs:annotation>
+      <xs:documentation><![CDATA[http://en.wikipedia.org/w/index.php?title=ISO_3166-1_alpha-3&oldid=422511645]]></xs:documentation>
+    </xs:annotation>
+    <xs:restriction base=\"xs:NMTOKEN\">
+")
+    (doseq [[code-3 country-name] *iso-3-country-codes*]
+      (.print outp (str "
+        <xs:enumeration value=\"" (.toLowerCase code-3) "\">
+           <xs:annotation>
+             <xs:documentation><![CDATA[" country-name "]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+")))
+
+    (.print outp "
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>
+")))
+
+(defn generate-iso-2-xsd []
+    (with-open [outp (clojure.contrib.duck-streams/writer "resources/xsd/iso-2-country-codes.xsd")]
+    (.println outp "<?xml version=\"1.0 \" encoding=\"UTF-8 \"?>")
+    (.println outp (str "<!--
+See: http://en.wikipedia.org/w/index.php?title=ISO_3166-2&oldid=419867458
+Generated: " (java.util.Date.) "
+-->"))
+    (.print outp  "
+<xs:schema version=\"1.0\"
+  xmlns=\"http://github.com/kyleburton/clj-etl-utils/iso-2-country-codes\"
+  targetNamespace=\"http://github.com/kyleburton/clj-etl-utils/iso-2-country-codes\"
+  xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"
+  elementFormDefault=\"qualified\"
+  xmlns:jxb=\"http://java.sun.com/xml/ns/jaxb\"
+  jxb:version=\"1.0\">
+
+<xs:simpleType name=\"ANIClassType\">
+    <xs:annotation>
+      <xs:documentation><![CDATA[http://en.wikipedia.org/w/index.php?title=ISO_3166-2&oldid=419867458]]></xs:documentation>
+    </xs:annotation>
+    <xs:restriction base=\"xs:NMTOKEN\">
+")
+    (doseq [[code-3 country-name] *iso-2-country-codes*]
+      (.print outp (str "
+        <xs:enumeration value=\"" (.toLowerCase code-3) "\">
+           <xs:annotation>
+             <xs:documentation><![CDATA[" country-name "]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+")))
+
+    (.print outp "
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>
+")))
+
+;; (generate-iso-3-xsd)
+;; (generate-iso-2-xsd)

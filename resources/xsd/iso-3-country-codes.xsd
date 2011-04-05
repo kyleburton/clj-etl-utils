@@ -1,0 +1,1499 @@
+<?xml version="1.0 " encoding="UTF-8 "?>
+<!--
+See: http://en.wikipedia.org/w/index.php?title=ISO_3166-1_alpha-3&oldid=422511645
+Generated: Tue Apr 05 11:03:01 EDT 2011
+-->
+
+<xs:schema version="1.0"
+  xmlns="http://github.com/kyleburton/clj-etl-utils/iso-3-country-codes"
+  targetNamespace="http://github.com/kyleburton/clj-etl-utils/iso-3-country-codes"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  elementFormDefault="qualified"
+  xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
+  jxb:version="1.0">
+
+<xs:simpleType name="ANIClassType">
+    <xs:annotation>
+      <xs:documentation><![CDATA[http://en.wikipedia.org/w/index.php?title=ISO_3166-1_alpha-3&oldid=422511645]]></xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:NMTOKEN">
+
+        <xs:enumeration value="abw">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Aruba]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="afg">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Afghanistan]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="ago">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Angola]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="aia">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Anguilla]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="ala">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Åland Islands]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="alb">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Albania]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="and">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Andorra]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="ant">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Netherlands Antilles]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="are">
+           <xs:annotation>
+             <xs:documentation><![CDATA[United Arab Emirates]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="arg">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Argentina]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="arm">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Armenia]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="asm">
+           <xs:annotation>
+             <xs:documentation><![CDATA[American Samoa]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="ata">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Antarctica]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="atf">
+           <xs:annotation>
+             <xs:documentation><![CDATA[French Southern Territories]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="atg">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Antigua and Barbuda]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="aus">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Australia]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="aut">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Austria]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="aze">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Azerbaijan]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="bdi">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Burundi]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="bel">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Belgium]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="ben">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Benin]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="bfa">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Burkina Faso]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="bgd">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Bangladesh]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="bgr">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Bulgaria]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="bhr">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Bahrain]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="bhs">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Bahamas]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="bih">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Bosnia and Herzegovina]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="blm">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Saint Barthélemy]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="blr">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Belarus]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="blz">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Belize]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="bmu">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Bermuda]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="bol">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Bolivia, Plurinational State of]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="bra">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Brazil]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="brb">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Barbados]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="brn">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Brunei Darussalam]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="btn">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Bhutan]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="bvt">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Bouvet Island]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="bwa">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Botswana]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="caf">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Central African Republic]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="can">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Canada]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="cck">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Cocos (Keeling) Islands]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="che">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Switzerland]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="chl">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Chile]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="chn">
+           <xs:annotation>
+             <xs:documentation><![CDATA[China]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="civ">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Côte d'Ivoire]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="cmr">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Cameroon]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="cod">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Congo, the Democratic Republic of the]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="cog">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Congo]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="cok">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Cook Islands]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="col">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Colombia]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="com">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Comoros]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="cpv">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Cape Verde]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="cri">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Costa Rica]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="cub">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Cuba]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="cxr">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Christmas Island]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="cym">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Cayman Islands]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="cyp">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Cyprus]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="cze">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Czech Republic]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="deu">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Germany]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="dji">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Djibouti]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="dma">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Dominica]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="dnk">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Denmark]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="dom">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Dominican Republic]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="dza">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Algeria]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="ecu">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Ecuador]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="egy">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Egypt]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="eri">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Eritrea]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="esh">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Western Sahara]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="esp">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Spain]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="est">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Estonia]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="eth">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Ethiopia]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="fin">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Finland]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="fji">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Fiji]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="flk">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Falkland Islands (Malvinas)]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="fra">
+           <xs:annotation>
+             <xs:documentation><![CDATA[France]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="fro">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Faroe Islands]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="fsm">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Micronesia, Federated States of]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="gab">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Gabon]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="gbr">
+           <xs:annotation>
+             <xs:documentation><![CDATA[United Kingdom]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="geo">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Georgia]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="ggy">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Guernsey]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="gha">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Ghana]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="gib">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Gibraltar]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="gin">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Guinea]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="glp">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Guadeloupe]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="gmb">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Gambia]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="gnb">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Guinea-Bissau]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="gnq">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Equatorial Guinea]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="grc">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Greece]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="grd">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Grenada]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="grl">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Greenland]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="gtm">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Guatemala]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="guf">
+           <xs:annotation>
+             <xs:documentation><![CDATA[French Guiana]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="gum">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Guam]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="guy">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Guyana]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="hkg">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Hong Kong]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="hmd">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Heard Island and McDonald Islands]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="hnd">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Honduras]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="hrv">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Croatia]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="hti">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Haiti]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="hun">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Hungary]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="idn">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Indonesia]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="imn">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Isle of Man]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="ind">
+           <xs:annotation>
+             <xs:documentation><![CDATA[India]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="iot">
+           <xs:annotation>
+             <xs:documentation><![CDATA[British Indian Ocean Territory]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="irl">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Ireland]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="irn">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Iran, Islamic Republic of]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="irq">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Iraq]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="isl">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Iceland]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="isr">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Israel]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="ita">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Italy]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="jam">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Jamaica]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="jey">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Jersey]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="jor">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Jordan]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="jpn">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Japan]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="kaz">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Kazakhstan]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="ken">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Kenya]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="kgz">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Kyrgyzstan]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="khm">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Cambodia]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="kir">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Kiribati]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="kna">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Saint Kitts and Nevis]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="kor">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Korea, Republic of]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="kwt">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Kuwait]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="lao">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Lao People's Democratic Republic]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="lbn">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Lebanon]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="lbr">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Liberia]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="lby">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Libyan Arab Jamahiriya]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="lca">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Saint Lucia]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="lie">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Liechtenstein]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="lka">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Sri Lanka]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="lso">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Lesotho]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="ltu">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Lithuania]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="lux">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Luxembourg]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="lva">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Latvia]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="mac">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Macao]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="maf">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Saint Martin (French part)]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="mar">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Morocco]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="mco">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Monaco]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="mda">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Moldova, Republic of]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="mdg">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Madagascar]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="mdv">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Maldives]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="mex">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Mexico]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="mhl">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Marshall Islands]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="mkd">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Macedonia, the former Yugoslav Republic of]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="mli">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Mali]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="mlt">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Malta]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="mmr">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Myanmar]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="mne">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Montenegro]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="mng">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Mongolia]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="mnp">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Northern Mariana Islands]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="moz">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Mozambique]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="mrt">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Mauritania]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="msr">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Montserrat]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="mtq">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Martinique]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="mus">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Mauritius]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="mwi">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Malawi]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="mys">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Malaysia]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="myt">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Mayotte]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="nam">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Namibia]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="ncl">
+           <xs:annotation>
+             <xs:documentation><![CDATA[New Caledonia]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="ner">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Niger]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="nfk">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Norfolk Island]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="nga">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Nigeria]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="nic">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Nicaragua]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="niu">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Niue]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="nld">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Netherlands]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="nor">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Norway]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="npl">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Nepal]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="nru">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Nauru]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="nzl">
+           <xs:annotation>
+             <xs:documentation><![CDATA[New Zealand]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="omn">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Oman]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="pak">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Pakistan]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="pan">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Panama]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="pcn">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Pitcairn]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="per">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Peru]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="phl">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Philippines]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="plw">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Palau]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="png">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Papua New Guinea]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="pol">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Poland]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="pri">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Puerto Rico]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="prk">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Korea, Democratic People's Republic of]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="prt">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Portugal]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="pry">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Paraguay]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="pse">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Palestinian Territory, Occupied]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="pyf">
+           <xs:annotation>
+             <xs:documentation><![CDATA[French Polynesia]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="qat">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Qatar]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="reu">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Réunion]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="rou">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Romania]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="rus">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Russian Federation]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="rwa">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Rwanda]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="sau">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Saudi Arabia]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="sdn">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Sudan]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="sen">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Senegal]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="sgp">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Singapore]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="sgs">
+           <xs:annotation>
+             <xs:documentation><![CDATA[South Georgia and the South Sandwich Islands]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="shn">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Saint Helena, Ascension and Tristan da Cunha]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="sjm">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Svalbard and Jan Mayen]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="slb">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Solomon Islands]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="sle">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Sierra Leone]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="slv">
+           <xs:annotation>
+             <xs:documentation><![CDATA[El Salvador]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="smr">
+           <xs:annotation>
+             <xs:documentation><![CDATA[San Marino]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="som">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Somalia]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="spm">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Saint Pierre and Miquelon]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="srb">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Serbia]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="stp">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Sao Tome and Principe]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="sur">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Suriname]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="svk">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Slovakia]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="svn">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Slovenia]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="swe">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Sweden]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="swz">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Swaziland]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="syc">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Seychelles]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="syr">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Syrian Arab Republic]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="tca">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Turks and Caicos Islands]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="tcd">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Chad]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="tgo">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Togo]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="tha">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Thailand]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="tjk">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Tajikistan]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="tkl">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Tokelau]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="tkm">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Turkmenistan]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="tls">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Timor-Leste]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="ton">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Tonga]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="tto">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Trinidad and Tobago]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="tun">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Tunisia]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="tur">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Turkey]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="tuv">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Tuvalu]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="twn">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Taiwan, Province of China]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="tza">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Tanzania, United Republic of]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="uga">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Uganda]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="ukr">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Ukraine]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="umi">
+           <xs:annotation>
+             <xs:documentation><![CDATA[United States Minor Outlying Islands]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="ury">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Uruguay]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="usa">
+           <xs:annotation>
+             <xs:documentation><![CDATA[United States]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="uzb">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Uzbekistan]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="vat">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Holy See (Vatican City State)]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="vct">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Saint Vincent and the Grenadines]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="ven">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Venezuela, Bolivarian Republic of]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="vgb">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Virgin Islands, British]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="vir">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Virgin Islands, U.S.]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="vnm">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Viet Nam]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="vut">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Vanuatu]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="wlf">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Wallis and Futuna]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="wsm">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Samoa]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="yem">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Yemen]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="zaf">
+           <xs:annotation>
+             <xs:documentation><![CDATA[South Africa]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="zmb">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Zambia]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+        <xs:enumeration value="zwe">
+           <xs:annotation>
+             <xs:documentation><![CDATA[Zimbabwe]]></xs:documentation>
+           </xs:annotation>
+        </xs:enumeration>
+
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>
