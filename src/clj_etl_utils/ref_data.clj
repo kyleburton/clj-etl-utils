@@ -1766,13 +1766,13 @@ See: http://en.wikipedia.org/w/index.php?title=ISO_3166-1_alpha-3&oldid=42251164
 Generated: " (java.util.Date.) "
 -->"))
     (.print outp  "
-<xs:schema version=\"1.0\"
-  xmlns=\"http://github.com/kyleburton/clj-etl-utils/iso-3-country-codes\"
-  targetNamespace=\"http://github.com/kyleburton/clj-etl-utils/iso-3-country-codes\"
+<xs:schema 
   xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"
+  xmlns=\"http://www.tm-xml.org/XMLSchema/common\"
+  version=\"1.0\"
   elementFormDefault=\"qualified\"
-  xmlns:jxb=\"http://java.sun.com/xml/ns/jaxb\"
-  jxb:version=\"1.0\">
+  attributeFormDefault=\"unqualified\">
+
 
 <xs:simpleType name=\"ISO3CountryCode\">
     <xs:annotation>
@@ -1803,13 +1803,12 @@ See: http://en.wikipedia.org/w/index.php?title=ISO_3166-2&oldid=419867458
 Generated: " (java.util.Date.) "
 -->"))
     (.print outp  "
-<xs:schema version=\"1.0\"
-  xmlns=\"http://github.com/kyleburton/clj-etl-utils/iso-2-country-codes\"
-  targetNamespace=\"http://github.com/kyleburton/clj-etl-utils/iso-2-country-codes\"
+<xs:schema 
   xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"
+  xmlns=\"http://www.tm-xml.org/XMLSchema/common\"
+  version=\"1.0\"
   elementFormDefault=\"qualified\"
-  xmlns:jxb=\"http://java.sun.com/xml/ns/jaxb\"
-  jxb:version=\"1.0\">
+  attributeFormDefault=\"unqualified\">
 
 <xs:simpleType name=\"ISO2CountryCode\">
     <xs:annotation>
