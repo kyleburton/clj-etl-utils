@@ -51,8 +51,8 @@
         :phone #"(?:1[- ]?)?\(?[2-9]\d{2}\)?[-\. ]?\d{3}[-\. ]?\d{4}(?:\s*(?:e|ex|ext|x|xtn|extension)?\s*\d*)"}
 
        :can
-       {:postal-code  #"^[ABCEGHJKLMNPRSTVXY]\d[ABCEGHJKLMNPRSTVWXYZ]\s?\d[ABCEGHJKLMNPRSTVWXYZ]\d$"
-        :postal-code? #"[ABCEGHJKLMNPRSTVXY]\d[ABCEGHJKLMNPRSTVWXYZ]\s?\d[ABCEGHJKLMNPRSTVWXYZ]\d"}}
+       {:postal-code  #"^(?i:[ABCEGHJKLMNPRSTVXY]\d[ABCEGHJKLMNPRSTVWXYZ]\s?\d[ABCEGHJKLMNPRSTVWXYZ]\d)$"
+        :postal-code? #"(?i:[ABCEGHJKLMNPRSTVXY]\d[ABCEGHJKLMNPRSTVWXYZ]\s?\d[ABCEGHJKLMNPRSTVWXYZ]\d)"}}
 
       :internet
       {:ipv4 #"(?xism:(?:(?:25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2})[.](?:25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2})[.](?:25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2})[.](?:25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2})))"
@@ -85,6 +85,8 @@
   (std-regex-compose [:geographic :usa :postal-code?]
                      [:geographic :can :postal-code?])
 
+  (re-matches (std-regex-compose [:geographic :usa :postal-code?]
+                                 [:geographic :can :postal-code?]) "m4w1j5")
 )
 
 (defn all-groups
