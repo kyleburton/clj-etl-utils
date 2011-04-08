@@ -39,9 +39,11 @@
                       "|"
                       (map first ref-data/*iso-2-country-codes*))))}
        :usa
-       {:zip #"(?xism:(?:(?:(?:USA?)-){0,1}(?:(?:(?:[0-9]{3})(?:[0-9]{2}))(?:(?:-)(?:(?:[0-9]{2})(?:[0-9]{2}))){0,1})))"
+       {:zip  #"^\d{5}-?(?:\d{4})?$"
+        :zip? #"\d{5}-?(?:\d{4})?"
         ;; NB: same as zip, just using a consistent name
-        :postal-code #"(?xism:(?:(?:(?:USA?)-){0,1}(?:(?:(?:[0-9]{3})(?:[0-9]{2}))(?:(?:-)(?:(?:[0-9]{2})(?:[0-9]{2}))){0,1})))"
+        :postal-code  #"^\d{5}-?(?:\d{4})?$"
+        :postal-code? #"\d{5}-?(?:\d{4})?"
         :state        (Pattern/compile (format "(?xism:%s)" (str/str-join "|" (map first ref-data/*us-states*))))
         :state-name   (Pattern/compile (format "(?xism:%s)" (str/str-join "|" (map second ref-data/*us-states*))))
         :airport-code (Pattern/compile (format "(?xism:%s)" (str/str-join "|" (map #(nth % 2) ref-data/*us-airport-codes*))))
@@ -49,7 +51,8 @@
         :phone #"(?:1[- ]?)?\(?[2-9]\d{2}\)?[-\. ]?\d{3}[-\. ]?\d{4}(?:\s*(?:e|ex|ext|x|xtn|extension)?\s*\d*)"}
 
        :can
-       {:postal-code #"[ABCEGHJKLMNPRSTVXY]\d[ABCEGHJKLMNPRSTVWXYZ]( )?\d[ABCEGHJKLMNPRSTVWXYZ]\d"}}
+       {:postal-code  #"^[ABCEGHJKLMNPRSTVXY]\d[ABCEGHJKLMNPRSTVWXYZ]\s?\d[ABCEGHJKLMNPRSTVWXYZ]\d$"
+        :postal-code? #"[ABCEGHJKLMNPRSTVXY]\d[ABCEGHJKLMNPRSTVWXYZ]\s?\d[ABCEGHJKLMNPRSTVWXYZ]\d"}}
 
       :internet
       {:ipv4 #"(?xism:(?:(?:25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2})[.](?:25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2})[.](?:25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2})[.](?:25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2})))"
@@ -73,8 +76,16 @@
                            (str/str-join
                             "|"
                             (map (fn [path]
-                                   (apply std-regex path))
+                                   (format "(?:%s)" (apply std-regex path)))
                                  paths)))))
+
+(comment
+
+  (std-regex :geographic :usa :postal-code?)
+  (std-regex-compose [:geographic :usa :postal-code?]
+                     [:geographic :can :postal-code?])
+
+)
 
 (defn all-groups
   "Extracts all the groups from a java.util.regex.Matcher into a seq."
