@@ -184,6 +184,13 @@ following actions are supported:
               (apply f nextval args))))))))
 
 
+(defmacro with-hit-timer [[sym-name block-size] & body]
+  `(let [~sym-name (clj-etl-utils.lang-utils/make-periodic-invoker
+                    ~block-size
+                    (fn [val# & args#]
+                      (printf "%d\n" val#)))]
+     ~@body))
+
 
 (defmacro prog1 [res & body]
   `(let [res# ~res]

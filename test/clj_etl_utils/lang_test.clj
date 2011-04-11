@@ -35,6 +35,17 @@
   (*timer* :set 19)
   (*timer* :reset)
 
+  (macroexpand-1
+   '(lang-utils/with-hit-timer [timer 10]
+      (dotimes [ii 100]
+        (timer))))
+
+
+  (lang-utils/with-hit-timer [timer 10]
+      (dotimes [ii 100]
+        (timer)))
+
+
   (let [total    1000
         period     100
         progress (lang-utils/make-periodic-invoker
