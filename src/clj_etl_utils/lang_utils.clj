@@ -167,7 +167,7 @@ following actions are supported:
         (cond
           (or (= :final action)
               (= :invoke action))
-          (apply f (.get ctr) (rest args))
+          (apply f action (.get ctr) (rest args))
 
           (= :state action)
           (.get ctr)
@@ -181,15 +181,9 @@ following actions are supported:
           :else
           (let [nextval (.incrementAndGet ctr)]
             (if (= 0 (mod nextval count))
-              (apply f nextval args))))))))
+              (apply f action nextval args))))))))
 
 
-(defmacro with-hit-timer [[sym-name block-size] & body]
-  `(let [~sym-name (clj-etl-utils.lang-utils/make-periodic-invoker
-                    ~block-size
-                    (fn [val# & args#]
-                      (printf "%d\n" val#)))]
-     ~@body))
 
 
 (defmacro prog1 [res & body]
@@ -219,6 +213,25 @@ following actions are supported:
      (let [~'it ~res]
        ~@body
        ~'it)))
+
+
+(defmacro with-hit-timer [[sym-name block-size] & body]
+  `(let [start-time# (- (.getTime (java.util.Date.)) 1.0)
+         ~sym-name (clj-etl-utils.lang-utils/make-periodic-invoker
+                    ~block-size
+                    (fn [action# val# & args#]
+                      (let [elapsed# (- (.getTime (java.util.Date.))
+                                        start-time#)
+                            elapsed-secs# (/ elapsed# 1000.0)
+                            rate#     (/ val# elapsed-secs#)]
+                        (if (= action# :final)
+                          (printf "COMPLETED: %d in %ss @ %s/s\n" val# elapsed-secs# rate#)
+                          (printf "%d in %ss @ %s/s\n" val# elapsed-secs# rate#)))))]
+     (prog1
+         (do ~@body)
+       (~sym-name :final))))
+
+
 
 
 (def rec-bean
