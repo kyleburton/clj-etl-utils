@@ -5,7 +5,7 @@
 (deftest test-make-periodic-invoker
   (let [stat    (atom [])
         trigger (lang-utils/make-periodic-invoker 10
-                                            (fn [count val]
+                                            (fn [action count val]
                                               (swap! stat conj val)))]
     (dotimes [ii 100]
       (trigger ii))
@@ -34,6 +34,17 @@
   (*timer* :state)
   (*timer* :set 19)
   (*timer* :reset)
+
+  (macroexpand-1
+   '(lang-utils/with-hit-timer [timer 10]
+      (dotimes [ii 100]
+        (timer))))
+
+
+  (lang-utils/with-hit-timer [timer 10]
+      (dotimes [ii 109]
+        (timer)))
+
 
   (let [total    1000
         period     100
