@@ -5,6 +5,7 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"
             :distribution :repo
             :comments "same as Clojure"}
+  :java-source-path [["java"]]
   :warn-on-reflection true
   :jvm-opts ["-Xmx512M"]
   :dev-dependencies [[swank-clojure "1.3.0"]
@@ -16,6 +17,7 @@
                  [fleet "0.9.3"]
                  [log4j/log4j "1.2.14"]
                  [commons-httpclient "3.1"]
+                 [commons-codec "1.4"]
                  [commons-lang "2.5"]]
   :autodoc {
     :name "clj-etl-utils"
