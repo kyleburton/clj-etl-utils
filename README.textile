@@ -1,6 +1,6 @@
 h1. clj-etl-utils
 
-ETL Utilities for Clojure.  These are mostly centered around functions that work with data on disk, such as database dumps and log files.  At least that was the original purpose of the library, it has since grown to include other utilities.
+ETL Utilities for Clojure.  This library began with functions that worked with data on disk, such as database dumps and log files, at least that was the original purpose of the library, it has since grown to include other utilities.
 
 h2. Modules
 
@@ -62,6 +62,14 @@ h4. freeze, thaw
 
 freeze invokes the java serialization and returns a byte array.  Thaw does the opposite: takes a byte array and deserializes it.
 
+h4. object->file
+
+Uses Java serialization to write an object to the given file, truncating if it exists.
+
+h4. file->object
+
+Deserializes a serialized object from a file.
+
 h4. ensure-directory
 
 Ensures a directory path exists (recursively), doing nothing if it already exists.
@@ -72,7 +80,7 @@ Compress a string, returning the bytes.
 
 h4. byte-partitions-at-line-boundaries
 
-This can be used in divide and conquer scenarios where you want to process different segments of a single file in parallel.  It takes an input file name and a desired block size.  Block boundaries will be close to teh desired size - the size is used as a seek position, any line remnant present at that position is read, such that a given block will end cleanly at a line boundary.
+This can be used in divide and conquer scenarios where you want to process different segments of a single file in parallel.  It takes an input file name and a desired block size.  Block boundaries will be close to the desired size - the size is used as a seek position, any line remnant present at that position is read, such that a given block will end cleanly at a line boundary.
 
 h4. random-access-file-line-seq-with-limit
 
