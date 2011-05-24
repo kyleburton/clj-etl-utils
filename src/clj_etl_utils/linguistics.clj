@@ -115,3 +115,15 @@
      (double-metaphone permutation)
      (nysiis permutation)]))
 
+(defn permutations-in-dict-with-encodings [word]
+  (for [permutation (filter in-dictionary? (concat (edist1 word)
+                                                   (edist2 word)))]
+    [word
+     (soundex word)
+     (double-metaphone word)
+     (nysiis word)
+     permutation
+     (soundex permutation)
+     (double-metaphone permutation)
+     (nysiis permutation)]))
+

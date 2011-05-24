@@ -122,14 +122,14 @@ public final class Nysiis implements Encoder {
 
     reduceDuplicates();
 
-    if(  'A' == first
+    if( (  'A' == first
         || 'E' == first
         || 'I' == first
         || 'O' == first
-        || 'U' == first ) {
+        || 'U' == first ) && word.length() > 0 ){
       word.deleteCharAt(0);
       word.insert(0,first);
-        }
+    }
 
     return word.toString();
   }

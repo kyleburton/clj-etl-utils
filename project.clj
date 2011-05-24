@@ -1,4 +1,4 @@
-(defproject org.clojars.kyleburton/clj-etl-utils "1.0.32-SNAPSHOT"
+(defproject org.clojars.kyleburton/clj-etl-utils "1.0.32"
   :description "ETL Utilities"
   :url         "http://github.com/kyleburton/clj-etl-utils"
   :license {:name "Eclipse Public License - v 1.0"
@@ -16,6 +16,7 @@
                  [commons-io "2.0"]
                  [fleet "0.9.3"]
                  [log4j/log4j "1.2.14"]
+                 [org.mindrot/jbcrypt "0.3m"]
                  [commons-httpclient "3.1"]
                  [commons-codec "1.4"]
                  [commons-lang "2.5"]]
