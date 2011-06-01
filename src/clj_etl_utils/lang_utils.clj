@@ -264,3 +264,10 @@ following actions are supported:
 (defmacro ..?
   ([x form] `(if (nil? ~x) nil (. ~x ~form)))
   ([x form & more] `(..? (if (nil? ~x) nil (. ~x ~form)) ~@more)))
+
+(defmacro restructure-map [& vars]
+  (reduce (fn [accum var]
+              (assoc accum (keyword var) var))
+            {}
+            vars))
+
