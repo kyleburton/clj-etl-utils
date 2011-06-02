@@ -1,9 +1,9 @@
 (ns
     ^{:doc "Text manipulation utilities not yet in Clojure or Contrib."
       :author "Kyle Burton"}
-    clj-etl-utils.text
-    (:use [clj-etl-utils.lang-utils  :only [raise]])
-    (:import [org.apache.commons.lang WordUtils]))
+  clj-etl-utils.text
+  (:use [clj-etl-utils.lang-utils  :only [raise]])
+  (:import [org.apache.commons.lang WordUtils]))
 
 (defn uc [#^String s] (.toUpperCase s))
 (defn lc [#^String s] (.toLowerCase s))
@@ -30,11 +30,92 @@
 ;; (md5->string (.getBytes "foo bar\n"))
 ;; (sha1->string (.getBytes "foo bar\n"))
 
+(defn security-providers-type-algorithm-seq []
+  (mapcat (fn [provider]
+            (map (fn [svc]
+                   [(.getType svc) (.getAlgorithm svc)])
+                 (.getServices provider)))
+          (java.security.Security/getProviders)))
+
+(defn security-providers-types []
+  (vec (set (map first (security-providers-type-algorithm-seq)))))
+
+(defn security-providers-for-type [type]
+  (filter #(= (first %) type)
+          (security-providers-type-algorithm-seq)))
+
+(defn message-digest-algorithms []
+  (security-providers-for-type "MessageDigest"))
+
+(comment
+
+  (security-providers-types)
+
+  (message-digest-algorithms)
+
+  )
+
 (defn string->sha1 [s]
   (sha1->string (.getBytes s)))
 
 (defn string->md5 [s]
   (md5->string (.getBytes s)))
+
+
+(defn sha256->string [bytes]
+  (let [digester (java.security.MessageDigest/getInstance "SHA-256")]
+    (.update digester bytes)
+    (apply str (map (fn [byte]
+                      (Integer/toHexString (bit-and 0xFF byte)))
+                    (.digest digester)))))
+
+(defn string->sha256 [s]
+  (sha256->string (.getBytes s)))
+
+
+(defn sha384->string [bytes]
+  (let [digester (java.security.MessageDigest/getInstance "SHA-384")]
+    (.update digester bytes)
+    (apply str (map (fn [byte]
+                      (Integer/toHexString (bit-and 0xFF byte)))
+                    (.digest digester)))))
+
+(defn string->sha384 [s]
+  (sha384->string (.getBytes s)))
+
+(defn sha512->string [bytes]
+  (let [digester (java.security.MessageDigest/getInstance "SHA-512")]
+    (.update digester bytes)
+    (apply str (map (fn [byte]
+                      (Integer/toHexString (bit-and 0xFF byte)))
+                    (.digest digester)))))
+
+(defn string->sha512 [s]
+  (sha512->string (.getBytes s)))
+
+(comment
+
+  (count (string->sha1 "foof"))   ;;  40
+  (count (string->sha256 "foof")) ;;  63
+  (count (string->sha384 "foof")) ;;  90
+  (count (string->sha512 "foof")) ;; 126
+
+  (time
+   (dotimes [ii 10000]
+     (string->sha1 "foof")))
+
+  (time
+   (dotimes [ii 10000]
+     (string->sha256 "foof")))
+
+  (time
+   (dotimes [ii 10000]
+     (string->sha512 "foof")))
+
+
+  )
+
+
 
 ;; TODO this doesn't belong in text.clj, couldn't think of a better place for it
 (defn now-milliseconds []

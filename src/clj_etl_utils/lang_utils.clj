@@ -264,3 +264,21 @@ following actions are supported:
 (defmacro ..?
   ([x form] `(if (nil? ~x) nil (. ~x ~form)))
   ([x form & more] `(..? (if (nil? ~x) nil (. ~x ~form)) ~@more)))
+
+(defmacro restructure-map [& vars]
+  (reduce (fn [accum var]
+              (assoc accum (keyword var) var))
+            {}
+            vars))
+
+
+(defmacro defn! [fn-name arg-spec & body]
+  `(defn ~fn-name ~arg-spec
+     ~@(map
+        (fn [arg]
+          `(if-not (isa? ~(:tag (meta arg)) (class ~arg))
+             (raise "Error: type-mismatch: expected:'%s' to be a '%s', it was a '%s'"
+                    '~arg ~(:tag (meta arg)) (class ~arg))))
+        arg-spec)
+     ~@body))
+
