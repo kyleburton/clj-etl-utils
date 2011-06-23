@@ -2,7 +2,8 @@
     ^{:doc "Core, shared utility functions that aid in development with Clojure, or with development on the JVM."
       :author "Kyle Burton"}
   clj-etl-utils.lang-utils
-  (:import [org.apache.commons.io IOUtils]))
+  (:import [org.apache.commons.io IOUtils]
+           [java.net InetAddress]))
 
 (defn- raise-dispatch-fn [& [fst snd thrd & rst]]
   (cond
@@ -282,3 +283,6 @@ following actions are supported:
         arg-spec)
      ~@body))
 
+
+(defn hostname []
+  (-> (java.net.InetAddress/getLocalHost) (.getHostName)))
