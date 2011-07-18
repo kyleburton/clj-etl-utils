@@ -262,6 +262,14 @@ following actions are supported:
              ex
              (java.io.PrintWriter. *out*)))))
 
+(defn caused-by-seq [th]
+  (loop [res []
+         next th]
+    (if next
+      (recur (conj res next)
+             (.getCause next))
+      res)))
+
 (defmacro ..?
   ([x form] `(if (nil? ~x) nil (. ~x ~form)))
   ([x form & more] `(..? (if (nil? ~x) nil (. ~x ~form)) ~@more)))
