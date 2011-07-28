@@ -34,3 +34,17 @@
 
 )
 
+
+(defn slice-map* [in-map & keys]
+  (reduce
+   (fn [m k]
+     (if (contains? in-map k)
+       (assoc m k (get in-map k))
+       m))
+   {}
+   keys))
+
+
+(defn slice-map [m keys]
+  (apply slice-map* m keys))
+
