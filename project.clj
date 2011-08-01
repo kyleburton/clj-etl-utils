@@ -9,7 +9,7 @@
   :warn-on-reflection   true
   :local-repo-classpath true
   :jvm-opts             ["-Xmx512M"]
-  :dev-dependencies [[swank-clojure   "1.3.0"]
+  :dev-dependencies [[swank-clojure   "1.4.0-SNAPSHOT"]
                    ;;[autodoc       "0.7.1"]
                      [lein-marginalia "0.6.0"]]
   :dependencies [[org.clojure/clojure         "1.2.0"]
