@@ -121,6 +121,14 @@
                          (:usa *sample-postal-codes*))]
       (is (re-matches regex postal-code)))))
 
+(deftest test-north-america-postal-code-matcher?
+  (let [regex (rx/std-regex-compose [:geographic :usa :postal-code?]
+                                    [:geographic :can :postal-code?])]
+    (doseq [postal-code (concat
+                         (:can *sample-postal-codes*)
+                         (:usa *sample-postal-codes*))]
+      (is (re-matches regex postal-code)))))
+
 (comment
 
   (apply rx/std-regex [:geographic :can :postal-code])
