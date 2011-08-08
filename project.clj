@@ -5,7 +5,7 @@
             :url          "http://www.eclipse.org/legal/epl-v10.html"
             :distribution :repo
             :comments     "Same as Clojure"}
-  :java-source-path     [["java"]]
+  :java-source-path     "java"
   :warn-on-reflection   true
   :local-repo-classpath true
   :jvm-opts             ["-Xmx512M"]
