@@ -294,3 +294,17 @@ following actions are supported:
 
 (defn hostname []
   (-> (java.net.InetAddress/getLocalHost) (.getHostName)))
+
+(defn string->int? [s]
+  (try
+   (Integer/parseInt s)
+   (catch Exception e
+     nil)))
+
+(defn string->long? [s]
+  (try
+   (Long/parseLong s)
+   (catch Exception e
+     nil)))
+
+
