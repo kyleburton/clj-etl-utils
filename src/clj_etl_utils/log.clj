@@ -116,3 +116,10 @@
         (.close res)))
       (throw (RuntimeException. (format "Error: log4j configuration not found as file nor as a resource: '%s'" log4j-prop-file))))))
 
+(defmacro time-nano [name & body]
+  `(let [start-nano# (System/nanoTime)
+         res# (do
+                ~@body)
+         end-nano# (System/nanoTime)]
+     (infof "%s:: %s elapsed (from %s to %s)" ~name (- end-nano# start-nano#) start-nano# end-nano#)
+     res#))
