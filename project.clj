@@ -1,11 +1,11 @@
-(defproject org.clojars.kyleburton/clj-etl-utils "1.0.38-SNAPSHOT"
+(defproject org.clojars.kyleburton/clj-etl-utils "1.0.39"
   :description "ETL Utilities"
   :url         "http://github.com/kyleburton/clj-etl-utils"
   :license {:name         "Eclipse Public License - v 1.0"
             :url          "http://www.eclipse.org/legal/epl-v10.html"
             :distribution :repo
             :comments     "Same as Clojure"}
-  :java-source-path     [["java"]]
+  :java-source-path     "java"
   :warn-on-reflection   true
   :local-repo-classpath true
   :jvm-opts             ["-Xmx512M"]
