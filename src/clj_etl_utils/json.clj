@@ -8,3 +8,7 @@
 (extend java.sql.Timestamp Write-JSON
         {:write-json (fn [x #^PrintWriter out]
                        (.print out (.toString x)))})
+
+(extend clojure.lang.Fn Write-JSON
+        {:write-json (fn [x #^PrintWriter out]
+                       (.print out (.toString x)))})
