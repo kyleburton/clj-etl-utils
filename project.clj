@@ -20,7 +20,8 @@
                  [org.mindrot/jbcrypt "0.3m"]
                  [commons-httpclient  "3.1"]
                  [commons-codec       "1.4"]
-                 [commons-lang        "2.5"]]
+                 [commons-lang        "2.5"]
+                 [joda-time/joda-time                   "1.6.2"]]
   :autodoc {
     :name        "clj-etl-utils"
     :page-title  "clj-etl-utils: API Documentation"
