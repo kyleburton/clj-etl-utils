@@ -241,6 +241,10 @@ following actions are supported:
                         clojure.lang.Keyword
                         clojure.lang.Symbol
                         Number
+                        Integer
+                        Long
+                        Double
+                        Float
                         java.util.Map
                         clojure.lang.IFn}]
        (fn rec-bean [thing]
