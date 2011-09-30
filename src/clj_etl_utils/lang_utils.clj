@@ -248,7 +248,7 @@ following actions are supported:
                  (seq? thing)
                  (primitive? (class thing)))
            thing
-           (let [bn (bean thing)]
+           (let [bn (dissoc (bean thing) :class)]
              (reduce (fn [res k]
                        (assoc res k (rec-bean (get bn k))))
                      {}
