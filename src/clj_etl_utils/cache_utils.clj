@@ -43,6 +43,10 @@
   (doseq [entry (lookup-caches-by-tag :standard)]
     (reset! (:cache entry) {})))
 
+(comment
+
+  (map :cache (lookup-caches-by-tag :standard))
+)
 
 (defn wrap-standard-cache [name tags the-fn args-ser-fn]
   (let [cache (atom {})]

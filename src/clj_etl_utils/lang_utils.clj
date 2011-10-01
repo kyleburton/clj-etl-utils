@@ -241,6 +241,10 @@ following actions are supported:
                         clojure.lang.Keyword
                         clojure.lang.Symbol
                         Number
+                        Integer
+                        Long
+                        Double
+                        Float
                         java.util.Map
                         clojure.lang.IFn}]
        (fn rec-bean [thing]
@@ -248,7 +252,7 @@ following actions are supported:
                  (seq? thing)
                  (primitive? (class thing)))
            thing
-           (let [bn (bean thing)]
+           (let [bn (dissoc (bean thing) :class)]
              (reduce (fn [res k]
                        (assoc res k (rec-bean (get bn k))))
                      {}
