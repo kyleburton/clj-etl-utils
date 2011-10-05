@@ -313,15 +313,26 @@ following actions are supported:
 
 
 ;; SRFI-??s cut macro
+(defn- cutpoint? [thing]
+  (let [sthing (str thing)]
+   (if (or (= '<> thing)
+           (and (.startsWith sthing "<")
+                (.endsWith   sthing ">")))
+     (let [pfx (.replaceAll sthing "[<>]" "")]
+       (if (empty? pfx)
+         (gensym)
+         (gensym (str pfx "-"))))
+     nil)))
+
 (defmacro cut [f & arg-sig]
-  (let [gsyms (map (fn [x] (gensym "cut-")) (filter #(= '<> %1) arg-sig))
+  (let [gsyms (map cutpoint? (filter cutpoint? arg-sig))
         arg-spec (loop [[arg & args] arg-sig
                         gsyms gsyms
                         res   []]
                    (cond
                      (not arg)
                      res
-                     (= '<> arg)
+                     (cutpoint? arg)
                      (recur args
                             (rest gsyms)
                             (conj res (first gsyms)))
@@ -331,3 +342,16 @@ following actions are supported:
                             (conj res arg))))]
     `(fn [~@gsyms]
        (~f ~@arg-spec))))
+
+
+(comment
+
+  (cut format <format-string> "this")
+
+  ;; shall we make it look like ascii scissors?
+  (defmacro %< [f & stuff]
+    `(cut ~f ~@stuff))
+
+  (%< format <format-string> "this")
+
+)
