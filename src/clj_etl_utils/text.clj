@@ -3,7 +3,8 @@
       :author "Kyle Burton"}
   clj-etl-utils.text
   (:use [clj-etl-utils.lang-utils  :only [raise]])
-  (:import [org.apache.commons.lang WordUtils]))
+  (:import [org.apache.commons.lang WordUtils]
+           [java.text NumberFormat]))
 
 (defn uc [#^String s] (.toUpperCase s))
 (defn lc [#^String s] (.toLowerCase s))
@@ -202,7 +203,59 @@
          delim)))))
 
 
+(def *formatter-setters*
+     {:negative-prefix (fn [#^NumberFormat nf x] (.setNegativePrefix nf x))
+      :negative-suffix (fn [#^NumberFormat nf x] (.setNegativeSuffix nf x))
+      :positive-prefix (fn [#^NumberFormat nf x] (.setPositivePrefix nf x))
+      :positive-suffix (fn [#^NumberFormat nf x] (.setPositiveSuffix nf x))})
+
+(defn apply-format-setter [#^NumberFormat nf k v]
+  (if-not (contains? *formatter-setters* k)
+    (raise "set-formatter-option: option not yet implemented: %s" k))
+  ((get *formatter-setters* k) nf v)
+  nf)
+
+(declare *default-formatters*)
+
+
+(defn get-currency-formatter [opts-or-keyword]
+  (cond
+    (map? opts-or-keyword)
+    (reduce (fn [formatter [k v]]
+              (apply-format-setter formatter k v))
+            (java.text.NumberFormat/getCurrencyInstance)
+            opts-or-keyword)
+    (keyword? opts-or-keyword)
+    (or (get @*default-formatters* opts-or-keyword)
+        (raise "Error: formatter not found for keyword: %s" opts-or-keyword))
+    :else
+    (raise "Error: unrecognized formatter spec (not a map or keyword): [%s] %s"
+           (class opts-or-keyword) opts-or-keyword)))
+
+(def *currency-with-negative* (get-currency-formatter {:negative-prefix "-$" :negative-suffix ""}))
+
+(def *default-formatters*
+     (atom
+      {:currency-with-negative *currency-with-negative*
+       :default                (get-currency-formatter {})}))
+
+
+
+
+(defn format-as-currency
+  ([num]
+     (format-as-currency num :default))
+  ([num opts]
+     (.format (get-currency-formatter opts)
+              num)))
+
+
 (comment
+  (.format (java.text.NumberFormat/getCurrencyInstance) -1234)
+  (format-as-currency -1234 :currency-with-negative)
+  (format-as-currency -1234 :default)
+  (format-as-currency -1234)
+  (format-as-currency 1234  :currency-with-negative)
 
   (human-readable-byte-count 1024)
   (human-readable-byte-count 1024 true)
