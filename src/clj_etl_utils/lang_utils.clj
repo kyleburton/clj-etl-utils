@@ -312,3 +312,22 @@ following actions are supported:
      nil)))
 
 
+;; SRFI-??s cut macro
+(defmacro cut [f & arg-sig]
+  (let [gsyms (map (fn [x] (gensym "cut-")) (filter #(= '<> %1) arg-sig))
+        arg-spec (loop [[arg & args] arg-sig
+                        gsyms gsyms
+                        res   []]
+                   (cond
+                     (not arg)
+                     res
+                     (= '<> arg)
+                     (recur args
+                            (rest gsyms)
+                            (conj res (first gsyms)))
+                     :else
+                     (recur args
+                            gsyms
+                            (conj res arg))))]
+    `(fn [~@gsyms]
+       (~f ~@arg-spec))))
