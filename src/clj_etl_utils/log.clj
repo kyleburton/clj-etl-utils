@@ -33,6 +33,8 @@
 
   (isa? (class (RuntimeException. "The caused-by")) Throwable)
 
+
+
   (log-args-dispatcher (RuntimeException. "The caused-by") "foof")
   (log-args-dispatcher (RuntimeException. "The caused-by"))
 
@@ -40,7 +42,10 @@
   (log-args-dispatcher "Herp a %sp!" "flur")
   (log-args-dispatcher "Herp a %sp %sp!" "flur" "bler")
   (log-args-dispatcher (RuntimeException. "The caused-by") "Herp a derp!")
+
   (log-args-dispatcher (RuntimeException. "The caused-by") "Herp a %s!" "flur")
+
+  (log-args-dispatcher (RuntimeException. "The caused-by") "Herp a %s!" nil)
 
   (log-formatter "foo")
   (print (log-formatter (RuntimeException. "herp!") "foo"))
@@ -54,24 +59,24 @@
   )
 
 
-(defn- log-args-dispatcher [& [frst scnd thrd & rst]]
+(defn- log-args-dispatcher [& args]
   (cond
-    (and (isa? (class frst) Throwable)
-         (not scnd))
+    (and (isa? (class (first args)) Throwable)
+         (= 1 (count args)))
     [:throwable]
 
-    (and (isa? (class frst) Throwable)
-         (isa? (class scnd) String)
-         thrd)
+    (and (isa? (class (first args)) Throwable)
+         (isa? (class (second args)) String)
+         (> (count args) 2))
     [:throwable :fmt-and-args]
 
-    (and (isa? (class frst) Throwable)
-         (isa? (class scnd) String)
-         (not thrd))
+    (and (isa? (class (first args)) Throwable)
+         (isa? (class (second args)) String)
+         (= 2 (count args)))
     [:throwable :message]
 
-    (and (isa? (class frst) String)
-         scnd)
+    (and (isa? (class (first args)) String)
+         (> (count args) 1))
     [:fmt-and-args]
 
     :else
