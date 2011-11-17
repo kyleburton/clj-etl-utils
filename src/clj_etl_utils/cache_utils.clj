@@ -52,9 +52,10 @@
   (let [cache (atom {})]
    (register-cache name tags cache)
    (fn [& args]
-     (let [k (args-ser-fn args)]
-       (if (contains? @cache k)
-         (get @cache k)
+     (let [k    (args-ser-fn args)
+           cmap @cache]
+       (if (contains? cmap k)
+         (get cmap k)
          (aprog1
              (apply the-fn args)
            (swap! cache assoc k it)))))))

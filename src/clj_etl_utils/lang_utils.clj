@@ -3,7 +3,8 @@
       :author "Kyle Burton"}
   clj-etl-utils.lang-utils
   (:import [org.apache.commons.io IOUtils]
-           [java.net InetAddress]))
+           [java.net InetAddress])
+  (:use    [clojure.contrib.core  :only [-?>]]))
 
 (defn- raise-dispatch-fn [& [fst snd thrd & rst]]
   (cond
@@ -233,7 +234,8 @@ following actions are supported:
        (~sym-name :final))))
 
 
-
+(defn array? [thing]
+  (-?> thing (.getClass) (.isArray)))
 
 (def rec-bean
      (let [primitive? #{Class
@@ -254,7 +256,10 @@ following actions are supported:
            thing
            (let [bn (dissoc (bean thing) :class)]
              (reduce (fn [res k]
-                       (assoc res k (rec-bean (get bn k))))
+                       (assoc res k
+                              (if (array? (get bn k))
+                                (vec (map rec-bean (get bn k)))
+                                (rec-bean (get bn k)))))
                      {}
                      (keys bn)))))))
 
