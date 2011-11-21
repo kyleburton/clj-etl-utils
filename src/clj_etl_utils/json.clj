@@ -11,6 +11,12 @@
                        (.print out (.toString x))
                        (.print out "\""))})
 
+(extend org.joda.time.DateTime Write-JSON
+        {:write-json (fn [x #^PrintWriter out]
+                       (.print out "\"")
+                       (.print out (.toString x))
+                       (.print out "\""))})
+
 (extend java.util.Date Write-JSON
         {:write-json (fn [x #^PrintWriter out]
                        (.print out "\"")
