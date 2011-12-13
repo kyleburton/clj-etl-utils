@@ -36,7 +36,6 @@
       (raise "Error: negative numbers are not supported, sorry: %s" n))
     (loop [res                 (StringBuilder.)
            [number remainder]  (.divideAndRemainder n base)]
-      (println (format "res:%s number:%s/%s remainder:%s" res number (class number) remainder))
       (if (= 1 (.compareTo number BigInteger/ZERO))
         (recur
          (.insert res 0 (.charAt base62-digits (.intValue remainder)))
