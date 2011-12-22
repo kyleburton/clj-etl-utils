@@ -3,6 +3,7 @@
       :author "Kyle Burton"}
   clj-etl-utils.text
   (:use [clj-etl-utils.lang-utils  :only [raise]])
+  (:require    [clojure.contrib.str-utils        :as str-utils])
   (:import [org.apache.commons.lang WordUtils]
            [java.text NumberFormat]))
 
@@ -249,6 +250,16 @@
      (.format (get-currency-formatter opts)
               num)))
 
+
+(defonce *rx-clean-phone-number* #"\D+")
+
+(defn canonical-phone-number [mobile-number]
+  (if (nil? mobile-number)
+    ""
+    (let [num (str-utils/re-gsub *rx-clean-phone-number* "" mobile-number)]
+      (if (= 10 (count num))
+        (str 1 num)
+        num))))
 
 (comment
   (.format (java.text.NumberFormat/getCurrencyInstance) -1234)
