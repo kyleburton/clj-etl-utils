@@ -2,9 +2,9 @@
     ^{:doc "Wrapper around Jakarta's HTTP Client."
       :author "Kyle Burton"}
   clj-etl-utils.http
-  (:use [clj-etl-utils.lang-utils :only [raise assert-allowed-keys! rest-params->map]])
+  (:use [clj-etl-utils.lang-utils :only [raise assert-allowed-keys! rest-params->map aprog1]])
   (:import
-   [org.apache.commons.httpclient Credentials Header HttpClient UsernamePasswordCredentials NameValuePair]
+   [org.apache.commons.httpclient Credentials Header HttpClient UsernamePasswordCredentials NameValuePair URI]
    [org.apache.commons.httpclient.auth AuthScope]
    [org.apache.commons.httpclient.methods InputStreamRequestEntity PostMethod GetMethod]
    [org.apache.commons.lang StringUtils]
@@ -19,7 +19,7 @@
 ;; TODO: :follow-redirects should default to true (as this is most
 ;; frequently the desired behavior of a user agent).
 ;; TODO: support specification of host/port/realm in the basic-auth structure
-;  TODO: support either a single map for basic auth, or a sequence of maps
+                                        ;  TODO: support either a single map for basic auth, or a sequence of maps
 (defn ^{:doc "Construct a new user agent (HttpClient).
 
    :follow-redirects [optional] true/false defaults to true
@@ -35,7 +35,7 @@
   user-agent [& params]
   (let [params (rest-params->map params)
         ua (HttpClient.)]
-    (assert-allowed-keys! params [:follow-redirects :basic-auth])
+    (assert-allowed-keys! params [:follow-redirects :basic-auth :scheme :host :port :base-url :request-headers])
     (if-let [auth-info (:basic-auth params)]
       (do
         (.setAuthenticationPreemptive (.getParams ua) true)
@@ -52,11 +52,11 @@
 ;; TODO: this helper fn belongs in lang.clj
 (defn map->name-value-pair-vec [params]
   (into-array NameValuePair
-   (reduce
-    (fn [accum key]
-      (cons (NameValuePair. (str key) (str (params key))) accum))
-    []
-    (keys params))))
+              (reduce
+               (fn [accum key]
+                 (cons (NameValuePair. (str key) (str (params key))) accum))
+               []
+               (keys params))))
 
 ;;; (map->name-value-pair-vec { :foo "bar" :chicken "turkey" })
 ;;; (map->name-value-pair-vec {})
@@ -100,11 +100,72 @@
        :http-method   post-method})))
 
 
+(def *client-registry* (atom {}))
+
+(def ^:dynamic *client* nil)
+
+(defn register-client [client-name config-map]
+  (swap! *client-registry*
+         assoc client-name
+         (apply user-agent (mapcat identity config-map))))
+
+(defn lookup-client [registered-name]
+  (get @*client-registry* registered-name))
+
+
+(defn with-client* [registered-name body-fn]
+  (if-let [client-config (lookup-client registered-name)]
+    (binding [*client* client-config]
+      (body-fn))
+    (raise "Error: no HTTP client registered with the given name [%s], currently registered names are: %s" registered-name (clojure.string/join "," (keys @*client-registry*)))))
+
+(defmacro with-client [registered-name & body]
+  `(with-client* ~registered-name
+     (fn [] ~@body)))
+
+(defn make-get-request [path]
+  (let [scheme   (:scheme *client*)
+        host     (:host   *client*)
+        port     (:port   *client*)
+        base-url (:base-url *client*)
+        path     (format "%s/%s" base-url path)]
+    (aprog1
+        (GetMethod.)
+      (.setURI it (URI. scheme nil host port path))
+      (doseq [[hdr-name hdr-val] (:request-headers *client*)]
+        (.setRequestHeader it (name hdr-name) hdr-val)))))
+
+(defn client-get [#^String url & params]
+  (let [get-method        (make-get-request url)
+        name-value-pairs  (map->name-value-pair-vec (second params))]
+    (.setQueryString get-method name-value-pairs)
+    ;;(printf "do-get: qs=%s" (.getQueryString get-method))
+    (let [return-code   (.executeMethod (:ua *client*) get-method )
+          response-body (.getResponseBodyAsString get-method)]
+      ;;(println (format "Return Code: %s" return-code))
+      ;;(println (format "Respone: %s" response-body ))
+      {:return-code   return-code
+       :response-body response-body
+       :http-method   get-method})))
+
+
 ;;   (do-post (user-agent) "http://localhost:10001" :body "some stuff!")
 
 ;;; (defn do-get [user-agent ])
 
 (comment
+
+  (register-client :cai-api.v1
+                   {:host            "localhost"
+                    :port            8098
+                    :scheme          "http"
+                    :base-url        "/api/cai/v1"
+                    :request-headers {:xx-relay-api-key "782d7862-795a-4057-99e5-f660ec5b2038"}})
+
+
+  (with-client :cai-api.v1
+    (client-get "398078711/144/RN_TEST_CITI_WS_ALLTEL|relayapitest1/bal"))
+
 
   @*foo*
 
