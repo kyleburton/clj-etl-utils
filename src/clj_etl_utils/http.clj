@@ -2,6 +2,7 @@
     ^{:doc "Wrapper around Jakarta's HTTP Client."
       :author "Kyle Burton"}
   clj-etl-utils.http
+  (require clojure.string)
   (:use [clj-etl-utils.lang-utils :only [raise assert-allowed-keys! rest-params->map aprog1]])
   (:import
    [org.apache.commons.httpclient Credentials Header HttpClient UsernamePasswordCredentials NameValuePair URI]
