@@ -108,7 +108,7 @@
 (defn register-client [client-name config-map]
   (swap! *client-registry*
          assoc client-name
-         (apply user-agent (mapcat identity config-map))))
+         config-map))
 
 (defn lookup-client [registered-name]
   (get @*client-registry* registered-name))
@@ -141,7 +141,7 @@
         name-value-pairs  (map->name-value-pair-vec (second params))]
     (.setQueryString get-method name-value-pairs)
     ;;(printf "do-get: qs=%s" (.getQueryString get-method))
-    (let [return-code   (.executeMethod (:ua *client*) get-method )
+    (let [return-code   (.executeMethod (:ua (apply user-agent (mapcat identity *client*))) get-method )
           response-body (.getResponseBodyAsString get-method)]
       ;;(println (format "Return Code: %s" return-code))
       ;;(println (format "Respone: %s" response-body ))
@@ -165,7 +165,7 @@
 
 
   (with-client :cai-api.v1
-    (client-get "398078711/144/RN_TEST_CITI_WS_ALLTEL|relayapitest1/bal"))
+    (client-get "398078711~RN_TEST_CITI_WS_ALLTEL|relayapitest1/bal"))
 
 
   @*foo*
