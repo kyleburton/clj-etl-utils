@@ -1,7 +1,7 @@
 (ns
     ^{:doc "I/O Utilities"
       :author "Kyle Burton"}
-    clj-etl-utils.io
+  clj-etl-utils.io
   (:use [clj-etl-utils.lang-utils :only (raise log)])
   (:require [clojure.contrib.shell-out           :as sh])
   (:import
@@ -165,7 +165,7 @@ marking, it will be reset back so that the bytes are not actually read."
 (defn
   ^{:doc   "Drain a buffered reader into a sequence."
     :added "1.0.0"}
-    drain-line-reader
+  drain-line-reader
   [#^java.io.BufferedReader rdr]
   (loop [res []
          line (.readLine rdr)]
@@ -248,16 +248,31 @@ marking, it will be reset back so that the bytes are not actually read."
   (let [f (java.io.File. (str path))]
     (if (not (.exists f))
       (do
-        ;(log "[INFO] mkdir: creating %s" path)
+                                        ;(log "[INFO] mkdir: creating %s" path)
         (.mkdirs f)
         true)
       (if (not (.isDirectory f))
         (do
-          ;(log "[WARN] mkdir: %s exists and is not a directory!" path)
+                                        ;(log "[WARN] mkdir: %s exists and is not a directory!" path)
           false)
         (do
-          ;(log "[DEBUG] mkdir: exists: %s" path)
+                                        ;(log "[DEBUG] mkdir: exists: %s" path)
           true)))))
+
+;; NB: Should be able to specify read/write/exec perms per-subdirectory
+(defn mkdir-p [dirs perm owner-only]
+  (loop [dir      [(first dirs)]
+         sub-dirs (next dirs)]
+    (let [next-dir (java.io.File. (clojure.contrib.string/join "/" dir ))]
+      (.mkdir next-dir)
+      (.setReadable next-dir perm owner-only)
+      (.setWritable next-dir perm owner-only)
+      (.setExecutable next-dir perm owner-only))
+
+    (if-not (empty? sub-dirs)
+      (recur (conj dir (first sub-dirs))
+             (next sub-dirs)))))
+
 
 (defmulti  exists? class)
 (defmethod exists? String   [#^String s] (.exists (File. s)))
@@ -401,17 +416,17 @@ marking, it will be reset back so that the bytes are not actually read."
 
 (defn byte-partitions-at-line-boundaries [#^String file-name desired-block-size-bytes]
   (with-open [fp (RandomAccessFile. file-name "r")]
-   (let [file-length (.length fp)]
-     (loop [byte-positions [0]
-            next-seek-point desired-block-size-bytes]
-       (if (>= next-seek-point file-length)
-         (conj byte-positions file-length)
-         (do
-           (.seek fp next-seek-point)
-           (if (nil? (.readLine fp))
-             byte-positions
-             (recur (conj byte-positions (.getFilePointer fp))
-                    (+ (.getFilePointer fp) desired-block-size-bytes)))))))))
+    (let [file-length (.length fp)]
+      (loop [byte-positions [0]
+             next-seek-point desired-block-size-bytes]
+        (if (>= next-seek-point file-length)
+          (conj byte-positions file-length)
+          (do
+            (.seek fp next-seek-point)
+            (if (nil? (.readLine fp))
+              byte-positions
+              (recur (conj byte-positions (.getFilePointer fp))
+                     (+ (.getFilePointer fp) desired-block-size-bytes)))))))))
 
 
 (defn- bounded-input-stream-line-seq [#^BufferedReader bis]
@@ -465,7 +480,7 @@ marking, it will be reset back so that the bytes are not actually read."
 (comment
   (ensure-directory! "/tmp")
 
-)
+  )
 
 (defmulti ensure-directory-for-file! class)
 
@@ -478,7 +493,7 @@ marking, it will be reset back so that the bytes are not actually read."
 (comment
   (ensure-directory-for-file! "/tmp/foo/bar")
 
-)
+  )
 
 (defn rewind-to-line-boundary [^java.io.RandomAccessFile fp]
   (loop [fp fp]
@@ -508,70 +523,70 @@ marking, it will be reset back so that the bytes are not actually read."
     (rewind-to-line-boundary fp)
     (printf "line=%s\n" (.readLine fp)))
 
-)
+  )
 
 (defn seek-to-before-segment [^RandomAccessFile fp ^String value]
   (let [seek-size (* 1024 1024 1)]
-   (loop [curr-val (.readLine ^RandomAccessFile (rewind-to-line-boundary fp))]
-     (cond
-       (< (.compareTo ^String curr-val value) 0)
-       fp
+    (loop [curr-val (.readLine ^RandomAccessFile (rewind-to-line-boundary fp))]
+      (cond
+        (< (.compareTo ^String curr-val value) 0)
+        fp
 
-       (< (.getFilePointer fp) seek-size)
-       (do
-         (.seek fp 0)
-         fp)
+        (< (.getFilePointer fp) seek-size)
+        (do
+          (.seek fp 0)
+          fp)
 
-       :else
-       (do
-         (.seek fp (- (.getFilePointer fp)
-                      seek-size))
-         (recur (.readLine ^RandomAccessFile (rewind-to-line-boundary fp))))))))
+        :else
+        (do
+          (.seek fp (- (.getFilePointer fp)
+                       seek-size))
+          (recur (.readLine ^RandomAccessFile (rewind-to-line-boundary fp))))))))
 
 
 (defn stream-segment-lines [^String file-name start ^String value]
   (filter #(.startsWith ^String % value)
-   (bounded-input-stream-line-seq
-    (BufferedReader.
-     (InputStreamReader.
-      (doto (FileInputStream. file-name)
-        (.skip start)))))))
+          (bounded-input-stream-line-seq
+           (BufferedReader.
+            (InputStreamReader.
+             (doto (FileInputStream. file-name)
+               (.skip start)))))))
 
 ;; makes the assumption that a line starts with the index value and a tab and is sorted(!)
 (defn binary-search-index [^String value ^String idx-file]
   (with-open [fp (RandomAccessFile. idx-file "r")]
-   (loop [spos      0
-          epos      (.length fp)
-          max       256]
-     (.seek fp (/ (+ epos spos) 2))
-     (rewind-to-line-boundary fp)
-     (let [mid-point (long (/ (+ spos epos) 2))
-           [val-from-idx] (.split (.readLine fp) "\t")]
-       (cond
-         (zero? max)
-         nil
+    (loop [spos      0
+           epos      (.length fp)
+           max       256]
+      (.seek fp (/ (+ epos spos) 2))
+      (rewind-to-line-boundary fp)
+      (let [mid-point (long (/ (+ spos epos) 2))
+            [val-from-idx] (.split (.readLine fp) "\t")]
+        (cond
+          (zero? max)
+          nil
 
-         (= epos spos) ;; nowhere else to seek to
-         nil
+          (= epos spos) ;; nowhere else to seek to
+          nil
 
-         (= spos (.length fp))
-         nil
+          (= spos (.length fp))
+          nil
 
-         (= value val-from-idx)
-         (do
-           (seek-to-before-segment fp value)
-           (stream-segment-lines
-            idx-file
-            (.getFilePointer fp)
-            value))
+          (= value val-from-idx)
+          (do
+            (seek-to-before-segment fp value)
+            (stream-segment-lines
+             idx-file
+             (.getFilePointer fp)
+             value))
 
-         (< (.compareTo value val-from-idx) 0)
-         (recur spos      (long mid-point) (dec max))
+          (< (.compareTo value val-from-idx) 0)
+          (recur spos      (long mid-point) (dec max))
 
-         (= 1 (- epos spos))
-         nil
+          (= 1 (- epos spos))
+          nil
 
-         :else
-         (recur mid-point (long epos) (dec max)))))))
+          :else
+          (recur mid-point (long epos) (dec max)))))))
 
 
