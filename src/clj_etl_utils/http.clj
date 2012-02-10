@@ -101,7 +101,7 @@
        :http-method   post-method})))
 
 
-(def *client-registry* (atom {}))
+(defonce *client-registry* (atom {}))
 
 (def ^:dynamic *client* nil)
 

@@ -193,13 +193,10 @@ following actions are supported:
      ~@body
      res#))
 
-
 (defmacro aprog1 [res & body]
   `(let [~'it ~res]
      ~@body
      ~'it))
-
-
 
 (defmacro prog2 [fst res & body]
   `(do
@@ -215,6 +212,10 @@ following actions are supported:
      (let [~'it ~res]
        ~@body
        ~'it)))
+
+(defmacro aprogn [res & body]
+  `(let [~'it ~res]
+     ~@body))
 
 
 (defmacro with-hit-timer [[sym-name block-size] & body]
