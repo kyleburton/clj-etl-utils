@@ -34,6 +34,10 @@
 (defn lookup-cache-by-name [name]
   (get @*cache-registry* name))
 
+(defn purge-cache-named [n]
+  (reset! (:cache (lookup-cache-by-name n))
+          {}))
+
 (defn lookup-caches-by-tag [tag]
   (filter (fn [entry]
             (contains? (:tags entry) tag))
@@ -42,6 +46,9 @@
 (defn purge-standard-caches []
   (doseq [entry (lookup-caches-by-tag :standard)]
     (reset! (:cache entry) {})))
+
+
+;;
 
 (comment
 
