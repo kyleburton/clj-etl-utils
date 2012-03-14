@@ -261,6 +261,21 @@
         (str 1 num)
         num))))
 
+
+(defn snake-case [s]
+  (.toString
+   (reduce
+    (fn [b c]
+      (if (Character/isUpperCase c)
+        (do
+          (.append b "-")
+          (.append b (clojure.string/lower-case c)))
+        (.append b c)))
+    (StringBuilder.)
+    (name s))))
+
+
+
 (comment
   (.format (java.text.NumberFormat/getCurrencyInstance) -1234)
   (format-as-currency -1234 :currency-with-negative)
