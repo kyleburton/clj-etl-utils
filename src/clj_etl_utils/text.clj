@@ -7,46 +7,75 @@
   (:import [org.apache.commons.lang WordUtils]
            [java.text NumberFormat]))
 
-(defn uc [#^String s] (.toUpperCase s))
-(defn lc [#^String s] (.toLowerCase s))
-(defmacro with-tmp-file [[var & [prefix suffix]] & body]
+(defn
+  ^{:doc "Convert string to upper case, null safe (returns empty string on null)."}
+      uc [#^String s]
+      (if (nil? s)
+        ""
+        (.toUpperCase s)))
+
+(defn
+  ^{:doc "Convert string to lower case, null safe (returns empty string on null)."}
+  lc [#^String s]
+  (if (nil? s)
+    ""
+    (.toLowerCase s)))
+
+(defmacro
+  ^{:doc "Binds a temporary file to the symbol indicated by var (java.io.File/createTempFile).
+prefix and suffix default to \"pfx\" and \"sfx\" respectively.  Note that this macro does not
+create or clean up the actual temporary file itself.
+  "}
+  with-tmp-file [[var & [prefix suffix]] & body]
   `(let [prefix# ~prefix
          suffix# ~suffix
          ~var (java.io.File/createTempFile (or prefix# "pfx") (or suffix# "sfx"))]
      ~@body))
 
-(defn md5->string [bytes]
+(defn
+  ^{:doc "Compute the MD5 sum of a byte buffer, returning it as a hex-encoded string."}
+  md5->string [bytes]
   (let [digester (java.security.MessageDigest/getInstance "MD5")]
     (.update digester bytes)
     (apply str (map (fn [byte]
                       (Integer/toHexString (bit-and 0xFF byte)))
                     (.digest digester)))))
 
-(defn sha1->string [bytes]
+(defn
+  ^{:doc "Compute the SHA1 sum of a byte buffer, returning it as a hex-encoded string."}
+  sha1->string [bytes]
   (let [digester (java.security.MessageDigest/getInstance "SHA1")]
     (.update digester bytes)
     (apply str (map (fn [byte]
                       (Integer/toHexString (bit-and 0xFF byte)))
                     (.digest digester)))))
 
-;; (md5->string (.getBytes "foo bar\n"))
-;; (sha1->string (.getBytes "foo bar\n"))
-
-(defn security-providers-type-algorithm-seq []
+(defn
+  ^{:doc "Returns a sequence of all the security providers available in the current JVM.
+The sequence consists of pairs of [provider-type provider-algorithm]"}
+  security-providers-type-algorithm-seq []
   (mapcat (fn [provider]
             (map (fn [svc]
                    [(.getType svc) (.getAlgorithm svc)])
                  (.getServices provider)))
           (java.security.Security/getProviders)))
 
-(defn security-providers-types []
+(defn
+  ^{:doc "Returns a seq of all of the provider types available in the current JVM."}
+  security-providers-types []
   (vec (set (map first (security-providers-type-algorithm-seq)))))
 
-(defn security-providers-for-type [type]
+(defn
+  ^{:doc "Filters security-providers-type-algorithm-seq for those that match the given type.
+  (security-providers-for-type \"MessageDigest\")
+  "}
+  security-providers-for-type [type]
   (filter #(= (first %) type)
           (security-providers-type-algorithm-seq)))
 
-(defn message-digest-algorithms []
+(defn
+  ^{:doc "Sequence of all the MessageDigest providers available in the current JVM."}
+  message-digest-algorithms []
   (security-providers-for-type "MessageDigest"))
 
 (comment
@@ -57,42 +86,58 @@
 
   )
 
-(defn string->sha1 [s]
+(defn
+  ^{:doc "Compute and return the SHA1 sum of the given string, returned as a hex-encoded string."}
+  string->sha1 [^String s]
   (sha1->string (.getBytes s)))
 
-(defn string->md5 [s]
+(defn
+  ^{:doc "Compute and return the MD5 sum of the given string, returned as a hex-encoded string."}
+  string->md5 [^String s]
   (md5->string (.getBytes s)))
 
 
-(defn sha256->string [bytes]
+(defn
+  ^{:doc "Compute and return the SHA256 sum of the given byte array, returned as a hex-encoded string."}
+  sha256->string [bytes]
   (let [digester (java.security.MessageDigest/getInstance "SHA-256")]
     (.update digester bytes)
     (apply str (map (fn [byte]
                       (Integer/toHexString (bit-and 0xFF byte)))
                     (.digest digester)))))
 
-(defn string->sha256 [s]
+(defn
+  ^{:doc "Compute and return the SHA256 sum of the given string, returned as a hex-encoded string."}
+  string->sha256 [s]
   (sha256->string (.getBytes s)))
 
 
-(defn sha384->string [bytes]
+(defn
+  ^{:doc "Compute and return the SHA384 sum of the byte array, returned as a hex-encoded string."}
+  sha384->string [bytes]
   (let [digester (java.security.MessageDigest/getInstance "SHA-384")]
     (.update digester bytes)
     (apply str (map (fn [byte]
                       (Integer/toHexString (bit-and 0xFF byte)))
                     (.digest digester)))))
 
-(defn string->sha384 [s]
+(defn
+  ^{:doc "Compute and return the SHA384 sum of the given string, returned as a hex-encoded string."}
+  string->sha384 [s]
   (sha384->string (.getBytes s)))
 
-(defn sha512->string [bytes]
+(defn
+  ^{:doc "Compute and return the SHA512 sum of the byte array, returned as a hex-encoded string."}
+  sha512->string [bytes]
   (let [digester (java.security.MessageDigest/getInstance "SHA-512")]
     (.update digester bytes)
     (apply str (map (fn [byte]
                       (Integer/toHexString (bit-and 0xFF byte)))
                     (.digest digester)))))
 
-(defn string->sha512 [s]
+(defn
+  ^{:doc "Compute and return the SHA512 sum of the given string, returned as a hex-encoded string."}
+  string->sha512 [s]
   (sha512->string (.getBytes s)))
 
 (comment
@@ -120,11 +165,20 @@
 
 
 ;; TODO this doesn't belong in text.clj, couldn't think of a better place for it
-(defn now-milliseconds []
+(defn
+  ^{:doc "Current time in milliseconds."}
+  now-milliseconds []
   (.getTime (java.util.Date.)))
 
 
-(defn substr [^String s start & [end]]
+(defn
+  ^{:doc "Substring that supports negative starting positions (negative takes the last N'th characters from the right-hand side of the string).
+
+  (substr \"the quick brown fox\" 10) => \"brown fox\"
+  (substr \"the quick brown fox\" -3) => \"fox\"
+
+  "}
+  substr [^String s start & [end]]
   (cond
     (and (< start 0)
          (not end))
@@ -166,17 +220,33 @@
 ;;     return String.format("%.1f %sB ", bytes / Math.pow(unit, exp), pre);
 ;; }"
 
-(defn human-readable-byte-count
-  ([bytes]
-     (human-readable-byte-count bytes false))
-  ([bytes use-si]
-     "Taken from: http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-into-human-readable-format-in-java"
+(defn
+  ^{:doc "Prodcues a human-readable (friendly unit sizes) count of the number of bytes provided (as a string).
+
+  (human-readable-byte-count 1023)                                    \"1023B\"
+  (human-readable-byte-count 1024)                                    \"1.00KiB\"
+  (human-readable-byte-count (* 1024 1024))                           \"1.00MiB\"
+  (human-readable-byte-count (* 1024 1024 1024))                      \"1.00GiB\"
+  (human-readable-byte-count (+ 1 (* 1024 1024 1024)))                \"1.00GiB\"
+  (human-readable-byte-count (* 1024 1024 1024 1024))                 \"1.00TiB\"
+  (human-readable-byte-count (* 1024 1024 1024 1024 1024))            \"1.00PiB\"
+  (human-readable-byte-count (* 1024 1024 1024 1024 1024 1024))       \"1.00EiB\"
+  (human-readable-byte-count (* 1024 1024 1024 1024 1024 1024 1024)) => Error, no Si prefix for this size
+
+
+Taken from: http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-into-human-readable-format-in-java
+
+"}
+  human-readable-byte-count
+  ([nbytes]
+     (human-readable-byte-count nbytes false))
+  ([nbytes use-si]
      (let [unit (if use-si 1000 1024)
-           exp (int (/ (Math/log bytes) (Math/log unit)))]
-       (if (< bytes unit)
-         (str bytes "B")
+           exp (int (/ (Math/log nbytes) (Math/log unit)))]
+       (if (< nbytes unit)
+         (str nbytes "B")
          (format "%.2f%sB"
-                 (/ bytes (Math/pow unit exp))
+                 (/ nbytes (Math/pow unit exp))
                  (str
                   (.charAt
                    (if use-si
@@ -187,8 +257,21 @@
                     ""
                     "i")))))))
 
+(comment
 
-(defn word-split
+
+)
+
+
+(defn
+  ^{:doc "Wrap a string (sentence or paragraph) at a maximum length.
+
+  (word-split \"This is a long sentence, if it were documentation someone would be happy and someone would be unsatisified.  That is the way of things.\" 50)
+    =>
+    (\"This is a long sentence, if it were documentation\" \"someone would be happy and someone would be\" \"unsatisified.  That is the way of things.\")
+
+"}
+  word-split
   ([str size]
      (word-split str size "\0"))
   ([str size delim]
@@ -204,20 +287,27 @@
          delim)))))
 
 
+(comment
+
+
+)
+
+
 (def *formatter-setters*
      {:negative-prefix (fn [#^NumberFormat nf x] (.setNegativePrefix nf x))
       :negative-suffix (fn [#^NumberFormat nf x] (.setNegativeSuffix nf x))
       :positive-prefix (fn [#^NumberFormat nf x] (.setPositivePrefix nf x))
       :positive-suffix (fn [#^NumberFormat nf x] (.setPositiveSuffix nf x))})
 
-(defn apply-format-setter [#^NumberFormat nf k v]
+(defn
+  ^{:doc ""}
+  apply-format-setter [#^NumberFormat nf k v]
   (if-not (contains? *formatter-setters* k)
     (raise "set-formatter-option: option not yet implemented: %s" k))
   ((get *formatter-setters* k) nf v)
   nf)
 
 (declare *default-formatters*)
-
 
 (defn get-currency-formatter [opts-or-keyword]
   (cond
