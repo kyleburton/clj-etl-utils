@@ -3,7 +3,8 @@
       :author "Kyle Burton"}
   clj-etl-utils.io
   (:use [clj-etl-utils.lang-utils :only (raise log)])
-  (:require [clojure.contrib.shell-out           :as sh])
+  (:require [clojure.contrib.shell-out           :as sh]
+            clojure.contrib.string)
   (:import
    [java.io
     InputStream FileInputStream File InputStreamReader RandomAccessFile
