@@ -41,36 +41,36 @@
 
 (defmulti raise raise-dispatch-fn
   #_(fn [& [fst snd thrd & rst]]
-    (cond
-      ;;       (and (isa? (class fst) Exception)
-      ;;            (isa? (class snd) Class)
-      ;;            (isa? (class thrd) String))
-      ;;       [:type-to-throw :caused-by :fmt-and-args]
+      (cond
+        ;;       (and (isa? (class fst) Exception)
+        ;;            (isa? (class snd) Class)
+        ;;            (isa? (class thrd) String))
+        ;;       [:type-to-throw :caused-by :fmt-and-args]
 
-      ;;       (and (isa? (class fst) Class)
-      ;;            (isa? (class snd) Exception)
-      ;;            (isa? (class thrd) String))
-      ;;       [:caused-by :type-to-throw :fmt-and-args]
+        ;;       (and (isa? (class fst) Class)
+        ;;            (isa? (class snd) Exception)
+        ;;            (isa? (class thrd) String))
+        ;;       [:caused-by :type-to-throw :fmt-and-args]
 
-      (and
-       (isa? (class fst) Throwable)
-       (isa? (class snd) String)
-       thrd)
-      [:caused-by :fmt-and-args]
+        (and
+         (isa? (class fst) Throwable)
+         (isa? (class snd) String)
+         thrd)
+        [:caused-by :fmt-and-args]
 
-      (and
-       (isa? (class fst) Throwable)
-       (isa? (class snd) String)
-       (not thrd))
-      [:caused-by :msg]
+        (and
+         (isa? (class fst) Throwable)
+         (isa? (class snd) String)
+         (not thrd))
+        [:caused-by :msg]
 
-      (and
-       (isa? (class fst) String)
-       snd)
-      [:fmt-and-args]
+        (and
+         (isa? (class fst) String)
+         snd)
+        [:fmt-and-args]
 
-      :else
-      :default)))
+        :else
+        :default)))
 
 
 (defmethod raise
@@ -286,9 +286,9 @@ following actions are supported:
 
 (defmacro restructure-map [& vars]
   (reduce (fn [accum var]
-              (assoc accum (keyword var) var))
-            {}
-            vars))
+            (assoc accum (keyword var) var))
+          {}
+          vars))
 
 
 (defmacro defn! [fn-name arg-spec & body]
@@ -321,14 +321,14 @@ following actions are supported:
 ;; SRFI-??s cut macro
 (defn- cutpoint? [thing]
   (let [sthing (str thing)]
-   (if (or (= '<> thing)
-           (and (.startsWith sthing "<")
-                (.endsWith   sthing ">")))
-     (let [pfx (.replaceAll sthing "[<>]" "")]
-       (if (empty? pfx)
-         (gensym)
-         (gensym (str pfx "-"))))
-     nil)))
+    (if (or (= '<> thing)
+            (and (.startsWith sthing "<")
+                 (.endsWith   sthing ">")))
+      (let [pfx (.replaceAll sthing "[<>]" "")]
+        (if (empty? pfx)
+          (gensym)
+          (gensym (str pfx "-"))))
+      nil)))
 
 (defmacro cut [f & arg-sig]
   (let [gsyms (map cutpoint? (filter cutpoint? arg-sig))
@@ -360,4 +360,11 @@ following actions are supported:
 
   (%< format <format-string> "this")
 
-)
+  )
+
+(defmacro assoc-if [test m & kvs]
+  `(if ~test
+     (assoc ~m ~@kvs)
+     ~m))
+
+
