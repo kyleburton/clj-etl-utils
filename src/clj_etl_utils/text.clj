@@ -5,7 +5,8 @@
   (:use [clj-etl-utils.lang-utils  :only [raise]])
   (:require    [clojure.contrib.str-utils        :as str-utils])
   (:import [org.apache.commons.lang WordUtils]
-           [java.text NumberFormat]))
+           [java.text NumberFormat]
+           [org.apache.commons.codec.binary Base64]))
 
 (defn
   ^{:doc "Convert string to upper case, null safe (returns empty string on null)."}
@@ -364,6 +365,16 @@ Taken from: http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-
     (StringBuilder.)
     (name s))))
 
+
+(def encode-base64
+     (let [b (Base64.)]
+       (fn encode-base64 [raw]
+         (.encode b raw))))
+
+(def decode-base64
+     (let [b (Base64.)]
+       (fn decode-base64 [coded]
+         (.decode b coded))))
 
 
 (comment
