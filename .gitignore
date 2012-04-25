@@ -8,3 +8,4 @@ out.txt
 README.html
 autodoc/
 .lein-deps-sum
+.lein-plugins
