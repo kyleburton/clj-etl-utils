@@ -1,4 +1,4 @@
-(defproject org.clojars.kyleburton/clj-etl-utils "1.0.49"
+(defproject org.clojars.kyleburton/clj-etl-utils "1.0.48-SNAPSHOT"
   :description "ETL Utilities"
   :url         "http://github.com/kyleburton/clj-etl-utils"
   :license {:name         "Eclipse Public License - v 1.0"
@@ -9,7 +9,7 @@
   :warn-on-reflection   true
   :local-repo-classpath true
   :jvm-opts             ["-Xmx512M"]
-  :plugins [[lein-release/lein-release "1.0.1-SNAPSHOT"]]
+  :plugins [[lein-release/lein-release "1.0.0"]]
   :dev-dependencies [[swank-clojure   "1.4.0-SNAPSHOT"]
                    ;;[autodoc       "0.7.1"]
                      [lein-marginalia "0.6.0"]]
