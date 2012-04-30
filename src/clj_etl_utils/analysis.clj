@@ -2,10 +2,8 @@
     work with delimited and fixed width files, such as database dumps,
     log data and other exports."
       :author "Kyle Burton"}
-  clj-etl-utils.analysis
-  (:require
-   [clojure.contrib.duck-streams :as ds]
-   [fleet :as fleet]))
+  clj-etl-utils.analysis)
+
 
 (defn ^{:doc "Given a sequence of records (a sequence of vectors),
   this function will track the maximum length string seen in each column
@@ -21,21 +19,6 @@ of the records of the sequence."
                    m
                    (range 0 (count rec))))]
     (reduce track-counts {} rec-seq)))
-
-(comment
-
-  (def *example-data* "field1\tfield2\tfield3
-This\ttaht\tother
-\t\t
-some more stuff\tand yet more\tfinal field
-the quick brown\t fox jumped over\t the lazy\t toad
-\tguns\t germs\t steel")
-
-  (def *example-recs* (map (fn [l] (vec (.split l "\t"))) (.split *example-data* "\\n")))
-
-  (max-col-lens *example-recs*)
-
-)
 
 (defn
   ^{:doc "Given a counts map (see: max-col-lens), and a vector of the header

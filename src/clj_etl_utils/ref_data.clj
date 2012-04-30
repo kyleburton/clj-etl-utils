@@ -9,7 +9,7 @@ Some of the sources:
       :author "Kyle Burton"}
     clj-etl-utils.ref-data
     (:require
-     clojure.contrib.duck-streams))
+     clojure.java.io ))
 
 
 
@@ -1741,25 +1741,11 @@ Some of the sources:
             (not (.contains l "Street Suffixes"))))
          (clj-etl-utils.landmark-parser/table-rows *abbrs-segment*))))
 
-  (require 'clojure.contrib.duck-streams)
-  (require 'clojure.contrib.string)
-
-  (with-open [outp (clojure.contrib.duck-streams/writer "resources/clj_etl_utils/ref_data/usps-abbreviations.tab")]
-    (let [write-rec (fn [r]
-                      (.println outp (clojure.contrib.string/join "\t" r)))]
-      (write-rec ["PRIMARY_NAME" "COMMON_ABBREVIATION" "USPS_ABBREVIATION"])
-      (doseq [rec (map
-                   #(vec (.split %1 "\\s+" 3))
-                   (filter
-                    #(.matches % "^[A-Z]+\\s+[A-Z]+\\s+[A-Z]+$")
-                    *rows*))]
-        (write-rec rec))))
-
 
   )
 
 (defn generate-iso-3-xsd []
-    (with-open [outp (clojure.contrib.duck-streams/writer "resources/xsd/iso-3-country-codes.xsd")]
+    (with-open [outp (clojure.java.io/writer "resources/xsd/iso-3-country-codes.xsd")]
     (.println outp "<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
     (.println outp (str "<!--
 See: http://en.wikipedia.org/w/index.php?title=ISO_3166-1_alpha-3&oldid=422511645
@@ -1796,7 +1782,7 @@ Generated: " (java.util.Date.) "
 ")))
 
 (defn generate-iso-2-xsd []
-    (with-open [outp (clojure.contrib.duck-streams/writer "resources/xsd/iso-2-country-codes.xsd")]
+    (with-open [outp (clojure.java.io/writer "resources/xsd/iso-2-country-codes.xsd")]
     (.println outp "<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
     (.println outp (str "<!--
 See: http://en.wikipedia.org/w/index.php?title=ISO_3166-2&oldid=419867458

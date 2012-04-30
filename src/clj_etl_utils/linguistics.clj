@@ -1,5 +1,4 @@
 (ns clj-etl-utils.linguistics
-  (:require [clojure.contrib.duck-streams :as ds])
   (:use
    [clj-etl-utils.lang-utils :only [raise]])
   (:import [com.rn.codec Nysiis]
@@ -11,13 +10,17 @@
 ;; see: http://norvig.com/spell-correct.html
 (def *dict-file* "/usr/share/dict/words")
 
+(defn read-lines [file-name]
+  (with-open [rdr (clojure.java.io/reader )]
+    (line-seq rdr)))
+
 (defn load-dictionary [file]
   (reduce
    (fn [s l]
      (conj s (.toLowerCase l)))
    #{}
    (filter
-    #(not (empty? %1)) (ds/read-lines file))))
+    #(not (empty? %1)) (read-lines file))))
 
 
 (def *dict* (atom nil))

@@ -3,21 +3,21 @@
       :author "Kyle Burton"}
   clj-etl-utils.text
   (:use [clj-etl-utils.lang-utils  :only [raise]])
-  (:require    [clojure.contrib.str-utils        :as str-utils])
+  (:require    [clojure.string     :as string])
   (:import [org.apache.commons.lang WordUtils]
            [java.text NumberFormat]
            [org.apache.commons.codec.binary Base64]))
 
 (defn
   ^{:doc "Convert string to upper case, null safe (returns empty string on null)."}
-      uc [#^String s]
+      uc [^String s]
       (if (nil? s)
         ""
         (.toUpperCase s)))
 
 (defn
   ^{:doc "Convert string to lower case, null safe (returns empty string on null)."}
-  lc [#^String s]
+  lc [^String s]
   (if (nil? s)
     ""
     (.toLowerCase s)))
@@ -295,14 +295,14 @@ Taken from: http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-
 
 
 (def *formatter-setters*
-     {:negative-prefix (fn [#^NumberFormat nf x] (.setNegativePrefix nf x))
-      :negative-suffix (fn [#^NumberFormat nf x] (.setNegativeSuffix nf x))
-      :positive-prefix (fn [#^NumberFormat nf x] (.setPositivePrefix nf x))
-      :positive-suffix (fn [#^NumberFormat nf x] (.setPositiveSuffix nf x))})
+     {:negative-prefix (fn [^NumberFormat nf x] (.setNegativePrefix nf x))
+      :negative-suffix (fn [^NumberFormat nf x] (.setNegativeSuffix nf x))
+      :positive-prefix (fn [^NumberFormat nf x] (.setPositivePrefix nf x))
+      :positive-suffix (fn [^NumberFormat nf x] (.setPositiveSuffix nf x))})
 
 (defn
   ^{:doc ""}
-  apply-format-setter [#^NumberFormat nf k v]
+  apply-format-setter [^NumberFormat nf k v]
   (if-not (contains? *formatter-setters* k)
     (raise "set-formatter-option: option not yet implemented: %s" k))
   ((get *formatter-setters* k) nf v)
@@ -347,7 +347,7 @@ Taken from: http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-
 (defn canonical-phone-number [mobile-number]
   (if (nil? mobile-number)
     ""
-    (let [num (str-utils/re-gsub *rx-clean-phone-number* "" mobile-number)]
+    (let [num   (clojure.string/replace mobile-number  *rx-clean-phone-number* "")]
       (if (= 10 (count num))
         (str 1 num)
         num))))
