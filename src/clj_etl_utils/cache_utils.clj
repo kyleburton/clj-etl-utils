@@ -28,7 +28,7 @@
 ;; The first supported type for this module is :standard
 ;; which represents a standard memoize based cache.
 
-(defn register-cache [name #^java.util.Set tags cache-ref]
+(defn register-cache [name ^java.util.Set tags cache-ref]
   (swap! *cache-registry* assoc name {:name name :tags tags :cache cache-ref}))
 
 (defn lookup-cache-by-name [name]

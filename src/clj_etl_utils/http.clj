@@ -2,7 +2,6 @@
     ^{:doc "Wrapper around Jakarta's HTTP Client."
       :author "Kyle Burton"}
   clj-etl-utils.http
-  (require clojure.string)
   (:use [clj-etl-utils.lang-utils :only [raise assert-allowed-keys! rest-params->map aprog1]])
   (:import
    [org.apache.commons.httpclient Credentials Header HttpClient UsernamePasswordCredentials NameValuePair URI]
@@ -10,6 +9,7 @@
    [org.apache.commons.httpclient.methods InputStreamRequestEntity PostMethod GetMethod]
    [org.apache.commons.lang StringUtils]
    [java.io ByteArrayInputStream]))
+
 
 ;; TODO: support follow redirects in the various get/post methods
 ;; TODO: this needs to be carried as state somehow, and applied to

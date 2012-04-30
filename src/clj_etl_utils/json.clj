@@ -5,7 +5,7 @@
    [org.joda.time DateTime  ]
    [org.joda.time.format ISODateTimeFormat])
   (:use
-   [clojure.contrib.json  :only [Write-JSON]]))
+   [clojure.data.json  :only [Write-JSON]]))
 
 (extend java.sql.Timestamp Write-JSON
         {:write-json (fn [x #^PrintWriter out]
@@ -45,4 +45,7 @@
     (.print
      (ISODateTimeFormat/dateTime )
      (org.joda.time.DateTime. (:created_at (rn-db.core/find-first-by :wall.actions {:id 5664})))))
+
+  (require 'clojure.data.json)
+  (clojure.data.json/Write-JSON)
   )
