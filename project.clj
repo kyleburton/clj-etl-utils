@@ -10,6 +10,7 @@
   :local-repo-classpath true
   :jvm-opts             ["-Xmx512M"]
   :plugins [[lein-release/lein-release "1.0.0"]]
+  :lein-release {:deploy-via :clojars}
   :dev-dependencies [[swank-clojure   "1.4.0-SNAPSHOT"]
                    ;;[autodoc       "0.7.1"]
                      [lein-marginalia "0.6.0"]]
