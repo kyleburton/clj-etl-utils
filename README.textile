@@ -1,5 +1,7 @@
 h1. clj-etl-utils
 
+The master branc is for Clojure 1.3 suport.  All clj-etl-utils versions released from this branch shall have a 1.3.x version numbering scheme.  Clojure 1.2 support will be on the clojure-1.2 branch.
+
 h2. Testing
 
 ETL Utilities for Clojure.  This library began with functions that worked with data on disk, such as database dumps and log files, at least that was the original purpose of the library, it has since grown to include other utilities.
