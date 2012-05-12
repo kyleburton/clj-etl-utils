@@ -4,7 +4,7 @@
   clj-etl-utils.lang-utils
   (:import [org.apache.commons.io IOUtils]
            [java.net InetAddress])
-  (:use    [clojure.contrib.core  :only [-?>]]))
+  (:use    [clojure.core.incubator  :only [-?>]]))
 
 (defn- raise-dispatch-fn [& [fst snd thrd & rst]]
   (cond
@@ -75,17 +75,17 @@
 
 (defmethod raise
   [:caused-by :fmt-and-args]
-  [#^Throwable caused-by #^String fmt & args]
+  [^Throwable caused-by ^String fmt & args]
   (throw (RuntimeException. (apply format fmt args) caused-by)))
 
 (defmethod raise
   [:caused-by :msg]
-  [#^Throwable caused-by #^String msg]
+  [^Throwable caused-by ^String msg]
   (throw (RuntimeException. msg caused-by)))
 
 (defmethod raise
   [:fmt-and-args]
-  [#^String fmt & args]
+  [^String fmt & args]
   (throw (RuntimeException. (apply format fmt args))))
 
 (defmethod raise
@@ -184,8 +184,6 @@ following actions are supported:
           (let [nextval (.incrementAndGet ctr)]
             (if (= 0 (mod nextval count))
               (apply f action nextval args))))))))
-
-
 
 
 (defmacro prog1 [res & body]
