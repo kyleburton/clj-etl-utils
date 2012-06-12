@@ -2,6 +2,7 @@
     ^{:doc "Wrapper around Jakarta's HTTP Client."
       :author "Kyle Burton"}
   clj-etl-utils.http
+  (require clojure.string)
   (:use [clj-etl-utils.lang-utils :only [raise assert-allowed-keys! rest-params->map aprog1]])
   (:import
    [org.apache.commons.httpclient Credentials Header HttpClient UsernamePasswordCredentials NameValuePair URI]
@@ -9,7 +10,6 @@
    [org.apache.commons.httpclient.methods InputStreamRequestEntity PostMethod GetMethod]
    [org.apache.commons.lang StringUtils]
    [java.io ByteArrayInputStream]))
-
 
 ;; TODO: support follow redirects in the various get/post methods
 ;; TODO: this needs to be carried as state somehow, and applied to
@@ -36,7 +36,7 @@
   user-agent [& params]
   (let [params (rest-params->map params)
         ua (HttpClient.)]
-    (assert-allowed-keys! params [:follow-redirects :basic-auth :scheme :host :port :base-url :request-headers])
+    (assert-allowed-keys! params [:follow-redirects :basic-auth :scheme :host :port :base-url :request-headers :allow-circular-redirects])
     (if-let [auth-info (:basic-auth params)]
       (do
         (.setAuthenticationPreemptive (.getParams ua) true)
@@ -48,6 +48,10 @@
           (:auth-port  params AuthScope/ANY_PORT)
           (:auth-realm params AuthScope/ANY_REALM))
          (UsernamePasswordCredentials. (:user auth-info) (:pass auth-info)))))
+    (when (:allow-circular-redirects params)
+      (let [http-params (org.apache.commons.httpclient.params.HttpClientParams.)]
+        (.setParameter http-params org.apache.commons.httpclient.params.HttpClientParams/ALLOW_CIRCULAR_REDIRECTS true)
+        (.setParams ua http-params)))
     (assoc params :ua ua)))
 
 ;; TODO: this helper fn belongs in lang.clj
@@ -66,6 +70,8 @@
   (let [get-method        (GetMethod. url)
         name-value-pairs  (map->name-value-pair-vec (second params))]
     (.setQueryString get-method name-value-pairs)
+    (if (contains? ua :follow-redirects)
+      (.setFollowRedirects get-method true))
     ;;(printf "do-get: qs=%s" (.getQueryString get-method))
     (let [return-code   (.executeMethod (:ua ua) get-method )
           response-body (.getResponseBodyAsString get-method)]
@@ -82,6 +88,8 @@
 (defn do-post [#^HttpClient ua #^String url & params]
   (let [post-method (PostMethod. url)
         params      (rest-params->map params)]
+    (if (contains? ua :follow-redirects)
+      (.setFollowRedirects post-method true))
     (if (:params params)
       (.setRequestBody post-method (map->name-value-pair-vec (:params params))))
     (if (:body params)
