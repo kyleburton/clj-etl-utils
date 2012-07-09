@@ -20,7 +20,7 @@
 ;;
 ;;   `(register-cache :clj-etl-utils.cache-utils.my-function #{:standard} (atom {}))`
 ;;
-(defonce *cache-registry* (atom {}))
+(defonce cache-registry (atom {}))
 
 ;; ### Cache Tags
 ;;
@@ -29,10 +29,10 @@
 ;; which represents a standard memoize based cache.
 
 (defn register-cache [name ^java.util.Set tags cache-ref]
-  (swap! *cache-registry* assoc name {:name name :tags tags :cache cache-ref}))
+  (swap! cache-registry assoc name {:name name :tags tags :cache cache-ref}))
 
 (defn lookup-cache-by-name [name]
-  (get @*cache-registry* name))
+  (get @cache-registry name))
 
 (defn purge-cache-named [n]
   (reset! (:cache (lookup-cache-by-name n))
@@ -41,7 +41,7 @@
 (defn lookup-caches-by-tag [tag]
   (filter (fn [entry]
             (contains? (:tags entry) tag))
-          (vals @*cache-registry*)))
+          (vals @cache-registry)))
 
 (defn purge-standard-caches []
   (doseq [entry (lookup-caches-by-tag :standard)]
