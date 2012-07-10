@@ -249,10 +249,18 @@ following actions are supported:
                         java.util.Map
                         clojure.lang.IFn}]
        (fn rec-bean [thing]
-         (if (or (nil? thing)
-                 (seq? thing)
-                 (primitive? (class thing)))
+         (cond
+           (or (nil? thing)
+               (primitive? (class thing)))
            thing
+
+           (or
+            (seq-like? thing)
+            (isa? (class thing) java.util.List)
+            (array? thing))
+           (vec (map rec-bean thing))
+
+           :thing-is-a-map
            (let [bn (dissoc (bean thing) :class)]
              (reduce (fn [res k]
                        (assoc res k
