@@ -8,7 +8,7 @@
 
 
 ;; see: http://norvig.com/spell-correct.html
-(def *dict-file* "/usr/share/dict/words")
+(def dict-file "/usr/share/dict/words")
 
 (defn read-lines [file-name]
   (with-open [rdr (clojure.java.io/reader )]
@@ -23,14 +23,14 @@
     #(not (empty? %1)) (read-lines file))))
 
 
-(def *dict* (atom nil))
+(def dict (atom nil))
 
 (defn in-dictionary? [word]
-  (if-not @*dict*
-    (reset! *dict* (load-dictionary *dict-file*)))
-  (not (nil? (get @*dict* (.toLowerCase word)))))
+  (if-not @dict
+    (reset! dict (load-dictionary dict-file)))
+  (not (nil? (get @dict (.toLowerCase word)))))
 
-(def *alphabet* (vec (drop 1 (.split "abcdefghijklmnopqrstuvwxyz" ""))))
+(def alphabet (vec (drop 1 (.split "abcdefghijklmnopqrstuvwxyz" ""))))
 
 (defn edist1 [word]
   (let [splits     (for [idx (range 0 (inc (count word)))]
@@ -44,10 +44,10 @@
                           (.substring b 0 1)
                           (.substring b 2)))
         replaces   (for [[a b] splits :when (not (empty? b))
-                         c     *alphabet*]
+                         c     alphabet]
                      (str a c (.substring b 1)))
         inserts    (for [[a b] splits
-                         c     *alphabet*]
+                         c     alphabet]
                      (str a c b))]
     (set (concat deletes transposes replaces inserts))))
 

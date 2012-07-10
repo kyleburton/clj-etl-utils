@@ -13,19 +13,19 @@
     (.nextBytes (java.security.SecureRandom.) it)))
 
 ;; Defaults
-(def *pbe-iteration-count*   65536)
-(def *pbe-key-length*        256)
-(def *cipher-algorithm*      "AES/CBC/PKCS5Padding")
-(def *key-factory-algorithm* "PBKDF2WithHmacSHA1")
-(def *key-encoding*          "AES")
+(def pbe-iteration-count   65536)
+(def pbe-key-length        256)
+(def cipher-algorithm      "AES/CBC/PKCS5Padding")
+(def key-factory-algorithm "PBKDF2WithHmacSHA1")
+(def key-encoding          "AES")
 
 (defn make-secret-key [password]
-  (let [key-factory  (SecretKeyFactory/getInstance *key-factory-algorithm*)
+  (let [key-factory  (SecretKeyFactory/getInstance key-factory-algorithm)
         key-spec     (PBEKeySpec. (.toCharArray password)
                                   (rand-salt 20)
-                                  *pbe-iteration-count*
-                                  *pbe-key-length*)]
-    (SecretKeySpec. (.getEncoded (.generateSecret key-factory key-spec)) *key-encoding*)))
+                                  pbe-iteration-count
+                                  pbe-key-length)]
+    (SecretKeySpec. (.getEncoded (.generateSecret key-factory key-spec)) key-encoding)))
 
 (defn get-init-vec-from-cipher [cipher]
   (-> cipher
@@ -35,10 +35,10 @@
 
 (defn make-cipher
   ([mode secret-key]
-     (doto (Cipher/getInstance *cipher-algorithm*)
+     (doto (Cipher/getInstance cipher-algorithm)
        (.init mode secret-key)))
   ([mode secret-key init-vec]
-     (doto (Cipher/getInstance *cipher-algorithm*)
+     (doto (Cipher/getInstance cipher-algorithm)
        (.init mode secret-key init-vec))))
 
 ;; Adapted from: http://stackoverflow.com/questions/992019/java-256-bit-aes-password-based-encryption
@@ -61,14 +61,14 @@
         ivec   (if (Base64/isBase64 init-vec)
                  (Base64/decodeBase64 init-vec)
                  init-vec)
-        cipher (make-cipher Cipher/DECRYPT_MODE (SecretKeySpec. skey *key-encoding*) (IvParameterSpec. ivec))]
+        cipher (make-cipher Cipher/DECRYPT_MODE (SecretKeySpec. skey key-encoding) (IvParameterSpec. ivec))]
     (with-open [istream (CipherInputStream. (FileInputStream. infile) cipher)
                 ostream (java.io.FileOutputStream. outfile)]
       (IOUtils/copy istream ostream))))
 
 
 (comment
-  (def *crypt-info* (file-encrypt "/home/superg/foo.txt" "/home/superg/foo.enc"))
+  (def crypt-info (file-encrypt "/home/superg/foo.txt" "/home/superg/foo.enc"))
 
-  (file-decrypt "/home/superg/foo.enc" "/home/superg/foo.dec" (:skey *crypt-info*) (:ivec *crypt-info*))
+  (file-decrypt "/home/superg/foo.enc" "/home/superg/foo.dec" (:skey crypt-info) (:ivec crypt-info))
   )

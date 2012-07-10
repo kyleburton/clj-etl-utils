@@ -30,12 +30,6 @@ names, this function replaces the numeric column indicies in the map returned by
           (counts-map idx)])
        (range 0 (count fields))))
 
-(comment
-
-  (translate-to-header-names-vec (max-col-lens (drop 1 *example-recs*))
-                                 (first *example-recs*))
-
-)
 
 (defn
   ^{:doc "Takes a sequences, returns a seq of column info, one per column.
@@ -63,9 +57,3 @@ remainder of the stream (not the header)."
      :type "character varying"
      :length max-size}))
 
-(comment
-
-
-  (analyze-column-data *example-recs*)
-
-)

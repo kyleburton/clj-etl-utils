@@ -6,11 +6,9 @@
        [clojure.string         :as str]
        [clj-etl-utils.ref-data :as ref-data]))
 
-;; *ns*
-
 
 ;; regexes, initial set pulled from Regex::Common CPAN module
-(def *common-regexes*
+(def common-regexes
      {:numeric
       {:real #"(?xism:(?:(?i)(?:[+-]?)(?:(?=[0123456789]|[.])(?:[0123456789]*)(?:(?:[.])(?:[0123456789]{0,}))?)(?:(?:[E])(?:(?:[+-]?)(?:[0123456789]+))|)))"
        :int #"(?xism:(?:(?:[+-]?)(?:[0123456789]+)))"
@@ -31,24 +29,24 @@
                      "(?xism:%s)"
                      (str/join
                       "|"
-                      (map first ref-data/*iso-3-country-codes*))))
+                      (map first ref-data/iso-3-country-codes))))
 
         :country-2 (Pattern/compile
                     (format
                      "(?xism:%s)"
                      (str/join
                       "|"
-                      (map first ref-data/*iso-2-country-codes*))))}
+                      (map first ref-data/iso-2-country-codes))))}
        :usa
        {:zip  #"^\d{5}[-\s]?(?:\d{4})?$"
         :zip? #"\d{5}[-\s]?(?:\d{4})?"
         ;; NB: same as zip, just using a consistent name
         :postal-code  #"^\d{5}[-\s]?(?:\d{4})?$"
         :postal-code? #"\d{5}[-\s]?(?:\d{4})?"
-        :state        (Pattern/compile (format "(?xism:%s)" (str/join "|" (map first ref-data/*us-states*))))
-        :state-name   (Pattern/compile (format "(?xism:%s)" (str/join "|" (map second ref-data/*us-states*))))
-        :airport-code (Pattern/compile (format "(?xism:%s)" (str/join "|" (map #(nth % 2) ref-data/*us-airport-codes*))))
-        :area-code    (Pattern/compile (format "(?xism:%s)" (str/join "|" ref-data/*us-area-codes*)))
+        :state        (Pattern/compile (format "(?xism:%s)" (str/join "|" (map first ref-data/us-states))))
+        :state-name   (Pattern/compile (format "(?xism:%s)" (str/join "|" (map second ref-data/us-states))))
+        :airport-code (Pattern/compile (format "(?xism:%s)" (str/join "|" (map #(nth % 2) ref-data/us-airport-codes))))
+        :area-code    (Pattern/compile (format "(?xism:%s)" (str/join "|" ref-data/us-area-codes)))
         :phone #"(?:1[- ]?)?\(?[2-9]\d{2}\)?[-\. ]?\d{3}[-\. ]?\d{4}(?:\s*(?:e|ex|ext|x|xtn|extension)?\s*\d*)"}
 
        :can
@@ -65,12 +63,12 @@
 
 
 (comment
-  (:zip *common-regexes*)
+  (:zip common-regexes)
 
   )
 
 (defn std-regex [& path]
-  (get-in *common-regexes* path))
+  (get-in common-regexes path))
 
 (defn std-regex-compose [& paths]
   (Pattern/compile (format "(?:%s)"
