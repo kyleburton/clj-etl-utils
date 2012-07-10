@@ -294,7 +294,7 @@ Taken from: http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-
 )
 
 
-(def *formatter-setters*
+(def formatter-setters
      {:negative-prefix (fn [^NumberFormat nf x] (.setNegativePrefix nf x))
       :negative-suffix (fn [^NumberFormat nf x] (.setNegativeSuffix nf x))
       :positive-prefix (fn [^NumberFormat nf x] (.setPositivePrefix nf x))
@@ -303,12 +303,12 @@ Taken from: http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-
 (defn
   ^{:doc ""}
   apply-format-setter [^NumberFormat nf k v]
-  (if-not (contains? *formatter-setters* k)
+  (if-not (contains? formatter-setters k)
     (raise "set-formatter-option: option not yet implemented: %s" k))
-  ((get *formatter-setters* k) nf v)
+  ((get formatter-setters k) nf v)
   nf)
 
-(declare *default-formatters*)
+(declare default-formatters)
 
 (defn get-currency-formatter [opts-or-keyword]
   (cond
@@ -318,17 +318,17 @@ Taken from: http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-
             (java.text.NumberFormat/getCurrencyInstance)
             opts-or-keyword)
     (keyword? opts-or-keyword)
-    (or (get @*default-formatters* opts-or-keyword)
+    (or (get @default-formatters opts-or-keyword)
         (raise "Error: formatter not found for keyword: %s" opts-or-keyword))
     :else
     (raise "Error: unrecognized formatter spec (not a map or keyword): [%s] %s"
            (class opts-or-keyword) opts-or-keyword)))
 
-(def *currency-with-negative* (get-currency-formatter {:negative-prefix "-$" :negative-suffix ""}))
+(def currency-with-negative (get-currency-formatter {:negative-prefix "-$" :negative-suffix ""}))
 
-(def *default-formatters*
+(def default-formatters
      (atom
-      {:currency-with-negative *currency-with-negative*
+      {:currency-with-negative currency-with-negative
        :default                (get-currency-formatter {})}))
 
 
@@ -342,12 +342,12 @@ Taken from: http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-
               num)))
 
 
-(defonce *rx-clean-phone-number* #"\D+")
+(defonce rx-clean-phone-number #"\D+")
 
 (defn canonical-phone-number [mobile-number]
   (if (nil? mobile-number)
     ""
-    (let [num   (clojure.string/replace mobile-number  *rx-clean-phone-number* "")]
+    (let [num   (clojure.string/replace mobile-number  rx-clean-phone-number "")]
       (if (= 10 (count num))
         (str 1 num)
         num))))
