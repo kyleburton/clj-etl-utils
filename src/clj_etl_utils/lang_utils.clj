@@ -368,3 +368,9 @@ following actions are supported:
      ~m))
 
 
+(defmacro assoc-in-if [test m ks v]
+  `(if ~test
+     (assoc-in ~m ~ks ~v)
+     ~m))
+
+
