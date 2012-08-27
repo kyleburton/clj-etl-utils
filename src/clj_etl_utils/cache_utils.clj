@@ -7,7 +7,9 @@
 ;;
 (ns clj-etl-utils.cache-utils
   (:use
-   [clj-etl-utils.lang-utils :only [raise aprog1]]))
+   [clj-etl-utils.lang-utils :only [raise aprog1]])
+  (:import
+   [org.joda.time DateTime Duration]))
 
 
 ;; ## Cache Registry
@@ -53,19 +55,19 @@
 (comment
 
   (map :cache (lookup-caches-by-tag :standard))
-)
+  )
 
 (defn wrap-standard-cache [name tags the-fn args-ser-fn]
   (let [cache (atom {})]
-   (register-cache name tags cache)
-   (fn [& args]
-     (let [k    (args-ser-fn args)
-           cmap @cache]
-       (if (contains? cmap k)
-         (get cmap k)
-         (aprog1
-             (apply the-fn args)
-           (swap! cache assoc k it)))))))
+    (register-cache name tags cache)
+    (fn [& args]
+      (let [k    (args-ser-fn args)
+            cmap @cache]
+        (if (contains? cmap k)
+          (get cmap k)
+          (aprog1
+              (apply the-fn args)
+            (swap! cache assoc k it)))))))
 
 (defn simple-cache [name the-fn]
   (wrap-standard-cache name #{:standard} the-fn identity))
@@ -100,4 +102,87 @@
   (time
    (my-func2 1 2 3))
 
-)
+  )
+
+
+(defn wrap-countdown-cache [name tags the-fn config]
+  (let [cache       (atom {})
+        args-ser-fn (:args-ser-fn config)
+        max-hits    (:max-hits    config 100)
+        nhits       (java.util.concurrent.atomic.AtomicLong. 0)]
+    (register-cache name tags cache)
+    (fn [& args]
+      (let [k    (args-ser-fn args)
+            cmap @cache]
+        (when (>= (.incrementAndGet nhits) max-hits)
+          (.set nhits 0)
+          (reset! cache {}))
+        (if (contains? cmap k)
+          (get cmap k)
+          (aprog1
+              (apply the-fn args)
+            (swap! cache assoc k it)))))))
+
+(defmacro def-countdown-cached [name max-hits arg-spec & body]
+  `(def ~name
+        (wrap-countdown-cache
+         ~(keyword (str *ns* "." name))
+         #{:countdown}
+         (fn ~arg-spec
+           ~@body)
+         {:max-hits    ~max-hits
+          :args-ser-fn identity})))
+
+(defn wrap-timeout-cache [name tags the-fn config]
+  (let [cache       (atom {})
+        args-ser-fn (:args-ser-fn config)
+        duration    (long  (:duration config (* 1000 60 60)))
+        exp-time    (atom  (.plusMillis  (DateTime.) duration))]
+    (println "duration " duration)
+    (register-cache name tags cache)
+    (fn [& args]
+      (let [k    (args-ser-fn args)
+            cmap @cache]
+        (when (.isBeforeNow @exp-time)
+          (reset! exp-time (.plusMillis  (DateTime.) duration))
+          (reset! cache {}))
+        (if (contains? cmap k)
+          (get cmap k)
+          (aprog1
+              (apply the-fn args)
+            (swap! cache assoc k it)))))))
+
+
+(defmacro def-timeout-cached [name duration arg-spec & body]
+   `(def ~name
+         (wrap-timeout-cache
+          ~(keyword (str *ns* "." name))
+          #{:timeout}
+         (fn ~arg-spec
+           ~@body)
+         {:duration    ~duration
+          :args-ser-fn identity})))
+
+
+
+(comment
+
+  (def-timeout-cached timeout-test 5000 [a b c]
+    (println "function is called")
+    (+ a b c))
+
+  (timeout-test 1 2 3)
+
+  (doto (DateTime.)
+    (.plusMillis 1000000))
+
+  (.plusMillis (DateTime. ) 1000000)
+
+  (def-countdown-cached countdown-test 5 [a b c]
+    (println "function is called")
+    (+ a b c))
+
+  (countdown-test 1 2 3)
+
+
+  )
