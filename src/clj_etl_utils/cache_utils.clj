@@ -9,7 +9,7 @@
   (:use
    [clj-etl-utils.lang-utils :only [raise aprog1]])
   (:import
-   [org.joda.time DateTime Duration]))
+   [org.joda.time DateTime]))
 
 
 ;; ## Cache Registry
@@ -138,7 +138,6 @@
         args-ser-fn (:args-ser-fn config)
         duration    (long  (:duration config (* 1000 60 60)))
         exp-time    (atom  (.plusMillis  (DateTime.) duration))]
-    (println "duration " duration)
     (register-cache name tags cache)
     (fn [& args]
       (let [k    (args-ser-fn args)
