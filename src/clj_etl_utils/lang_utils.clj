@@ -373,4 +373,6 @@ following actions are supported:
      (assoc-in ~m ~ks ~v)
      ~m))
 
-
+(defn resource->file-path [resource]
+  (-> (.getClass *ns*) (.getClassLoader) (.findResource resource)
+      (.getFile)))
