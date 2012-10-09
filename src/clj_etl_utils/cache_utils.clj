@@ -30,8 +30,9 @@
 ;; The first supported type for this module is :standard
 ;; which represents a standard memoize based cache.
 
-(defn register-cache [name #^java.util.Set tags cache-ref]
-  (swap! *cache-registry* assoc name {:name name :tags tags :cache cache-ref}))
+(defn register-cache [name #^java.util.Set tags cache-ref & [cache-reset-fn]]
+  (swap! *cache-registry* assoc name {:name name :tags tags :cache cache-ref :reset-fn (or cache-reset-fn
+                                                                                           (fn [entry] (reset! (:cache entry) {})))}))
 
 (defn lookup-cache-by-name [name]
   (get @*cache-registry* name))
@@ -45,9 +46,13 @@
             (contains? (:tags entry) tag))
           (vals @*cache-registry*)))
 
+(defn purge-caches-with-tag [tag]
+  (doseq [entry (lookup-caches-by-tag tag)]
+    ((:reset-fn entry) entry)))
+
 (defn purge-standard-caches []
-  (doseq [entry (lookup-caches-by-tag :standard)]
-    (reset! (:cache entry) {})))
+  (purge-caches-with-tag :standard))
+
 
 
 ;;
