@@ -6,6 +6,8 @@
 ;; caches to have various flushing policies associated with them.
 ;;
 (ns clj-etl-utils.cache-utils
+  (:require
+   [clj-etl-utils.log        :as log])
   (:use
    [clj-etl-utils.lang-utils :only [raise aprog1]])
   (:import
@@ -83,33 +85,6 @@
                       (fn ~arg-spec
                         ~@body))))
 
-(comment
-
-  (register-cache :test1 #{:standard} (atom {}))
-  (lookup-cache-by-name :test1)
-  (lookup-caches-by-tag :standard)
-
-  (defn my-func [a b c]
-    (Thread/sleep 1000)
-    (+ a b c))
-
-  (def-simple-cached my-func2 [a b c]
-    (Thread/sleep 1000)
-    (+ a b c))
-
-  (def cached-func (simple-cache :my-func my-func))
-
-  (purge-standard-caches)
-
-  (time
-   (cached-func 1 2 3))
-
-  (time
-   (my-func2 1 2 3))
-
-  )
-
-
 (defn wrap-countdown-cache [name tags the-fn config]
   (let [cache       (atom {})
         args-ser-fn (:args-ser-fn config)
@@ -158,35 +133,46 @@
 
 
 (defmacro def-timeout-cached [name duration arg-spec & body]
-   `(def ~name
-         (wrap-timeout-cache
-          ~(keyword (str *ns* "." name))
-          #{:timeout}
+  `(def ~name
+        (wrap-timeout-cache
+         ~(keyword (str *ns* "." name))
+         #{:timeout}
          (fn ~arg-spec
            ~@body)
          {:duration    ~duration
           :args-ser-fn identity})))
 
 
+(defn timeout-with-fallback-cache [timeout-ms the-fn]
+  (let [cache           (atom {})
+        now-ms          (fn [] (.getTime (java.util.Date.)))
+        store-in-cache! (fn store-in-cache [cache-key res]
+                          (swap! cache assoc cache-key {:res res :time (now-ms)})
+                          res)
+        in-cache-and-not-expired? (fn in-cache-and-not-expired [cache-key]
+                                    (if-let [entry (get @cache cache-key)]
+                                      (< (- (now-ms) (:time entry)) timeout-ms)
+                                      false))]
+    (fn timeout-with-fallback-cache-inner [& args]
+      (cond
+        (not (contains? @cache args))
+        (store-in-cache! args (apply the-fn args))
 
-(comment
+        (in-cache-and-not-expired? args)
+        (:res (get @cache args))
 
-  (def-timeout-cached timeout-test 5000 [a b c]
-    (println "function is called")
-    (+ a b c))
+        :in-cache-but-expired
+        (try
+         (log/infof "in-cache-and-not-expired: refetching: %s" args)
+         (store-in-cache! args (apply the-fn args))
+         (catch Exception ex
+           (log/errorf ex "Error executing wrapped function! (will return old cached value) %s" ex)
+           (:res (get @cache args))))))))
 
-  (timeout-test 1 2 3)
-
-  (doto (DateTime.)
-    (.plusMillis 1000000))
-
-  (.plusMillis (DateTime. ) 1000000)
-
-  (def-countdown-cached countdown-test 5 [a b c]
-    (println "function is called")
-    (+ a b c))
-
-  (countdown-test 1 2 3)
+(defmacro def-timeout-with-fallback-cache [fn-name timeout-ms args-spec & body]
+  `(def ~fn-name
+        (timeout-with-fallback-cache ~timeout-ms
+          (fn ~args-spec
+            ~@body))))
 
 
-  )
