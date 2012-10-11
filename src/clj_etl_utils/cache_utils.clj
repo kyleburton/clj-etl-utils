@@ -6,8 +6,12 @@
 ;; caches to have various flushing policies associated with them.
 ;;
 (ns clj-etl-utils.cache-utils
+  (:require
+   [clj-etl-utils.log        :as log])
   (:use
-   [clj-etl-utils.lang-utils :only [raise aprog1]]))
+   [clj-etl-utils.lang-utils :only [raise aprog1]])
+  (:import 
+    [org.joda.time DateTime])
 
 
 ;; ## Cache Registry
@@ -81,28 +85,94 @@
                       (fn ~arg-spec
                         ~@body))))
 
-(comment
+(defn wrap-countdown-cache [name tags the-fn config]
+  (let [cache       (atom {})
+        args-ser-fn (:args-ser-fn config)
+        max-hits    (:max-hits    config 100)
+        nhits       (java.util.concurrent.atomic.AtomicLong. 0)]
+    (register-cache name tags cache)
+    (fn [& args]
+      (let [k    (args-ser-fn args)
+            cmap @cache]
+        (when (>= (.incrementAndGet nhits) max-hits)
+          (.set nhits 0)
+          (reset! cache {}))
+        (if (contains? cmap k)
+          (get cmap k)
+          (aprog1
+              (apply the-fn args)
+            (swap! cache assoc k it)))))))
 
-  (register-cache :test1 #{:standard} (atom {}))
-  (lookup-cache-by-name :test1)
-  (lookup-caches-by-tag :standard)
+(defmacro def-countdown-cached [name max-hits arg-spec & body]
+  `(def ~name
+        (wrap-countdown-cache
+         ~(keyword (str *ns* "." name))
+         #{:countdown}
+         (fn ~arg-spec
+           ~@body)
+         {:max-hits    ~max-hits
+          :args-ser-fn identity})))
 
-  (defn my-func [a b c]
-    (Thread/sleep 1000)
-    (+ a b c))
+(defn wrap-timeout-cache [name tags the-fn config]
+  (let [cache       (atom {})
+        args-ser-fn (:args-ser-fn config)
+        duration    (long  (:duration config (* 1000 60 60)))
+        exp-time    (atom  (.plusMillis  (DateTime.) duration))]
+    (register-cache name tags cache)
+    (fn [& args]
+      (let [k    (args-ser-fn args)
+            cmap @cache]
+        (when (.isBeforeNow @exp-time)
+          (reset! exp-time (.plusMillis  (DateTime.) duration))
+          (reset! cache {}))
+        (if (contains? cmap k)
+          (get cmap k)
+          (aprog1
+              (apply the-fn args)
+            (swap! cache assoc k it)))))))
 
-  (def-simple-cached my-func2 [a b c]
-    (Thread/sleep 1000)
-    (+ a b c))
 
-  (def cached-func (simple-cache :my-func my-func))
+(defmacro def-timeout-cached [name duration arg-spec & body]
+  `(def ~name
+        (wrap-timeout-cache
+         ~(keyword (str *ns* "." name))
+         #{:timeout}
+         (fn ~arg-spec
+           ~@body)
+         {:duration    ~duration
+          :args-ser-fn identity})))
 
-  (purge-standard-caches)
 
-  (time
-   (cached-func 1 2 3))
+(defn timeout-with-fallback-cache [timeout-ms the-fn]
+  (let [cache           (atom {})
+        now-ms          (fn [] (.getTime (java.util.Date.)))
+        store-in-cache! (fn store-in-cache [cache-key res]
+                          (swap! cache assoc cache-key {:res res :time (now-ms)})
+                          res)
+        in-cache-and-not-expired? (fn in-cache-and-not-expired [cache-key]
+                                    (if-let [entry (get @cache cache-key)]
+                                      (< (- (now-ms) (:time entry)) timeout-ms)
+                                      false))]
+    (fn timeout-with-fallback-cache-inner [& args]
+      (cond
+        (not (contains? @cache args))
+        (store-in-cache! args (apply the-fn args))
 
-  (time
-   (my-func2 1 2 3))
+        (in-cache-and-not-expired? args)
+        (:res (get @cache args))
 
-)
+        :in-cache-but-expired
+        (try
+         (log/infof "in-cache-and-not-expired: refetching: %s" args)
+         (store-in-cache! args (apply the-fn args))
+         (catch Exception ex
+           (log/errorf ex "Error executing wrapped function! (will return old cached value) %s" ex)
+           (:res (get @cache args))))))))
+
+(defmacro def-timeout-with-fallback-cache [fn-name timeout-ms args-spec & body]
+  `(def ~fn-name
+        (timeout-with-fallback-cache ~timeout-ms
+          (fn ~args-spec
+            ~@body))))
+
+
