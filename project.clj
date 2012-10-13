@@ -17,7 +17,7 @@
   :dependencies [[org.clojure/clojure         "1.3.0"]
                 [org.clojure/java.classpath "0.2.0"]
                 [org.clojure/core.incubator "0.1.0"]
-                [org.clojure/data.json      "0.1.3"]
+                [org.clojure/data.json      "0.2.0"]
                 [org.clojure/tools.logging  "0.2.3"]
                 [commons-io          "2.0"]
                 [log4j/log4j         "1.2.14"]
