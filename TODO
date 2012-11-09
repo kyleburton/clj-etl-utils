@@ -1,0 +1,9 @@
+Cache Utils
+  New strategies:
+    - countdown latch, specify max # of requests to hold the cache value for
+    - LRU expunging with a max # of entries
+    - time based expiration, refresh a given key every X seconds
+  Disk based caching
+    - $HOME/.etl-cache/package-name/function-name/{{sha1-of-args}}.dat 
+        {:args []  ;; the args passed (for grepping)
+         :return ...}
