@@ -17,7 +17,6 @@
   :dependencies [[org.clojure/clojure         "1.2.0"]
                  [org.clojure/clojure-contrib "1.2.0"]
                  [commons-io          "2.0"]
-                 [fleet               "0.9.3"]
                  [log4j/log4j         "1.2.14"]
                  [org.mindrot/jbcrypt "0.3m"]
                  [commons-httpclient  "3.1"]
