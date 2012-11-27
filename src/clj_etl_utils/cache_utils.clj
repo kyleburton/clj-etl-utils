@@ -55,10 +55,6 @@
 (defn purge-standard-caches []
   (purge-caches-with-tag :standard))
 
-
-
-;;
-
 (comment
 
   (map :cache (lookup-caches-by-tag :standard))
@@ -142,8 +138,7 @@
          {:duration    ~duration
           :args-ser-fn identity})))
 
-
-(defn timeout-with-fallback-cache [timeout-ms the-fn]
+(defn timeout-with-fallback-cache [name tags timeout-ms the-fn]
   (let [cache           (atom {})
         now-ms          (fn [] (.getTime (java.util.Date.)))
         store-in-cache! (fn store-in-cache [cache-key res]
@@ -153,6 +148,7 @@
                                     (if-let [entry (get @cache cache-key)]
                                       (< (- (now-ms) (:time entry)) timeout-ms)
                                       false))]
+    (register-cache name tags cache)
     (fn timeout-with-fallback-cache-inner [& args]
       (cond
         (not (contains? @cache args))
@@ -171,7 +167,7 @@
 
 (defmacro def-timeout-with-fallback-cache [fn-name timeout-ms args-spec & body]
   `(def ~fn-name
-        (timeout-with-fallback-cache ~timeout-ms
+        (timeout-with-fallback-cache ~(keyword (str *ns* "." fn-name)) #{:timeout :fallback} ~timeout-ms
           (fn ~args-spec
             ~@body))))
 
