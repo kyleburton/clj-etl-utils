@@ -379,10 +379,10 @@ Taken from: http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-
 
 (defn summarize-message
   ([msg len]
-     (summarize-message "'" "..."))
+     (summarize-message msg len "'" "..."))
   ([msg len delimiter summary-marker]
      (if (> (count msg) len)
-       (str delimiter (first (clj-etl-utils.text/word-split msg len)) summary-marker delimiter)
+       (str delimiter (first (word-split msg len)) summary-marker delimiter)
        (str delimiter msg delimiter))))
 
 
