@@ -377,6 +377,15 @@ Taken from: http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-
          (.decode b coded))))
 
 
+(defn summarize-message
+  ([msg len]
+     (summarize-message "'" "..."))
+  ([msg len delimiter summary-marker]
+     (if (> (count msg) len)
+       (str delimiter (first (clj-etl-utils.text/word-split msg len)) summary-marker delimiter)
+       (str delimiter msg delimiter))))
+
+
 (comment
   (.format (java.text.NumberFormat/getCurrencyInstance) -1234)
   (format-as-currency -1234 :currency-with-negative)
