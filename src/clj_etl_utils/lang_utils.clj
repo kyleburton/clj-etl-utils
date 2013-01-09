@@ -121,6 +121,13 @@
 
 ;; (rest-params->map [:follow-redirects true :basic-auth {:user "bob" :pass "sekret"}])
 
+(defn valid-keys? [params key-lists]
+  (some
+   (fn [key-list]
+     (= (set key-list)
+        (set (keys params))))
+   key-lists))
+
 (defn assert-allowed-keys! [m allowed-keys]
   (let [allowed-keys (apply hash-set allowed-keys)]
     (doseq [k (keys m)]
