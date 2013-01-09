@@ -200,3 +200,5 @@ h1. Authors
 Kyle Burton <kyle.burton@gmail.com>
 
 Paul Santa Clara <kesserich1@gmail.com>
+
+Tim Visher <tim.visher@gmail.com>

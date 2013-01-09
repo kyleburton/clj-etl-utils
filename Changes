@@ -1,3 +1,6 @@
+1.0.61 :: Wed Jan 9 09:35 EDT 2012
+  * Added valid-keys function to lang_utils.clj
+
 1.0.43 ::!  Thu Apr  5 09:58:51 EDT 2012
   * text: added base64 encode / decode helpers
   * added crypto/aes.clj
