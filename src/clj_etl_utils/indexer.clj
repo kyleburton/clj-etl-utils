@@ -135,7 +135,7 @@ For all the lines in the file.
       recs
       (recur
        ;; NB: range should be 1 and only 1 line/record
-       (conj recs (first (io/read-lines-from-file-segment inp-file start-pos end-pos)))
+       (conj recs (first (vec (io/read-lines-from-file-segment inp-file start-pos end-pos))))
        idx-block))))
 
 (comment
