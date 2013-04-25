@@ -77,6 +77,7 @@
           response-body (.getResponseBodyAsString get-method)]
       ;;(println (format "Return Code: %s" return-code))
       ;;(println (format "Respone: %s" response-body ))
+      (.releaseConnection get-method)
       {:return-code   return-code
        :response-body response-body
        :http-method   get-method})))
@@ -102,6 +103,7 @@
           (long (.length (:body params)))))))
     (let [return-code   (.executeMethod (:ua ua) post-method)
           response-body (.getResponseBodyAsString post-method)]
+      (.releaseConnection post-method)
       ;;(println (format "Return Code: %s" return-code))
       ;;(println (format "Respone: %s" response-body ))
       {:return-code   return-code

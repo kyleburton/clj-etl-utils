@@ -9,3 +9,4 @@ README.html
 autodoc/
 .lein-deps-sum
 .lein-plugins
+.lein-failures

@@ -4,8 +4,7 @@
       :author "Kyle Burton"}
   clj-etl-utils.analysis
   (:require
-   [clojure.contrib.duck-streams :as ds]
-   [fleet :as fleet]))
+   [clojure.contrib.duck-streams :as ds]))
 
 (defn ^{:doc "Given a sequence of records (a sequence of vectors),
   this function will track the maximum length string seen in each column

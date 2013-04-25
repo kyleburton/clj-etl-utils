@@ -374,6 +374,13 @@ following actions are supported:
      (assoc ~m ~@kvs)
      ~m))
 
+(defmacro nth-let [[rec & bindings] & body]
+  (let [rec-gensym `rec#]
+   `(let [~rec-gensym ~rec
+          ~@(vec (mapcat
+                  (fn [[sym idx]]
+                    [sym `(nth ~rec-gensym ~idx)]) (partition 2  bindings)))]
+      ~@body)))
 
 (defmacro assoc-in-if [test m ks v]
   `(if ~test
