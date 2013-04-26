@@ -38,18 +38,18 @@ create or clean up the actual temporary file itself.
   md5->string [bytes]
   (let [digester (java.security.MessageDigest/getInstance "MD5")]
     (.update digester bytes)
-    (apply str (map (fn [byte]
-                      (Integer/toHexString (bit-and 0xFF byte)))
-                    (.digest digester)))))
+    (.toString
+     (java.math.BigInteger. 1 (.digest digester))
+     16)))
 
 (defn
   ^{:doc "Compute the SHA1 sum of a byte buffer, returning it as a hex-encoded string."}
   sha1->string [bytes]
   (let [digester (java.security.MessageDigest/getInstance "SHA1")]
     (.update digester bytes)
-    (apply str (map (fn [byte]
-                      (Integer/toHexString (bit-and 0xFF byte)))
-                    (.digest digester)))))
+    (.toString
+     (java.math.BigInteger. 1 (.digest digester))
+     16)))
 
 (defn
   ^{:doc "Returns a sequence of all the security providers available in the current JVM.
