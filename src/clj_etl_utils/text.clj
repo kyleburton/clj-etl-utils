@@ -10,10 +10,10 @@
 
 (defn
   ^{:doc "Convert string to upper case, null safe (returns empty string on null)."}
-      uc [#^String s]
-      (if (nil? s)
-        ""
-        (.toUpperCase s)))
+  uc [#^String s]
+  (if (nil? s)
+    ""
+    (.toUpperCase s)))
 
 (defn
   ^{:doc "Convert string to lower case, null safe (returns empty string on null)."}
@@ -39,17 +39,17 @@ create or clean up the actual temporary file itself.
   (let [digester (java.security.MessageDigest/getInstance "MD5")]
     (.update digester bytes)
     (.toString
-      (java.math.BigInteger. 1 (.digest digester))
-      16)))
+     (java.math.BigInteger. 1 (.digest digester))
+     16)))
 
 (defn
   ^{:doc "Compute the SHA1 sum of a byte buffer, returning it as a hex-encoded string."}
   sha1->string [bytes]
   (let [digester (java.security.MessageDigest/getInstance "SHA1")]
     (.update digester bytes)
-    (apply str (map (fn [byte]
-                      (Integer/toHexString (bit-and 0xFF byte)))
-                    (.digest digester)))))
+    (.toString
+     (java.math.BigInteger. 1 (.digest digester))
+     16)))
 
 (defn
   ^{:doc "Returns a sequence of all the security providers available in the current JVM.
@@ -261,7 +261,7 @@ Taken from: http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-
 (comment
 
 
-)
+  )
 
 
 (defn
@@ -291,7 +291,7 @@ Taken from: http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-
 (comment
 
 
-)
+  )
 
 
 (def *formatter-setters*
