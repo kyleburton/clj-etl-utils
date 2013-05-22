@@ -372,6 +372,23 @@ Taken from: http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-
    {}
    params))
 
+(defn camelize-keyword [k]
+  (let [[res & parts] (.split (name k) "[-_]")]
+    (loop [res         res
+           [n & parts] parts]
+      (if-not n
+        (keyword res)
+        (recur (str res (org.apache.commons.lang.WordUtils/capitalize n))
+               parts)))))
+
+(defn camelize-map-keys [m]
+  (reduce
+   (fn [accum [k v]]
+     (assoc accum
+       (camelize-keyword k) v))
+   {}
+   m))
+
 (def encode-base64
      (let [b (Base64.)]
        (fn encode-base64 [raw]
