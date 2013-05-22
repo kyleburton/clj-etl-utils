@@ -1,12 +1,13 @@
 (ns clj-etl-utils.lang-test
   (:require [clj-etl-utils.lang-utils :as lang-utils])
-  (:use [clojure.test]))
+  (:use [clojure.test]
+        [clj-etl-utils.lang-utils :only [nth-let]]))
 
 (deftest test-make-periodic-invoker
   (let [stat    (atom [])
         trigger (lang-utils/make-periodic-invoker 10
-                                            (fn [action count val]
-                                              (swap! stat conj val)))]
+                                                  (fn [action count val]
+                                                    (swap! stat conj val)))]
     (dotimes [ii 100]
       (trigger ii))
     (is (= 10 (count @stat)))))
@@ -16,8 +17,8 @@
 (comment
   (let [stat    (atom [])
         trigger (lang-utils/make-periodic-invoker 10
-                                            (fn [count val]
-                                              (swap! stat conj [count val])))]
+                                                  (fn [count val]
+                                                    (swap! stat conj [count val])))]
     (dotimes [ii 100]
       (trigger :hit ii))
     @stat)
@@ -42,8 +43,8 @@
 
 
   (lang-utils/with-hit-timer [timer 10]
-      (dotimes [ii 109]
-        (timer)))
+    (dotimes [ii 109]
+      (timer)))
 
 
   (let [total    1000
@@ -60,3 +61,16 @@
 
 
   )
+
+(deftest test-nth-let
+  (let [rec (vec (rest (.split "abcdefghijklmnopqrstuvwxyz" "")))]
+    (nth-let [rec
+              lstart 0
+              lmiddle 12
+              llast   25]
+      (is (= "a" lstart))
+      (is (= "m" lmiddle))
+      (is (= "z" llast)))))
+
+
+
