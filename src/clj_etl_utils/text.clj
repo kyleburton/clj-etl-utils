@@ -365,6 +365,12 @@ Taken from: http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-
     (StringBuilder.)
     (name s))))
 
+(defn camel->underscore [^Map params]
+  (reduce
+   (fn [accum [k v]]
+     (assoc accum (keyword (.replaceAll (snake-case k) "-" "_")) v))
+   {}
+   params))
 
 (def encode-base64
      (let [b (Base64.)]
