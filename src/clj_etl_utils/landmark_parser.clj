@@ -1,6 +1,6 @@
 (ns ^{:doc "Semi-structured Text parsing library.  The library uses an
     automation and a command set to extract portions of a document.
-    Atomic commands are instructions such as: start, end,
+    Atomic commands are instructions such as: start, end
     forward-char, backward-char, forward-past, rewind-to and so on.
     The landmarks can be either literal or logical (regular
     expressions, 'types', etc).  This extractor can often succeed in
@@ -15,7 +15,7 @@
    [clj-etl-utils.regex :as regex]))
 
 
-(declare cmds)
+(declare parser-cmds)
 
 (defstruct parser :pos :doc :ldoc :doclen)
 
@@ -113,7 +113,7 @@
   (loop [[[cmd & args] & cmds] (parse-cmds cmds)]
     (if cmd
       (do
-        (if (apply (cmds cmd) (cons parser args))
+        (if (apply (parser-cmds cmd) (cons parser args))
           (do
             (recur cmds))
           false))
@@ -123,9 +123,9 @@
   (loop [[[cmd & args] & cmds] (parse-cmds cmds)]
     (if cmd
       (do
-        (if (not (cmds cmd))
+        (if (not (parser-cmds cmd))
           (raise "Error: invalid command: %s" cmd))
-        (if (apply (cmds cmd) (cons parser args))
+        (if (apply (parser-cmds cmd) (cons parser args))
           (do
             (recur cmds))
           false))
@@ -161,7 +161,7 @@
       false)))
 
 
-(def cmds
+(def parser-cmds
      {:apply-commands        apply-commands
       :a                     apply-commands
       :do-commands           do-commands

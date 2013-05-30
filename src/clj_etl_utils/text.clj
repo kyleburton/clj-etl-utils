@@ -56,7 +56,7 @@ create or clean up the actual temporary file itself.
 The sequence consists of pairs of [provider-type provider-algorithm]"}
   security-providers-type-algorithm-seq []
   (mapcat (fn [provider]
-            (map (fn [svc]
+            (map (fn [^java.security.Provider svc]
                    [(.getType svc) (.getAlgorithm svc)])
                  (.getServices provider)))
           (java.security.Security/getProviders)))
@@ -100,7 +100,7 @@ The sequence consists of pairs of [provider-type provider-algorithm]"}
 
 (defn
   ^{:doc "Compute and return the SHA256 sum of the given byte array, returned as a hex-encoded string."}
-  sha256->string [bytes]
+  sha256->string [^bytes bytes]
   (let [digester (java.security.MessageDigest/getInstance "SHA-256")]
     (.update digester bytes)
     (apply str (map (fn [byte]
@@ -109,7 +109,7 @@ The sequence consists of pairs of [provider-type provider-algorithm]"}
 
 (defn
   ^{:doc "Compute and return the SHA256 sum of the given string, returned as a hex-encoded string."}
-  string->sha256 [s]
+  string->sha256 [^String s]
   (sha256->string (.getBytes s)))
 
 

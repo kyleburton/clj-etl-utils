@@ -86,12 +86,12 @@
 (defmethod raise
   [:fmt-and-args]
   [^String fmt & args]
-  (throw (RuntimeException. (apply format fmt args))))
+  (throw (RuntimeException. ^String (apply format fmt args))))
 
 (defmethod raise
   :default
   [& stuff]
-  (throw (RuntimeException. (apply str stuff))))
+  (throw (RuntimeException. ^String (apply str stuff))))
 
 
 ;; TODO: get rid of 'log'
@@ -102,10 +102,10 @@
   (or (seq? thing)
       (vector? thing)))
 
-(defn resource-as-stream [res-url]
+(defn resource-as-stream ^java.io.InputStream [^String res-url]
   (.getResourceAsStream (.getClass *ns*) res-url))
 
-(defn resource-as-string [res-url]
+(defn resource-as-string [^String res-url]
   (let [strm (resource-as-stream res-url)]
     (if (not strm)
       nil
@@ -240,7 +240,7 @@ following actions are supported:
        (~sym-name :final))))
 
 
-(defn array? [thing]
+(defn array? [^Object thing]
   (-?> thing (.getClass) (.isArray)))
 
 (def rec-bean
@@ -277,7 +277,7 @@ following actions are supported:
                      {}
                      (keys bn)))))))
 
-(defn get-stack-trace [ex]
+(defn get-stack-trace [^Exception ex]
   (format "Exception Message: %s, Stack Trace: %s"
           (.getMessage ex)
           (with-out-str
@@ -285,7 +285,7 @@ following actions are supported:
              ex
              (java.io.PrintWriter. *out*)))))
 
-(defn caused-by-seq [th]
+(defn caused-by-seq [^Throwable th]
   (loop [res []
          next th]
     (if next

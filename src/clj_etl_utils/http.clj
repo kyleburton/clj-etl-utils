@@ -98,9 +98,9 @@
         (.setRequestEntity
          post-method
          (InputStreamRequestEntity.
-          (ByteArrayInputStream. (.getBytes (:body params)))
-          (long (.length (:body params)))))))
-    (let [return-code   (.executeMethod (:ua ua) post-method)
+          (ByteArrayInputStream. (.getBytes ^String (:body params)))
+          (long (.length ^String (:body params)))))))
+    (let [return-code   (.executeMethod ^HttpClient (:ua ua) post-method)
           response-body (.getResponseBodyAsString post-method)]
       ;;(println (format "Return Code: %s" return-code))
       ;;(println (format "Respone: %s" response-body ))
@@ -133,11 +133,11 @@
      (fn [] ~@body)))
 
 (defn make-get-request [path]
-  (let [scheme   (:scheme client)
-        host     (:host   client)
-        port     (:port   client)
-        base-url (:base-url client)
-        path     (format "%s/%s" base-url path)]
+  (let [scheme   ^String (:scheme client)
+        host     ^String (:host   client)
+        port             (:port   client)
+        base-url ^String (:base-url client)
+        path     ^String (format "%s/%s" base-url path)]
     (aprog1
         (GetMethod.)
       (.setURI it (URI. scheme nil host port path))

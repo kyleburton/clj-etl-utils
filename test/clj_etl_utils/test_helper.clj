@@ -1,6 +1,6 @@
 (ns clj-etl-utils.test-helper
-  (:use [clojure.contrib.str-utils :as str-utils]
-        [clojure.contrib.logging :as log]))
+  (:require [clojure.string :as str-utils]
+            [clojure.tools.logging :as log]))
 
 (defonce *fixture-registry* (atom {}))
 

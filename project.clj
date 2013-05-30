@@ -6,15 +6,15 @@
             :distribution :repo
             :comments     "Same as Clojure"}
   :java-source-path     "java"
-  :warn-on-reflection   true
+  ;; :warn-on-reflection   true
   :local-repo-classpath true
   :jvm-opts             ["-Xmx512M"]
   :plugins [[lein-release/lein-release "1.0.0"]]
   :lein-release {:deploy-via :clojars}
-  :dev-dependencies [[swank-clojure   "1.4.0-SNAPSHOT"]
+  :dev-dependencies [[swank-clojure   "1.4.3"]
                    ;;[autodoc       "0.7.1"]
                      [lein-marginalia "0.6.0"]]
-  :dependencies [[org.clojure/clojure         "1.3.0"]
+  :dependencies [[org.clojure/clojure         "1.5.1"]
                 [org.clojure/java.classpath "0.2.0"]
                 [org.clojure/core.incubator "0.1.0"]
                 [org.clojure/data.json      "0.2.0"]
@@ -25,7 +25,7 @@
                 [commons-httpclient  "3.1"]
                 [commons-codec       "1.4"]
                 [commons-lang        "2.5"]
-                [joda-time/joda-time                   "1.6.2"]]
+                [joda-time/joda-time                   "2.2"]]
   :autodoc {
     :name        "clj-etl-utils"
     :page-title  "clj-etl-utils: API Documentation"
