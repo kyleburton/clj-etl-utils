@@ -379,6 +379,20 @@ Taken from: http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-
    {}
    params))
 
+(defn snake->underscore [^Map params]
+  (reduce
+   (fn [accum [k v]]
+     (assoc accum (keyword (.replaceAll (name k) "-" "_")) v))
+   {}
+   params))
+
+(defn underscore->snake [^Map params]
+  (reduce
+   (fn [accum [k v]]
+     (assoc accum (keyword (.replaceAll (name k) "_" "-")) v))
+   {}
+   params))
+
 (defn camelize-keyword [k]
   (let [[res & parts] (.split (name k) "[-_]")]
     (loop [res         res
