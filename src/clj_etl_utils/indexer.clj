@@ -99,7 +99,25 @@ For all the lines in the file.
 
 (comment
 
-  (index-file! "file.txt" ".file.txt.id-idx" #(first (.split % "\t")))
+  (defn rand-elt [s]
+    (let [idx (mod (.nextInt (java.util.Random.))
+                   (count s))]
+      (nth s idx)))
+
+  (require 'clj-etl-utils.ref-data)
+  (let [rnd (java.util.Random.)
+        states (vec (map first clj-etl-utils.ref-data/*us-states*))]
+   (with-open [wtr (java.io.PrintWriter. "file.txt")]
+     (dotimes [ii 100]
+       (.println wtr
+                 (str
+                      (rand-elt states)
+                      "\t"
+                      (.nextInt rnd))))))
+
+  (index-file! "file.txt" ".file.txt.id-idx"
+               (fn [l]
+                 [(.toLowerCase (first (.split l "\t")))]))
 
   )
 
@@ -349,12 +367,25 @@ index values returning records from the data file."
  )
 
 
-;; TODO: take the result of index-search and look up the records out of the original file
+(defn index-search-file
+  ([^String input-file ^String index-file term]
+     (index-search-file input-file index-file term =))
+  ([^String input-file ^String index-file term matcher]
+     (map
+      (fn [[v s e]]
+        (first (vec (io/read-lines-from-file-segment input-file s e))))
+      (filter
+       (fn [[v s e]]
+         (matcher v term))
+       (index-search-prefix index-file term)))))
 
 ;; TODO: Implement mutiple index block streaming (grouping across
 ;; mutiple data files to create candidate clusters).
 
 (comment
+
+
+  (index-search-file "file.txt" ".file.txt.id-idx" "IA")
 
 
   (index-file! "file.txt" ".file.txt.id-idx" (fn [line] [(first (.split line "\t"))]))
