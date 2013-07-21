@@ -339,34 +339,6 @@ index values returning records from the data file."
       (index-search-prefix-impl idx-file term 0 epos))))
 
 
-(comment
-
- (index-search-prefix
-  "tmp/.free-zipcode-database.csv.city-idx"
-  "NEW PHILA")
-
- (defn sort-compatible-compare [s1 s2]
-   (let [len (min (count s1) (count s2))]
-     (loop [idx 0]
-       (cond
-         (= idx len)
-         0
-         :compare-chars
-         (let [c1 (.charAt s1 idx)
-               c2 (.charAt s1 idx)])))))
-
- (compare "A" " ")
-
- (compare "NEWAGEN" "NEW PHILA")
-
-
- (.compareTo "NEWAGEN" "NEW PHILA")
-
-
-
- )
-
-
 (defn index-search-file
   ([^String input-file ^String index-file term]
      (index-search-file input-file index-file term =))
@@ -379,9 +351,6 @@ index values returning records from the data file."
          (matcher v term))
        (index-search-prefix index-file term)))))
 
-;; TODO: Implement mutiple index block streaming (grouping across
-;; mutiple data files to create candidate clusters).
-
 (comment
 
 
@@ -393,4 +362,74 @@ index values returning records from the data file."
 
 
   )
+
+
+;; (defn csv-parse [^String s]
+;;   (with-in-str s
+;;     (first (csv/read-csv *in*))))
+
+(defn index-file-path [src idx-name]
+  (let [src-file (java.io.File. (-> src :config :file))]
+    (format "%s/.%s.%s-idx"
+            (.getParent src-file)
+            (.getName src-file)
+            (name idx-name))))
+
+(defn ensure-indexes [src]
+  (doseq [[idx-name idx] (-> src :config :indexes)]
+    (println (format "idx:%s" idx))
+    (let [src-path (-> src :config :file)
+          src-file (java.io.File. src-path)
+          idx-path (index-file-path src (:name idx))
+          idx-file (java.io.File. idx-path)]
+      ;; only if the idx-file doesn't exist or the src file is newer
+      (println (format "src-path:%s idx-path:%s" src-path idx-path))
+      (when (or (not (.exists idx-file))
+                (> (.lastModified src-file)
+                   (.lastModified idx-file)))
+        (index-file!
+         src-path
+         idx-path
+         (:fn idx))))))
+
+(defn make-candidate-keyfile [sources index-name candfile]
+  ;; combine the index values, sort and count them
+  (with-open [wtr (java.io.PrintWriter. candfile)]
+    (doseq [src sources]
+      (let [idx (-> src :config :indexes index-name)
+            idx-file (index-file-path src index-name)]
+        (with-open [rdr (java.io.BufferedReader. (java.io.FileReader. idx-file))]
+          (doall
+           (for [line (line-seq rdr)]
+             (.println wtr (first (.split line "\t" 2)))))))))
+  (let [tmp    (java.io.File/createTempFile "cand-srt" "tmp")
+        tmpnam (.getName tmp)]
+    (sh/sh "sort" "-u" "-o" tmpnam candfile
+           :env {"LANG" "C"})
+    (println (format "mv %s %s" tmpnam candfile))
+    (sh/sh "mv" tmpnam candfile)))
+
+(defn ensure-candidate-keyfile [sources index-name candfile]
+  (let [f (java.io.File. candfile)]
+    (when-not (.exists f)
+      (make-candidate-keyfile sources index-name candfile))))
+
+(defn process-candidte-clusters [sources index-name f]
+  (let [candfile (format "%s-by-%s.candidates"
+                         (string/join "" (map #(name (:name %1)) sources))
+                         (name index-name))]
+    ;; ensure indexes, then the candidate file
+    (ensure-candidate-keyfile sources index-name candfile)
+    (with-open [rdr (java.io.BufferedReader. (java.io.FileReader. candfile))]
+      (doseq [term (line-seq rdr)]
+        (let [cluster (vec (map (fn [src]
+                                  (let [input-file (-> src :config :file)
+                                        index-file (index-file-path src index-name)]
+                                    {:source     (-> src :name)
+                                     :index-file index-file
+                                     :recs       (vec (index-search-file input-file index-file term))}))
+                                sources))]
+          (f term cluster))))))
+
+
 
