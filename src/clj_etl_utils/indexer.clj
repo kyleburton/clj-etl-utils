@@ -6,6 +6,7 @@
   clj-etl-utils.indexer
   (:require [clojure.contrib.duck-streams :as ds]
             [clojure.contrib.shell-out    :as sh]
+            [clojure.string               :as string]
             [clj-etl-utils.sequences      :as sequences]
             [clj-etl-utils.io             :as io]
             [clojure.java.io              :as cljio])
