@@ -365,28 +365,28 @@ Taken from: http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-
     (StringBuilder.)
     (name s))))
 
-(defn camel->snake [^Map params]
+(defn camel->snake [^java.util.Map params]
   (reduce
    (fn [accum [k v]]
      (assoc accum (keyword (snake-case k)) v))
    {}
    params))
 
-(defn camel->underscore [^Map params]
+(defn camel->underscore [^java.util.Map params]
   (reduce
    (fn [accum [k v]]
      (assoc accum (keyword (.replaceAll (snake-case k) "-" "_")) v))
    {}
    params))
 
-(defn snake->underscore [^Map params]
+(defn snake->underscore [^java.util.Map params]
   (reduce
    (fn [accum [k v]]
      (assoc accum (keyword (.replaceAll (name k) "-" "_")) v))
    {}
    params))
 
-(defn underscore->snake [^Map params]
+(defn underscore->snake [^java.util.Map params]
   (reduce
    (fn [accum [k v]]
      (assoc accum (keyword (.replaceAll (name k) "_" "-")) v))
