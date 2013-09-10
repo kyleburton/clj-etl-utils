@@ -9,11 +9,11 @@ Some of the sources:
       :author "Kyle Burton"}
     clj-etl-utils.ref-data
     (:require
-     clojure.java.io ))
+     clojure.contrib.duck-streams))
 
 
 
-(def us-states
+(def *us-states*
      (partition 2
                 ["AL" "ALABAMA"
                  "AK" "ALASKA"
@@ -80,7 +80,7 @@ Some of the sources:
                  "AE" "Armed Forces Middle East"
                  "AP" "Armed Forces Pacific"]))
 
-(def us-airport-codes
+(def *us-airport-codes*
      (partition
       3
       ["SD" "Aberdeen" "ABR"
@@ -817,7 +817,7 @@ Some of the sources:
        ]))
 
 ;; from: http://www.bennetyee.org/ucsd-pages/area.html
-(def us-area-code-detail
+(def *us-area-code-detail*
      '(("Area Code" "Region" "Time Zone Offset" "Description")
        ("52 55" "MX" "-6" "   Mexico: Mexico City area (country code + city code)")
        ("201" "NJ" "-5" "   N New Jersey: Jersey City, Hackensack (see split 973, overlay 551)")
@@ -1205,10 +1205,10 @@ Some of the sources:
        ("989" "MI" "-5" "   Upper central Michigan: Mt Pleasant, Saginaw (split from 517; perm 4/7/01)")
        ("999" "--" "--" "   Often used by carriers to indicate that the area code information is unavailable for CNID, even though the rest of the number is present")))
 
-(def us-area-codes (map #(nth % 0)
-                          (drop 2 us-area-code-detail)))
+(def *us-area-codes* (map #(nth % 0)
+                          (drop 2 *us-area-code-detail*)))
 
-(def iso-3-country-codes
+(def *iso-3-country-codes*
      [["ABW" "Aruba"]
       ["AFG" "Afghanistan"]
       ["AGO" "Angola"]
@@ -1456,7 +1456,7 @@ Some of the sources:
       ["ZMB" "Zambia"]
       ["ZWE" "Zimbabwe"]])
 
-(def iso-2-country-codes
+(def *iso-2-country-codes*
      [[ "AF"  "AFGHANISTAN" ]
       [ "AX"  "ÅLAND ISLANDS" ]
       [ "AL"  "ALBANIA" ]
@@ -1709,13 +1709,13 @@ Some of the sources:
 
 (comment
 
-  (def page (slurp  "http://www.usps.com/ncsc/lookups/abbreviations.html"))
+  (def *page* (slurp  "http://www.usps.com/ncsc/lookups/abbreviations.html"))
 
   (require 'clj-etl-utils.landmark-parser)
 
-  (def abbrs-segment
+  (def *abbrs-segment*
        (clj-etl-utils.landmark-parser/extract
-        (clj-etl-utils.landmark-parser/make-parser page)
+        (clj-etl-utils.landmark-parser/make-parser *page*)
         [[:fp "Street Suffixes"]
          [:ft "Street Suffixes"]
          [:rp "<table"]]
@@ -1725,7 +1725,7 @@ Some of the sources:
 
   (require 'clojure.contrib.pprint)
 
-  (def rows
+  (def *rows*
        (map
         (fn [s]
           (.. s
@@ -1739,13 +1739,27 @@ Some of the sources:
          (fn [l]
            (and
             (not (.contains l "Street Suffixes"))))
-         (clj-etl-utils.landmark-parser/table-rows abbrs-segment))))
+         (clj-etl-utils.landmark-parser/table-rows *abbrs-segment*))))
+
+  (require 'clojure.contrib.duck-streams)
+  (require 'clojure.contrib.string)
+
+  (with-open [outp (clojure.contrib.duck-streams/writer "resources/clj_etl_utils/ref_data/usps-abbreviations.tab")]
+    (let [write-rec (fn [r]
+                      (.println outp (clojure.contrib.string/join "\t" r)))]
+      (write-rec ["PRIMARY_NAME" "COMMON_ABBREVIATION" "USPS_ABBREVIATION"])
+      (doseq [rec (map
+                   #(vec (.split %1 "\\s+" 3))
+                   (filter
+                    #(.matches % "^[A-Z]+\\s+[A-Z]+\\s+[A-Z]+$")
+                    *rows*))]
+        (write-rec rec))))
 
 
   )
 
 (defn generate-iso-3-xsd []
-    (with-open [outp (clojure.java.io/writer "resources/xsd/iso-3-country-codes.xsd")]
+    (with-open [outp (clojure.contrib.duck-streams/writer "resources/xsd/iso-3-country-codes.xsd")]
     (.println outp "<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
     (.println outp (str "<!--
 See: http://en.wikipedia.org/w/index.php?title=ISO_3166-1_alpha-3&oldid=422511645
@@ -1766,7 +1780,7 @@ Generated: " (java.util.Date.) "
     </xs:annotation>
     <xs:restriction base=\"xs:NMTOKEN\">
 ")
-    (doseq [[code-3 country-name] iso-3-country-codes]
+    (doseq [[code-3 country-name] *iso-3-country-codes*]
       (.print outp (str "
         <xs:enumeration value=\"" (.toLowerCase code-3) "\">
            <xs:annotation>
@@ -1782,7 +1796,7 @@ Generated: " (java.util.Date.) "
 ")))
 
 (defn generate-iso-2-xsd []
-    (with-open [outp (clojure.java.io/writer "resources/xsd/iso-2-country-codes.xsd")]
+    (with-open [outp (clojure.contrib.duck-streams/writer "resources/xsd/iso-2-country-codes.xsd")]
     (.println outp "<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
     (.println outp (str "<!--
 See: http://en.wikipedia.org/w/index.php?title=ISO_3166-2&oldid=419867458
@@ -1802,7 +1816,7 @@ Generated: " (java.util.Date.) "
     </xs:annotation>
     <xs:restriction base=\"xs:NMTOKEN\">
 ")
-    (doseq [[code-3 country-name] iso-2-country-codes]
+    (doseq [[code-3 country-name] *iso-2-country-codes*]
       (.print outp (str "
         <xs:enumeration value=\"" (.toLowerCase code-3) "\">
            <xs:annotation>

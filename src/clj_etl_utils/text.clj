@@ -3,21 +3,21 @@
       :author "Kyle Burton"}
   clj-etl-utils.text
   (:use [clj-etl-utils.lang-utils  :only [raise]])
-  (:require    [clojure.string     :as string])
+  (:require    [clojure.contrib.str-utils        :as str-utils])
   (:import [org.apache.commons.lang WordUtils]
            [java.text NumberFormat]
            [org.apache.commons.codec.binary Base64]))
 
 (defn
   ^{:doc "Convert string to upper case, null safe (returns empty string on null)."}
-      uc [^String s]
-      (if (nil? s)
-        ""
-        (.toUpperCase s)))
+  uc [#^String s]
+  (if (nil? s)
+    ""
+    (.toUpperCase s)))
 
 (defn
   ^{:doc "Convert string to lower case, null safe (returns empty string on null)."}
-  lc [^String s]
+  lc [#^String s]
   (if (nil? s)
     ""
     (.toLowerCase s)))
@@ -56,7 +56,7 @@ create or clean up the actual temporary file itself.
 The sequence consists of pairs of [provider-type provider-algorithm]"}
   security-providers-type-algorithm-seq []
   (mapcat (fn [provider]
-            (map (fn [^java.security.Provider svc]
+            (map (fn [svc]
                    [(.getType svc) (.getAlgorithm svc)])
                  (.getServices provider)))
           (java.security.Security/getProviders)))
@@ -100,7 +100,7 @@ The sequence consists of pairs of [provider-type provider-algorithm]"}
 
 (defn
   ^{:doc "Compute and return the SHA256 sum of the given byte array, returned as a hex-encoded string."}
-  sha256->string [^bytes bytes]
+  sha256->string [bytes]
   (let [digester (java.security.MessageDigest/getInstance "SHA-256")]
     (.update digester bytes)
     (apply str (map (fn [byte]
@@ -109,7 +109,7 @@ The sequence consists of pairs of [provider-type provider-algorithm]"}
 
 (defn
   ^{:doc "Compute and return the SHA256 sum of the given string, returned as a hex-encoded string."}
-  string->sha256 [^String s]
+  string->sha256 [s]
   (sha256->string (.getBytes s)))
 
 
@@ -261,7 +261,7 @@ Taken from: http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-
 (comment
 
 
-)
+  )
 
 
 (defn
@@ -291,24 +291,24 @@ Taken from: http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-
 (comment
 
 
-)
+  )
 
 
-(def formatter-setters
-     {:negative-prefix (fn [^NumberFormat nf x] (.setNegativePrefix nf x))
-      :negative-suffix (fn [^NumberFormat nf x] (.setNegativeSuffix nf x))
-      :positive-prefix (fn [^NumberFormat nf x] (.setPositivePrefix nf x))
-      :positive-suffix (fn [^NumberFormat nf x] (.setPositiveSuffix nf x))})
+(def *formatter-setters*
+     {:negative-prefix (fn [#^NumberFormat nf x] (.setNegativePrefix nf x))
+      :negative-suffix (fn [#^NumberFormat nf x] (.setNegativeSuffix nf x))
+      :positive-prefix (fn [#^NumberFormat nf x] (.setPositivePrefix nf x))
+      :positive-suffix (fn [#^NumberFormat nf x] (.setPositiveSuffix nf x))})
 
 (defn
   ^{:doc ""}
-  apply-format-setter [^NumberFormat nf k v]
-  (if-not (contains? formatter-setters k)
+  apply-format-setter [#^NumberFormat nf k v]
+  (if-not (contains? *formatter-setters* k)
     (raise "set-formatter-option: option not yet implemented: %s" k))
-  ((get formatter-setters k) nf v)
+  ((get *formatter-setters* k) nf v)
   nf)
 
-(declare default-formatters)
+(declare *default-formatters*)
 
 (defn get-currency-formatter [opts-or-keyword]
   (cond
@@ -318,17 +318,17 @@ Taken from: http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-
             (java.text.NumberFormat/getCurrencyInstance)
             opts-or-keyword)
     (keyword? opts-or-keyword)
-    (or (get @default-formatters opts-or-keyword)
+    (or (get @*default-formatters* opts-or-keyword)
         (raise "Error: formatter not found for keyword: %s" opts-or-keyword))
     :else
     (raise "Error: unrecognized formatter spec (not a map or keyword): [%s] %s"
            (class opts-or-keyword) opts-or-keyword)))
 
-(def currency-with-negative (get-currency-formatter {:negative-prefix "-$" :negative-suffix ""}))
+(def *currency-with-negative* (get-currency-formatter {:negative-prefix "-$" :negative-suffix ""}))
 
-(def default-formatters
+(def *default-formatters*
      (atom
-      {:currency-with-negative currency-with-negative
+      {:currency-with-negative *currency-with-negative*
        :default                (get-currency-formatter {})}))
 
 
@@ -342,12 +342,12 @@ Taken from: http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-
               num)))
 
 
-(defonce rx-clean-phone-number #"\D+")
+(defonce *rx-clean-phone-number* #"\D+")
 
 (defn canonical-phone-number [mobile-number]
   (if (nil? mobile-number)
     ""
-    (let [num   (clojure.string/replace mobile-number  rx-clean-phone-number "")]
+    (let [num (str-utils/re-gsub *rx-clean-phone-number* "" mobile-number)]
       (if (= 10 (count num))
         (str 1 num)
         num))))
@@ -365,6 +365,50 @@ Taken from: http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-
     (StringBuilder.)
     (name s))))
 
+(defn camel->snake [^Map params]
+  (reduce
+   (fn [accum [k v]]
+     (assoc accum (keyword (snake-case k)) v))
+   {}
+   params))
+
+(defn camel->underscore [^Map params]
+  (reduce
+   (fn [accum [k v]]
+     (assoc accum (keyword (.replaceAll (snake-case k) "-" "_")) v))
+   {}
+   params))
+
+(defn snake->underscore [^Map params]
+  (reduce
+   (fn [accum [k v]]
+     (assoc accum (keyword (.replaceAll (name k) "-" "_")) v))
+   {}
+   params))
+
+(defn underscore->snake [^Map params]
+  (reduce
+   (fn [accum [k v]]
+     (assoc accum (keyword (.replaceAll (name k) "_" "-")) v))
+   {}
+   params))
+
+(defn camelize-keyword [k]
+  (let [[res & parts] (.split (name k) "[-_]")]
+    (loop [res         res
+           [n & parts] parts]
+      (if-not n
+        (keyword res)
+        (recur (str res (org.apache.commons.lang.WordUtils/capitalize n))
+               parts)))))
+
+(defn camelize-map-keys [m]
+  (reduce
+   (fn [accum [k v]]
+     (assoc accum
+       (camelize-keyword k) v))
+   {}
+   m))
 
 (def encode-base64
      (let [b (Base64.)]
@@ -375,6 +419,15 @@ Taken from: http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-
      (let [b (Base64.)]
        (fn decode-base64 [coded]
          (.decode b coded))))
+
+
+(defn summarize-message
+  ([msg len]
+     (summarize-message msg len "'" "..."))
+  ([msg len delimiter summary-marker]
+     (if (> (count msg) len)
+       (str delimiter (first (word-split msg len)) summary-marker delimiter)
+       (str delimiter msg delimiter))))
 
 
 (comment

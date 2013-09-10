@@ -4,7 +4,7 @@
   clj-etl-utils.lang-utils
   (:import [org.apache.commons.io IOUtils]
            [java.net InetAddress])
-  (:use    [clojure.core.incubator  :only [-?>]]))
+  (:use    [clojure.contrib.core  :only [-?>]]))
 
 (defn- raise-dispatch-fn [& [fst snd thrd & rst]]
   (cond
@@ -75,23 +75,23 @@
 
 (defmethod raise
   [:caused-by :fmt-and-args]
-  [^Throwable caused-by ^String fmt & args]
+  [#^Throwable caused-by #^String fmt & args]
   (throw (RuntimeException. (apply format fmt args) caused-by)))
 
 (defmethod raise
   [:caused-by :msg]
-  [^Throwable caused-by ^String msg]
+  [#^Throwable caused-by #^String msg]
   (throw (RuntimeException. msg caused-by)))
 
 (defmethod raise
   [:fmt-and-args]
-  [^String fmt & args]
-  (throw (RuntimeException. ^String (apply format fmt args))))
+  [#^String fmt & args]
+  (throw (RuntimeException. (apply format fmt args))))
 
 (defmethod raise
   :default
   [& stuff]
-  (throw (RuntimeException. ^String (apply str stuff))))
+  (throw (RuntimeException. (apply str stuff))))
 
 
 ;; TODO: get rid of 'log'
@@ -102,10 +102,10 @@
   (or (seq? thing)
       (vector? thing)))
 
-(defn resource-as-stream ^java.io.InputStream [^String res-url]
+(defn resource-as-stream [res-url]
   (.getResourceAsStream (.getClass *ns*) res-url))
 
-(defn resource-as-string [^String res-url]
+(defn resource-as-string [res-url]
   (let [strm (resource-as-stream res-url)]
     (if (not strm)
       nil
@@ -193,6 +193,8 @@ following actions are supported:
               (apply f action nextval args))))))))
 
 
+
+
 (defmacro prog1 [res & body]
   `(let [res# ~res]
      ~@body
@@ -240,7 +242,7 @@ following actions are supported:
        (~sym-name :final))))
 
 
-(defn array? [^Object thing]
+(defn array? [thing]
   (-?> thing (.getClass) (.isArray)))
 
 (def rec-bean
@@ -256,18 +258,10 @@ following actions are supported:
                         java.util.Map
                         clojure.lang.IFn}]
        (fn rec-bean [thing]
-         (cond
-           (or (nil? thing)
-               (primitive? (class thing)))
+         (if (or (nil? thing)
+                 (seq? thing)
+                 (primitive? (class thing)))
            thing
-
-           (or
-            (seq-like? thing)
-            (isa? (class thing) java.util.List)
-            (array? thing))
-           (vec (map rec-bean thing))
-
-           :thing-is-a-map
            (let [bn (dissoc (bean thing) :class)]
              (reduce (fn [res k]
                        (assoc res k
@@ -277,7 +271,7 @@ following actions are supported:
                      {}
                      (keys bn)))))))
 
-(defn get-stack-trace [^Exception ex]
+(defn get-stack-trace [ex]
   (format "Exception Message: %s, Stack Trace: %s"
           (.getMessage ex)
           (with-out-str
@@ -285,7 +279,7 @@ following actions are supported:
              ex
              (java.io.PrintWriter. *out*)))))
 
-(defn caused-by-seq [^Throwable th]
+(defn caused-by-seq [th]
   (loop [res []
          next th]
     (if next
@@ -388,3 +382,11 @@ following actions are supported:
                     [sym `(nth ~rec-gensym ~idx)]) (partition 2  bindings)))]
       ~@body)))
 
+(defmacro assoc-in-if [test m ks v]
+  `(if ~test
+     (assoc-in ~m ~ks ~v)
+     ~m))
+
+(defn resource->file-path [resource]
+  (-> (.getClass *ns*) (.getClassLoader) (.findResource resource)
+      (.getFile)))

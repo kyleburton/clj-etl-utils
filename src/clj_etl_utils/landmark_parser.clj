@@ -1,6 +1,6 @@
 (ns ^{:doc "Semi-structured Text parsing library.  The library uses an
     automation and a command set to extract portions of a document.
-    Atomic commands are instructions such as: start, end
+    Atomic commands are instructions such as: start, end,
     forward-char, backward-char, forward-past, rewind-to and so on.
     The landmarks can be either literal or logical (regular
     expressions, 'types', etc).  This extractor can often succeed in
@@ -15,7 +15,7 @@
    [clj-etl-utils.regex :as regex]))
 
 
-(declare parser-cmds)
+(declare *cmds*)
 
 (defstruct parser :pos :doc :ldoc :doclen)
 
@@ -113,7 +113,7 @@
   (loop [[[cmd & args] & cmds] (parse-cmds cmds)]
     (if cmd
       (do
-        (if (apply (parser-cmds cmd) (cons parser args))
+        (if (apply (*cmds* cmd) (cons parser args))
           (do
             (recur cmds))
           false))
@@ -123,20 +123,20 @@
   (loop [[[cmd & args] & cmds] (parse-cmds cmds)]
     (if cmd
       (do
-        (if (not (parser-cmds cmd))
+        (if (not (*cmds* cmd))
           (raise "Error: invalid command: %s" cmd))
-        (if (apply (parser-cmds cmd) (cons parser args))
+        (if (apply (*cmds* cmd) (cons parser args))
           (do
             (recur cmds))
           false))
       true)))
 
 (defn forward-past-regex
-  "See also regex/common-regexes"
+  "See also regex/*common-regexes*"
   [p regex]
   (log "forward-past-regex regex=%s" regex)
-  (let [pat (if (and (keyword? regex) (regex regex/common-regexes))
-              (regex regex/common-regexes)
+  (let [pat (if (and (keyword? regex) (regex regex/*common-regexes*))
+              (regex regex/*common-regexes*)
               (Pattern/compile (str regex) (bit-or Pattern/MULTILINE Pattern/CASE_INSENSITIVE)))
         m   (.matcher pat (:doc p))]
     (log "forward-past-regex: pat=%s m=%s" pat m)
@@ -148,9 +148,9 @@
       false)))
 
 (defn forward-to-regex [p regex]
-  "See also regex/common-regexes"
-  (let [pat (if (and (keyword? regex) (regex regex/common-regexes))
-              (regex regex/common-regexes)
+  "See also regex/*common-regexes*"
+  (let [pat (if (and (keyword? regex) (regex regex/*common-regexes*))
+              (regex regex/*common-regexes*)
               (Pattern/compile (str regex) (bit-or Pattern/MULTILINE Pattern/CASE_INSENSITIVE)))
         m   (.matcher pat (:doc p))]
     (log "forward-to-regex: using pat=%s" pat)
@@ -161,7 +161,7 @@
       false)))
 
 
-(def parser-cmds
+(def *cmds*
      {:apply-commands        apply-commands
       :a                     apply-commands
       :do-commands           do-commands

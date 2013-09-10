@@ -77,6 +77,7 @@
           response-body (.getResponseBodyAsString get-method)]
       ;;(println (format "Return Code: %s" return-code))
       ;;(println (format "Respone: %s" response-body ))
+      (.releaseConnection get-method)
       {:return-code   return-code
        :response-body response-body
        :http-method   get-method})))
@@ -98,10 +99,11 @@
         (.setRequestEntity
          post-method
          (InputStreamRequestEntity.
-          (ByteArrayInputStream. (.getBytes ^String (:body params)))
-          (long (.length ^String (:body params)))))))
-    (let [return-code   (.executeMethod ^HttpClient (:ua ua) post-method)
+          (ByteArrayInputStream. (.getBytes (:body params)))
+          (long (.length (:body params)))))))
+    (let [return-code   (.executeMethod (:ua ua) post-method)
           response-body (.getResponseBodyAsString post-method)]
+      (.releaseConnection post-method)
       ;;(println (format "Return Code: %s" return-code))
       ;;(println (format "Respone: %s" response-body ))
       {:return-code   return-code
@@ -109,39 +111,39 @@
        :http-method   post-method})))
 
 
-(defonce client-registry (atom {}))
+(defonce *client-registry* (atom {}))
 
-(def ^:dynamic client nil)
+(def ^:dynamic *client* nil)
 
 (defn register-client [client-name config-map]
-  (swap! client-registry
+  (swap! *client-registry*
          assoc client-name
          config-map))
 
 (defn lookup-client [registered-name]
-  (get @client-registry registered-name))
+  (get @*client-registry* registered-name))
 
 
 (defn with-client* [registered-name body-fn]
   (if-let [client-config (lookup-client registered-name)]
-    (binding [client client-config]
+    (binding [*client* client-config]
       (body-fn))
-    (raise "Error: no HTTP client registered with the given name [%s], currently registered names are: %s" registered-name (clojure.string/join "," (keys @client-registry)))))
+    (raise "Error: no HTTP client registered with the given name [%s], currently registered names are: %s" registered-name (clojure.string/join "," (keys @*client-registry*)))))
 
 (defmacro with-client [registered-name & body]
   `(with-client* ~registered-name
      (fn [] ~@body)))
 
 (defn make-get-request [path]
-  (let [scheme   ^String (:scheme client)
-        host     ^String (:host   client)
-        port             (:port   client)
-        base-url ^String (:base-url client)
-        path     ^String (format "%s/%s" base-url path)]
+  (let [scheme   (:scheme *client*)
+        host     (:host   *client*)
+        port     (:port   *client*)
+        base-url (:base-url *client*)
+        path     (format "%s/%s" base-url path)]
     (aprog1
         (GetMethod.)
       (.setURI it (URI. scheme nil host port path))
-      (doseq [[hdr-name hdr-val] (:request-headers client)]
+      (doseq [[hdr-name hdr-val] (:request-headers *client*)]
         (.setRequestHeader it (name hdr-name) hdr-val)))))
 
 (defn client-get [#^String url & params]
@@ -149,7 +151,7 @@
         name-value-pairs  (map->name-value-pair-vec (second params))]
     (.setQueryString get-method name-value-pairs)
     ;;(printf "do-get: qs=%s" (.getQueryString get-method))
-    (let [return-code   (.executeMethod (:ua (apply user-agent (mapcat identity client))) get-method )
+    (let [return-code   (.executeMethod (:ua (apply user-agent (mapcat identity *client*))) get-method )
           response-body (.getResponseBodyAsString get-method)]
       ;;(println (format "Return Code: %s" return-code))
       ;;(println (format "Respone: %s" response-body ))
@@ -176,6 +178,7 @@
     (client-get "398078711~RN_TEST_CITI_WS_ALLTEL|relayapitest1/bal"))
 
 
+  @*foo*
 
   (do-get (user-agent) "http://www.google.com" :params {})
   (do-post (user-agent) "http://localhost:10001" :params { :secret 44 :secret2 49} )

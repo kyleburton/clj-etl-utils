@@ -1,6 +1,6 @@
 h1. clj-etl-utils
 
-The master branch is for Clojure 1.3 suport.  All clj-etl-utils versions released from this branch shall have a 1.3.x version numbering scheme.  Clojure 1.2 support will be on the clojure-1.2 branch.
+This branch is for Clojure 1.2 Support.  All clj-etl-util versions released from this branch shall have a 1.0.x version numbering scheme.  Clojure 1.3 support will be on the master branch.
 
 h2. Testing
 
@@ -200,3 +200,5 @@ h1. Authors
 Kyle Burton <kyle.burton@gmail.com>
 
 Paul Santa Clara <kesserich1@gmail.com>
+
+Tim Visher <tim.visher@gmail.com>

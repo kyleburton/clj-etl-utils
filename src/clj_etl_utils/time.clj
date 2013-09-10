@@ -17,7 +17,7 @@
         d2 (.toLocalDate t2)]
     (.isEqual d1 d2)))
 
-(def days-of-week-long
+(def *days-of-week-long*
      {DateTimeConstants/SUNDAY    "Sunday"
       DateTimeConstants/MONDAY    "Monday"
       DateTimeConstants/TUESDAY   "Tuesday"
@@ -27,9 +27,9 @@
       DateTimeConstants/SATURDAY  "Saturday"})
 
 (defn day-of-week-long [dt]
-  (get days-of-week-long (.getDayOfWeek dt)))
+  (get *days-of-week-long* (.getDayOfWeek dt)))
 
-(def days-of-week-abbr
+(def *days-of-week-abbr*
      {DateTimeConstants/SUNDAY    "Sun"
       DateTimeConstants/MONDAY    "Mon"
       DateTimeConstants/TUESDAY   "Tue"
@@ -39,9 +39,9 @@
       DateTimeConstants/SATURDAY  "Sat"})
 
 (defn day-of-week-abbr [dt]
-  (get days-of-week-abbr (.getDayOfWeek dt)))
+  (get *days-of-week-abbr* (.getDayOfWeek dt)))
 
-(def days-of-week-short
+(def *days-of-week-short*
      {DateTimeConstants/SUNDAY    "S"
       DateTimeConstants/MONDAY    "M"
       DateTimeConstants/TUESDAY   "T"

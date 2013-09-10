@@ -3,8 +3,7 @@
       :author "Kyle Burton"}
   clj-etl-utils.log
   (:require
-   [clojure.tools.logging  :as log]))
-
+   [clojure.contrib.logging :as log]))
 
 (defmacro tracef [& args]  `(if (log/enabled? :debug) (log/debug (log-formatter ~@args))))
 (defmacro debugf [& args]  `(if (log/enabled? :debug) (log/debug (log-formatter ~@args))))

@@ -5,11 +5,10 @@
    [org.joda.time DateTime  ]
    [org.joda.time.format ISODateTimeFormat])
   (:use
-   [clojure.data.json  :only [Write-JSON]]))
-
+   [clojure.contrib.json  :only [Write-JSON]]))
 
 (extend java.sql.Timestamp Write-JSON
-        {:write-json (fn [x #^PrintWriter out escape-unicode?]
+        {:write-json (fn [x #^PrintWriter out]
                        (.print out "\"")
                        (.print out
                                (.print (ISODateTimeFormat/dateTime )
@@ -17,22 +16,23 @@
                        (.print out "\""))})
 
 (extend org.joda.time.DateTime Write-JSON
-        {:write-json (fn [x #^PrintWriter out escape-unicode?]
+        {:write-json (fn [x #^PrintWriter out]
                        (.print out "\"")
                        (.print out (.toString x))
                        (.print out "\""))})
 
 (extend java.util.Date Write-JSON
-        {:write-json (fn [x #^PrintWriter out escape-unicode?]
+        {:write-json (fn [x #^PrintWriter out]
                        (.print out "\"")
                        (.print out (.toString x))
                        (.print out "\""))})
 
 (extend clojure.lang.Fn Write-JSON
-        {:write-json (fn [x #^PrintWriter out escape-unicode?]
+        {:write-json (fn [x #^PrintWriter out]
                        (.print out "\"")
                        (.print out (.toString x))
                        (.print out "\""))})
+
 
 
 (comment
@@ -45,7 +45,4 @@
     (.print
      (ISODateTimeFormat/dateTime )
      (org.joda.time.DateTime. (:created_at (rn-db.core/find-first-by :wall.actions {:id 5664})))))
-
-  (require 'clojure.data.json)
-  (clojure.data.json/Write-JSON)
   )

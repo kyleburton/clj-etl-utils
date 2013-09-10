@@ -85,7 +85,7 @@ the random sampling process."} ;"
   ([1 1] [2] [3 3] [4 4 4] [5] [6] [7] [8] [9 9 9 9 9 9 9])
 
   (group-with
-   (fn [^String s]
+   (fn [#^String s]
      (.charAt s 0))
    ["this" "that" "other" "othello" "flub" "flubber" "flugelhorn" "potatoe"])
 

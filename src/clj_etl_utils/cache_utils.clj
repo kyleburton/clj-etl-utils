@@ -10,8 +10,8 @@
    [clj-etl-utils.log        :as log])
   (:use
    [clj-etl-utils.lang-utils :only [raise aprog1]])
-  (:import 
-    [org.joda.time DateTime])
+  (:import
+   [org.joda.time DateTime]))
 
 
 ;; ## Cache Registry
@@ -24,7 +24,7 @@
 ;;
 ;;   `(register-cache :clj-etl-utils.cache-utils.my-function #{:standard} (atom {}))`
 ;;
-(defonce cache-registry (atom {}))
+(defonce *cache-registry* (atom {}))
 
 ;; ### Cache Tags
 ;;
@@ -32,12 +32,12 @@
 ;; The first supported type for this module is :standard
 ;; which represents a standard memoize based cache.
 
-(defn register-cache [name ^java.util.Set tags cache-ref & [cache-reset-fn]]
+(defn register-cache [name #^java.util.Set tags cache-ref & [cache-reset-fn]]
   (swap! *cache-registry* assoc name {:name name :tags tags :cache cache-ref :reset-fn (or cache-reset-fn
                                                                                            (fn [entry] (reset! (:cache entry) {})))}))
 
 (defn lookup-cache-by-name [name]
-  (get @cache-registry name))
+  (get @*cache-registry* name))
 
 (defn purge-cache-named [n]
   (reset! (:cache (lookup-cache-by-name n))
@@ -46,7 +46,7 @@
 (defn lookup-caches-by-tag [tag]
   (filter (fn [entry]
             (contains? (:tags entry) tag))
-          (vals @cache-registry)))
+          (vals @*cache-registry*)))
 
 (defn purge-caches-with-tag [tag]
   (doseq [entry (lookup-caches-by-tag tag)]
@@ -55,26 +55,22 @@
 (defn purge-standard-caches []
   (purge-caches-with-tag :standard))
 
-
-
-;;
-
 (comment
 
   (map :cache (lookup-caches-by-tag :standard))
-)
+  )
 
 (defn wrap-standard-cache [name tags the-fn args-ser-fn]
   (let [cache (atom {})]
-   (register-cache name tags cache)
-   (fn [& args]
-     (let [k    (args-ser-fn args)
-           cmap @cache]
-       (if (contains? cmap k)
-         (get cmap k)
-         (aprog1
-             (apply the-fn args)
-           (swap! cache assoc k it)))))))
+    (register-cache name tags cache)
+    (fn [& args]
+      (let [k    (args-ser-fn args)
+            cmap @cache]
+        (if (contains? cmap k)
+          (get cmap k)
+          (aprog1
+              (apply the-fn args)
+            (swap! cache assoc k it)))))))
 
 (defn simple-cache [name the-fn]
   (wrap-standard-cache name #{:standard} the-fn identity))
@@ -142,8 +138,7 @@
          {:duration    ~duration
           :args-ser-fn identity})))
 
-
-(defn timeout-with-fallback-cache [timeout-ms the-fn]
+(defn timeout-with-fallback-cache [name tags timeout-ms the-fn]
   (let [cache           (atom {})
         now-ms          (fn [] (.getTime (java.util.Date.)))
         store-in-cache! (fn store-in-cache [cache-key res]
@@ -153,6 +148,7 @@
                                     (if-let [entry (get @cache cache-key)]
                                       (< (- (now-ms) (:time entry)) timeout-ms)
                                       false))]
+    (register-cache name tags cache)
     (fn timeout-with-fallback-cache-inner [& args]
       (cond
         (not (contains? @cache args))
@@ -171,7 +167,7 @@
 
 (defmacro def-timeout-with-fallback-cache [fn-name timeout-ms args-spec & body]
   `(def ~fn-name
-        (timeout-with-fallback-cache ~timeout-ms
+        (timeout-with-fallback-cache ~(keyword (str *ns* "." fn-name)) #{:timeout :fallback} ~timeout-ms
           (fn ~args-spec
             ~@body))))
 

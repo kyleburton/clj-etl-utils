@@ -3,8 +3,8 @@
       :author "Kyle Burton"}
   clj-etl-utils.io
   (:use [clj-etl-utils.lang-utils :only (raise log)])
-  (:require [clojure.java.shell           :as sh]
-            clojure.string) 
+  (:require [clojure.contrib.shell-out           :as sh]
+            clojure.contrib.string)
   (:import
    [java.io
     InputStream FileInputStream File InputStreamReader RandomAccessFile
@@ -20,7 +20,7 @@
   ^{:doc "Read the first n-bytes available in the stream, if the stream supports
 marking, it will be reset back so that the bytes are not actually read."
     :added "1.0.0"}
-  first-n-bytes-available [^Reader stream n-bytes]
+  first-n-bytes-available [#^Reader stream n-bytes]
   (let [res (atom [])]
     (try
      (if (.markSupported stream)
@@ -39,56 +39,56 @@ marking, it will be reset back so that the bytes are not actually read."
     @res))
 
 ;; ;; from: http://unicode.org/faq/utf_bom.html
-;; (def utf-16be
+;; (def *utf-16be*
 ;;      {:encoding  "UTF-16BE"
 ;;       :name      :utf-16be
 ;;       :marker    "\u00FE\u00FF"
 ;;       :marker-bytes [0xFE 0xFF]})
 
-;; (def utf-16le
+;; (def *utf-16le*
 ;;      {:encoding  "UTF-16LE"
 ;;       :name      :utf-16le
 ;;       :marker    "\u00FF\u00FE"
 ;;       :marker-bytes [0xFF 0xFE]})
 
-;; (def utf-32be
+;; (def *utf-32be*
 ;;      {:encoding  "UTF-32BE"
 ;;       :name       :utf-32be
 ;;       :marker    "\u0000\u0000\u00FE\u00FF"
 ;;       :marker-bytes [0x00 0x00 0xFE 0xFF]})
 
-;; (def utf-32le
+;; (def *utf-32le*
 ;;      {:encoding  "UTF-32LE"
 ;;       :name      :utf-32le
 ;;       :marker    "\u00FF\u00FE\u0000\u0000"
 ;;       :marker-bytes [0xFF 0xFE 0x00 0x00]})
 
-;; (def utf-8
+;; (def *utf-8*
 ;;      {:encoding  "UTF-8"
 ;;       :name      :utf-8
 ;;       :marker    "\u00EF\u00BB\u00BF"
 ;;       :marker-bytes [0xEF 0xBB 0xBF]})
 
-;; (def iso-8851-1
+;; (def *iso-8851-1*
 ;;      {:encoding  "ISO-8859-1"
 ;;       :name      :iso-8859-1
 ;;       :marker    ""
 ;;       :marker-bytes []})
 
-;; (def us-ascii
+;; (def *us-ascii*
 ;;      {:encoding  "US-ASCII"
 ;;       :name      :us-ascii
 ;;       :marker    ""
 ;;       :marker-bytes []})
 
-;; (def bom-markers
-;;      [utf-32be
-;;       utf-32le
-;;       utf-16be
-;;       utf-16le
-;;       utf-8])
+;; (def *bom-markers*
+;;      [*utf-32be*
+;;       *utf-32le*
+;;       *utf-16be*
+;;       *utf-16le*
+;;       *utf-8*])
 
-;; (def default-encoding iso-8851-1)
+;; (def *default-encoding* *iso-8851-1*)
 
 
 (defn ^{:doc "Test if a given marker is equivalent to the given set of
@@ -111,11 +111,11 @@ marking, it will be reset back so that the bytes are not actually read."
 ;; TODO: may return a false positive on arbitrary binary data
 ;; (defn detect-stream-encoding-via-bom [stream & [default-encoding]]
 ;;   (let [file-bytes (first-n-bytes-available stream 4)]
-;;     (loop [[encoding & encodings] bom-markers]
+;;     (loop [[encoding & encodings] *bom-markers*]
 ;;       (cond
 ;;         (not encoding)
 ;;         ;; TODO: return the default encoding here
-;;  	(or default-encoding default-encoding)
+;;  	(or default-encoding *default-encoding*)
 ;;         (byte-marker-matches? (:marker-bytes encoding) file-bytes)
 ;;         encoding
 ;;         :else
@@ -126,10 +126,10 @@ marking, it will be reset back so that the bytes are not actually read."
 
 ;; (defmulti detect-file-encoding-via-bom (fn [x & [default-encoding]] (class x)))
 
-;; (defmethod detect-file-encoding-via-bom String [^String file & [^String default-encoding]]
+;; (defmethod detect-file-encoding-via-bom String [#^String file & [#^String default-encoding]]
 ;;   (detect-file-encoding-via-bom (File. file) default-encoding))
 
-;; (defmethod detect-file-encoding-via-bom File [^File file & [^String default-encoding]]
+;; (defmethod detect-file-encoding-via-bom File [#^File file & [#^String default-encoding]]
 ;;   (with-open [inp (FileReader. file)]
 ;;     (detect-stream-encoding-via-bom inp default-encoding)))
 
@@ -137,10 +137,10 @@ marking, it will be reset back so that the bytes are not actually read."
 ;;   (throw (format "Error: fell through to :default for detect-stream-encoding-via-bom file=%s" file)))
 
 
-;; (defn unicode-input-stream [^String path]
+;; (defn unicode-input-stream [#^String path]
 ;;   (InputStreamReader.
 ;;    (FileInputStream. path)
-;;    ^String (:encoding (detect-file-encoding-via-bom path))))
+;;    #^String (:encoding (detect-file-encoding-via-bom path))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -158,8 +158,8 @@ marking, it will be reset back so that the bytes are not actually read."
 (defn
   ^{:doc "Read a specific number of characters from the InputStream, return a string."
     :added "1.0.0"}
-  read-fixed-length-string [^InputStream inp nchars]
-  (let [dest ^bytes (make-array Byte/TYPE nchars)
+  read-fixed-length-string [#^InputStream inp nchars]
+  (let [dest #^bytes (make-array Byte/TYPE nchars)
         nread (.read inp dest 0 nchars)]
     (String. dest 0 nread)))
 
@@ -167,7 +167,7 @@ marking, it will be reset back so that the bytes are not actually read."
   ^{:doc   "Drain a buffered reader into a sequence."
     :added "1.0.0"}
   drain-line-reader
-  [^java.io.BufferedReader rdr]
+  [#^java.io.BufferedReader rdr]
   (loop [res []
          line (.readLine rdr)]
     (if line
@@ -176,11 +176,11 @@ marking, it will be reset back so that the bytes are not actually read."
       res)))
 
 (defn
-  ^{:doc   "Simple wrapper around Runtime.exec - not intended to compete with clojure.java.shell"
+  ^{:doc   "Simple wrapper around Runtime.exec - not intended to compete with clojure.contrib.shell-out"
     :added "1.0.0"}
   exec
-  [^String cmd]
-  (let [proc ^Process (.exec (Runtime/getRuntime) cmd)
+  [#^String cmd]
+  (let [proc #^Process (.exec (Runtime/getRuntime) cmd)
         rv (.waitFor proc)]
     {:error (drain-line-reader (java.io.BufferedReader. (java.io.InputStreamReader. (.getErrorStream proc))))
      :output (drain-line-reader (java.io.BufferedReader. (java.io.InputStreamReader. (.getInputStream proc))))
@@ -213,14 +213,14 @@ marking, it will be reset back so that the bytes are not actually read."
   "Strip off the last part of the file name."
   [fname]
   (if (instance? java.io.File fname)
-    (.getParent ^java.io.File fname)
-    (.getParent (java.io.File. ^String (str fname)))))
+    (.getParent #^java.io.File fname)
+    (.getParent (java.io.File. #^String (str fname)))))
 
-(defn ^java.io.File $HOME
+(defn #^java.io.File $HOME
   "Construct a path relative to the user's home directory."
   [& paths]
   (java.io.File.
-   ^String (apply str
+   #^String (apply str
                    (cons (str (System/getProperty "user.home") "/")
                          (apply str (interpose "/" paths))))))
 
@@ -228,12 +228,12 @@ marking, it will be reset back so that the bytes are not actually read."
   "Perform bash style expansion on the given path.  Eg: ~/file.txt."
   class)
 
-(defn ^String get-user-home
+(defn #^String get-user-home
   "Get the user's home dir as a string."
   []
   (System/getProperty "user.home"))
 
-(defmethod expand-file-name String [^String path]
+(defmethod expand-file-name String [#^String path]
   (cond (.startsWith path "~/")
         (.replaceFirst path "^~(/|$)" (str (get-user-home) "/"))
         (.startsWith path "file://~/")
@@ -264,7 +264,7 @@ marking, it will be reset back so that the bytes are not actually read."
 (defn mkdir-p [dirs perm owner-only]
   (loop [dir      [(first dirs)]
          sub-dirs (next dirs)]
-    (let [next-dir (java.io.File. (clojure.string/join "/" dir ))]
+    (let [next-dir (java.io.File. (clojure.contrib.string/join "/" dir ))]
       (.mkdir next-dir)
       (.setReadable next-dir perm owner-only)
       (.setWritable next-dir perm owner-only)
@@ -276,14 +276,14 @@ marking, it will be reset back so that the bytes are not actually read."
 
 
 (defmulti  exists? class)
-(defmethod exists? String   [^String s] (.exists (File. s)))
-(defmethod exists? File     [^File f]   (.exists f))
+(defmethod exists? String   [#^String s] (.exists (File. s)))
+(defmethod exists? File     [#^File f]   (.exists f))
 (defmethod exists? :default [x] (throw (Exception. (str "Do not know how to test <" (pr-str x) "> if it `exists?'"))))
 
 
 (defn drain-line-reader
   "Drain a buffered reader into a sequence."
-  [^java.io.BufferedReader rdr]
+  [#^java.io.BufferedReader rdr]
   (loop [res []
          line (.readLine rdr)]
     (if line
@@ -292,8 +292,8 @@ marking, it will be reset back so that the bytes are not actually read."
       res)))
 
 (defn exec
-  "Simple wrapper around Runtime.exec - not intended to compete with clojure.java.shell"
-  [^String cmd]
+  "Simple wrapper around Runtime.exec - not intended to compete with clojure.contrib.shell-out"
+  [#^String cmd]
   (let [proc (.exec (Runtime/getRuntime) cmd)
         rv (.waitFor proc)]
     {:error (drain-line-reader (java.io.BufferedReader. (java.io.InputStreamReader. (.getErrorStream proc))))
@@ -302,7 +302,7 @@ marking, it will be reset back so that the bytes are not actually read."
 
 (defn symlink
   "Create a symlink."
-  [^String src ^String dst]
+  [#^String src #^String dst]
   (let [src (java.io.File. (str src))
         dst (java.io.File. (str dst))]
     (if (not (.exists src))
@@ -317,7 +317,7 @@ marking, it will be reset back so that the bytes are not actually read."
 
 (defn delete
   "Remove a file if it exists."
-  [^String path]
+  [#^String path]
   (let [path (java.io.File. (str path))]
     (if (.exists path)
       (.delete path))))
@@ -337,7 +337,7 @@ marking, it will be reset back so that the bytes are not actually read."
 
 (defn url-download
   "Shell's out to wget to pull the file into the target directory."
-  [url ^String target-dir]
+  [url #^String target-dir]
   (let [cmd (format "wget -P %s -c %s" target-dir url)
         res (exec cmd)]
     (log "[INFO] wget: %s" cmd)
@@ -345,19 +345,19 @@ marking, it will be reset back so that the bytes are not actually read."
       (log "[ERROR] %s" (:error res)))))
 
 
-(defn object->file [^Object obj ^String file]
+(defn object->file [#^Object obj #^String file]
   "Use Java Serialization to emit an object to a file (binary format)."
   (with-open [outp (java.io.ObjectOutputStream. (java.io.FileOutputStream. file))]
     (.writeObject outp obj)))
 
 
-(defn file->object [^String file]
+(defn file->object [#^String file]
   "Use Java Serialization to pull an object from a file (see object->file)."
   (with-open [inp (java.io.ObjectInputStream. (java.io.FileInputStream. file))]
     (.readObject inp)))
 
 ;; clojure.lang.PersistentVector$Node ins't serializable any longer...is this an oversight? ignore for now...
-(defn freeze [^Object obj]
+(defn freeze [#^Object obj]
   "Serialize an object to a byte array."
   (with-open [baos (java.io.ByteArrayOutputStream. 1024)
               oos  (java.io.ObjectOutputStream. baos)]
@@ -367,7 +367,7 @@ marking, it will be reset back so that the bytes are not actually read."
 ;; (freeze "foo")
 ;; (freeze "foo" "bar" "qux")
 
-(defn thaw [^bytes bytes]
+(defn thaw [#^bytes bytes]
   "Deserialize from a byte array to the object."
   (with-open [bais (java.io.ByteArrayInputStream. bytes)
               ois  (java.io.ObjectInputStream. bais)]
@@ -393,7 +393,7 @@ marking, it will be reset back so that the bytes are not actually read."
 
 (defn ensure-directory
   "Create the directory if it does not already exist."
-  [^String dir]
+  [#^String dir]
   (let [f (java.io.File. dir)]
     (if (not (.exists f))
       (.mkdirs f))))
@@ -401,11 +401,11 @@ marking, it will be reset back so that the bytes are not actually read."
 ;; TODO: port to pure java, rm is unix specific...
 (defn deltree
   "Remove the given directory tree, all files and subdirectories."
-  [^String dir]
+  [#^String dir]
   (sh/sh "rm" "-rf" dir))
 
 ;; TODO this doesn't belong in io.clj, couldn't think of a better place for it
-(defn string-gzip [^String s]
+(defn string-gzip [#^String s]
   (with-open [bout (java.io.ByteArrayOutputStream.)
               gzout (java.util.zip.GZIPOutputStream. bout)]
     (.write gzout (.getBytes s))
@@ -415,7 +415,7 @@ marking, it will be reset back so that the bytes are not actually read."
 (defn file-size [f]
   (.length (java.io.File. (str f))))
 
-(defn byte-partitions-at-line-boundaries [^String file-name desired-block-size-bytes]
+(defn byte-partitions-at-line-boundaries [#^String file-name desired-block-size-bytes]
   (with-open [fp (RandomAccessFile. file-name "r")]
     (let [file-length (.length fp)]
       (loop [byte-positions [0]
@@ -430,7 +430,7 @@ marking, it will be reset back so that the bytes are not actually read."
                      (+ (.getFilePointer fp) desired-block-size-bytes)))))))))
 
 
-(defn- bounded-input-stream-line-seq [^BufferedReader bis]
+(defn- bounded-input-stream-line-seq [#^BufferedReader bis]
   (let [line (.readLine bis)]
     (if-not line
       (do
@@ -441,7 +441,7 @@ marking, it will be reset back so that the bytes are not actually read."
        [line]
        (bounded-input-stream-line-seq bis)))))
 
-(defn read-lines-from-file-segment [^String file-name start end]
+(defn read-lines-from-file-segment [#^String file-name start end]
   (let [bis (BoundedInputStream.
              (doto (FileInputStream. file-name)
                (.skip start))
@@ -450,7 +450,7 @@ marking, it will be reset back so that the bytes are not actually read."
 
 
 
-;; (defn ^{:doc "Map over the lines of a file - in parallel.  This
+;; (defn #^{:doc "Map over the lines of a file - in parallel.  This
 ;; function will partition the given file into blocks of lines (where
 ;; each block size is approximately equal to `block-size', which defaults
 ;; to 8Mb).  "
