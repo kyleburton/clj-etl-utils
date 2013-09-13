@@ -3,8 +3,7 @@
       :author "Kyle Burton"}
   clj-etl-utils.lang-utils
   (:import [org.apache.commons.io IOUtils]
-           [java.net InetAddress])
-  (:use    [clojure.contrib.core  :only [-?>]]))
+           [java.net InetAddress]))
 
 (defn- raise-dispatch-fn [& [fst snd thrd & rst]]
   (cond
@@ -148,7 +147,7 @@ Useful for 'long' running processes where you would like to
 periodically see a progress update.  For example:
 
   (let [progress-bar (make-periodic-invoker 10000 (fn [count chr] (.print System/err chr))]
-    (doseq [line (clojure.contrib.duck-streams/read-lines \"some/file\")]
+    (doseq [line (line-seq (clojure.java.io/reader \"some/file\"))]
       (progress-bar \".\")
       (process-line line)))
 
@@ -243,7 +242,7 @@ following actions are supported:
 
 
 (defn array? [^Object thing]
-  (-?> thing (.getClass) (.isArray)))
+  (some-> thing (.getClass) (.isArray)))
 
 (def rec-bean
      (let [primitive? #{Class
@@ -376,11 +375,11 @@ following actions are supported:
 
 (defmacro nth-let [[rec & bindings] & body]
   (let [rec-gensym `rec#]
-   `(let [~rec-gensym ~rec
-          ~@(vec (mapcat
-                  (fn [[sym idx]]
-                    [sym `(nth ~rec-gensym ~idx)]) (partition 2  bindings)))]
-      ~@body)))
+    `(let [~rec-gensym ~rec
+           ~@(vec (mapcat
+                   (fn [[sym idx]]
+                     [sym `(nth ~rec-gensym ~idx)]) (partition 2  bindings)))]
+       ~@body)))
 
 (defmacro assoc-in-if [test m ks v]
   `(if ~test
@@ -388,5 +387,8 @@ following actions are supported:
      ~m))
 
 (defn resource->file-path [^String resource]
-  (let [^java.net.URL url (-> (.getClass *ns*) (.getClassLoader) (.findResource resource))]
-    (.getFile url)))
+  (let [cl  (.getClassLoader (.getClass *ns*))
+        url (.findResource ^ClassLoader cl ^String resource)]
+    (.getFile ^java.net.URL url)))
+
+

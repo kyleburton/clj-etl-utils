@@ -2,9 +2,10 @@
     ^{:doc "I/O Utilities"
       :author "Kyle Burton"}
   clj-etl-utils.io
-  (:use [clj-etl-utils.lang-utils :only (raise log)])
-  (:require [clojure.contrib.shell-out           :as sh]
-            clojure.contrib.string)
+  (:require [clojure.java.shell :as sh]
+            [clojure.java.io    :as cljio])
+  (:use [clj-etl-utils.lang-utils :only (raise log)]
+        [clojure.string           :only [join]])
   (:import
    [java.io
     InputStream FileInputStream File InputStreamReader RandomAccessFile
@@ -176,7 +177,7 @@ marking, it will be reset back so that the bytes are not actually read."
       res)))
 
 (defn
-  ^{:doc   "Simple wrapper around Runtime.exec - not intended to compete with clojure.contrib.shell-out"
+  ^{:doc   "Simple wrapper around Runtime.exec"
     :added "1.0.0"}
   exec
   [#^String cmd]
@@ -264,7 +265,7 @@ marking, it will be reset back so that the bytes are not actually read."
 (defn mkdir-p [dirs perm owner-only]
   (loop [dir      [(first dirs)]
          sub-dirs (next dirs)]
-    (let [next-dir (java.io.File. (clojure.contrib.string/join "/" dir ))]
+    (let [next-dir (java.io.File. (join "/" dir ))]
       (.mkdir next-dir)
       (.setReadable next-dir perm owner-only)
       (.setWritable next-dir perm owner-only)
@@ -292,7 +293,7 @@ marking, it will be reset back so that the bytes are not actually read."
       res)))
 
 (defn exec
-  "Simple wrapper around Runtime.exec - not intended to compete with clojure.contrib.shell-out"
+  "Simple wrapper around Runtime.exec"
   [#^String cmd]
   (let [proc (.exec (Runtime/getRuntime) cmd)
         rv (.waitFor proc)]
@@ -590,4 +591,13 @@ marking, it will be reset back so that the bytes are not actually read."
           :else
           (recur mid-point (long epos) (dec max)))))))
 
+
+
+(defn lazy-read-lines [filename]
+  (let [rdr            (cljio/reader filename)
+        read-next-line (fn read-next []
+                         (if-let [line (.readLine rdr)]
+                           (cons line (lazy-seq (read-next)))
+                           (.close rdr)))]
+    (lazy-seq (read-next-line))))
 

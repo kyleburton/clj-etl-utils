@@ -5,7 +5,7 @@
 
 
 (defn us-state-match-found [data]
-  (let [regex (rx/std-regex :geographic :usa :state)]
+  (let [regex ^java.util.regex.Pattern (rx/std-regex :geographic :usa :state)]
     (.matches (.matcher regex data))))
 
 
@@ -21,7 +21,7 @@
 
 ;; (test-us-state-regex)
 
-(def *sample-postal-codes*
+(def sample-postal-codes
      {:can
       ["R2K 3X4"
        "R6W 4B7"
@@ -96,12 +96,12 @@
        "08201-2813"]})
 
 (deftest test-usa-zip-matcher
-  (doseq [zip5 (:usa *sample-postal-codes*)]
+  (doseq [zip5 (:usa sample-postal-codes)]
     (is (re-matches (rx/std-regex :geographic :usa :zip)
                     zip5))))
 
 (deftest test-can-postal-code-matcher
-  (doseq [postal-code (:can *sample-postal-codes*)]
+  (doseq [postal-code (:can sample-postal-codes)]
     (is (re-matches (rx/std-regex :geographic :can :postal-code)
                     postal-code))))
 
@@ -109,24 +109,24 @@
   (let [regex (rx/std-regex-compose [:geographic :usa :postal-code]
                                     [:geographic :can :postal-code])]
     (doseq [postal-code (concat
-                         (:can *sample-postal-codes*)
-                         (:usa *sample-postal-codes*))]
+                         (:can sample-postal-codes)
+                         (:usa sample-postal-codes))]
       (is (re-matches regex postal-code)))))
 
 (deftest test-north-america-postal-code-matcher?
   (let [regex (rx/std-regex-compose [:geographic :usa :postal-code?]
                                     [:geographic :can :postal-code?])]
     (doseq [postal-code (concat
-                         (:can *sample-postal-codes*)
-                         (:usa *sample-postal-codes*))]
+                         (:can sample-postal-codes)
+                         (:usa sample-postal-codes))]
       (is (re-matches regex postal-code)))))
 
 (deftest test-north-america-postal-code-matcher?
   (let [regex (rx/std-regex-compose [:geographic :usa :postal-code?]
                                     [:geographic :can :postal-code?])]
     (doseq [postal-code (concat
-                         (:can *sample-postal-codes*)
-                         (:usa *sample-postal-codes*))]
+                         (:can sample-postal-codes)
+                         (:usa sample-postal-codes))]
       (is (re-matches regex postal-code)))))
 
 (comment

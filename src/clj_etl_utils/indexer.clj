@@ -4,17 +4,18 @@
     data into a database."
       :author "Kyle Burton"}
   clj-etl-utils.indexer
-  (:require [clojure.contrib.duck-streams :as ds]
-            [clojure.contrib.shell-out    :as sh]
-            [clojure.string               :as string]
-            [clj-etl-utils.sequences      :as sequences]
-            [clj-etl-utils.io             :as io]
-            [clojure.java.io              :as cljio])
+  (:require
+   [clojure.java.shell           :as sh]
+   [clojure.string               :as string]
+   [clj-etl-utils.sequences      :as sequences]
+   [clj-etl-utils.io             :as io]
+   [clojure.java.io              :as cljio])
   (:import
    [java.io RandomAccessFile FileInputStream InputStreamReader BufferedReader]
    [org.apache.commons.io.input BoundedInputStream]))
 
 ;; index line oriented files
+
 
 ;; TODO: convention for escaping the key (URI? - it could contain a
 ;; tab character...), handling null or empty values, when the key fn
@@ -22,7 +23,7 @@
 
 ;; TODO: consider updating or refreshing - incrementally, the index files
 
-(defn line-position-seq [#^RandomAccessFile fp]
+(defn line-position-seq [^RandomAccessFile fp]
   (let [start-pos (.getFilePointer fp)
         line      (.readLine fp)
         end-pos   (.getFilePointer fp)]
@@ -33,7 +34,7 @@
        [[line start-pos end-pos]]
        (line-position-seq fp)))))
 
-(defn line-index-seq [#^RandomAccessFile fp key-fn]
+(defn line-index-seq [^RandomAccessFile fp key-fn]
   "Given a random access file (need not be positioned at the start)
 and a key function (run on the line to compute the keys for the line)
 this will return a sequence of:
@@ -59,10 +60,10 @@ For all the lines in the file.
 ;; returns a sequnce of [key line-start-byte-pos line-endbyte-pos]
 ;; given a key-fn that takes a line of text and returns a string key that represents the line.
 
-(defn file-index-seq [#^String file #^IFn key-fn]
+(defn file-index-seq [^String file key-fn]
   (line-index-seq  (RandomAccessFile. file "r") key-fn))
 
-(defn extract-range [#^RandomAccessFile fp start end]
+(defn extract-range [^RandomAccessFile fp start end]
   (.seek fp start)
   (let [data-bytes (byte-array (- end start))]
     (.read fp data-bytes)
@@ -70,10 +71,10 @@ For all the lines in the file.
 
 ;; NB: decide on sort behavior - string collation or numeric?  we're
 ;; going to shell out to GNU sort for this so that is a concern...
-(defn create-index-file [#^String input-file #^String index-file #^IFn key-fn]
+(defn create-index-file [^String input-file ^String index-file key-fn]
   ;; run the indexer (seq), emit to index-file
   ;; sort index-file
-  (with-open [outp (ds/writer index-file)]
+  (with-open [outp (cljio/writer index-file)]
     (loop [[[kvals start end] & vals] (file-index-seq input-file key-fn)]
       (if (or (nil? kvals)
               (empty? kvals))
@@ -85,7 +86,7 @@ For all the lines in the file.
 
 ;; NB: return value isn't taking into account error statuses
 ;; NB: will not work on platforms that don't have sort and mv, fix this...
-(defn sort-index-file [#^String index-file]
+(defn sort-index-file [^String index-file]
   (let [tmp    (java.io.File/createTempFile "idx-srt" "tmp")
         tmpnam (.getName tmp)]
     (sh/sh "sort" "-o" tmpnam index-file
@@ -93,7 +94,7 @@ For all the lines in the file.
     (sh/sh "mv" tmpnam index-file))
   true)
 
-(defn index-file! [#^String input-file #^String index-file #^IFn key-fn]
+(defn index-file! [^String input-file ^String index-file key-fn]
   (create-index-file input-file index-file key-fn)
   (sort-index-file index-file))
 
@@ -108,13 +109,13 @@ For all the lines in the file.
   (require 'clj-etl-utils.ref-data)
   (let [rnd (java.util.Random.)
         states (vec (map first clj-etl-utils.ref-data/*us-states*))]
-   (with-open [wtr (java.io.PrintWriter. "file.txt")]
-     (dotimes [ii 100]
-       (.println wtr
-                 (str
-                      (rand-elt states)
-                      "\t"
-                      (.nextInt rnd))))))
+    (with-open [wtr (java.io.PrintWriter. "file.txt")]
+      (dotimes [ii 100]
+        (.println wtr
+                  (str
+                   (rand-elt states)
+                   "\t"
+                   (.nextInt rnd))))))
 
   (index-file! "file.txt" ".file.txt.id-idx"
                (fn [l]
@@ -123,7 +124,7 @@ For all the lines in the file.
   )
 
 ;; TODO: this is splitting multiple times, rework to only split 1x
-(defn index-blocks-seq [#^String index-file]
+(defn index-blocks-seq [^String index-file]
   (map (fn [grp]
          (map (fn [l]
                 (let [[val spos epos] (.split l "\t")]
@@ -131,17 +132,17 @@ For all the lines in the file.
               grp))
        (sequences/group-with (fn [l]
                                (first (.split l "\t")))
-                             (ds/read-lines index-file))))
+                             (io/lazy-read-lines index-file))))
 
 ;; This is the new form of above (only call split 1x), needs to be tested
-#_(defn index-blocks-seq [#^String index-file]
+#_(defn index-blocks-seq [^String index-file]
     (sequences/group-with
      first
      (map
       (fn [l]
         (let [[val spos epos] (.split l "\t")]
           [val (Long/parseLong spos) (Long/parseLong epos)]))
-      (ds/read-lines index-file))))
+      (io/lazy-read-lines index-file))))
 
 
 
@@ -151,7 +152,7 @@ For all the lines in the file.
   )
 
 
-(defn records-for-idx-block #^String [inp-file idx-block]
+(defn records-for-idx-block ^String [inp-file idx-block]
   (loop [recs []
          [[k start-pos end-pos] & idx-block] idx-block]
     (if (not k)
@@ -172,7 +173,7 @@ For all the lines in the file.
 ;; the implementation such that we can create multiple indicies by
 ;; streaming only one time...
 
-(defn record-blocks-via-index [#^String inp-file #^String index-file]
+(defn record-blocks-via-index [^String inp-file ^String index-file]
   "Given an data file and an index file, this stream through the distinct
 index values returning records from the data file."
   (map (partial records-for-idx-block inp-file)
@@ -211,7 +212,7 @@ index values returning records from the data file."
              (pos? direction)
              (do
                #_(println (format "direction was positive, indicating we've gone past: (compare \"%s\" \"%s\") %d"
-                                v term direction))
+                                  v term direction))
                res)
 
              :continue
@@ -241,10 +242,10 @@ index values returning records from the data file."
         :rewind
         (do
           #_(println (format "rewind-to-newline: [%d/%s] Did not find newline at %d, going back to %d"
-                           (.intValue b)
-                           ch
-                           (.getFilePointer fp)
-                           (- (.getFilePointer fp) 2)))
+                             (.intValue b)
+                             ch
+                             (.getFilePointer fp)
+                             (- (.getFilePointer fp) 2)))
           (.seek fp (- (.getFilePointer fp) 2))
           ;; (recur (dec max-iters))
           (recur))))))
@@ -254,7 +255,7 @@ index values returning records from the data file."
 ;; epos must point at either the end of the file, or a newline
 (defn index-search-prefix-impl [^String idx-file ^String term spos epos]
   #_(println (format "index-search-prefix-impl %s %s %d %d"
-                   idx-file term spos epos))
+                     idx-file term spos epos))
   (if (<= (- epos spos) min-streaming-threshold)
     (with-open [rdr (BufferedReader.
                      (InputStreamReader.
@@ -283,8 +284,8 @@ index values returning records from the data file."
               [iterm bstart bend] (.split line "\t" 3)
               order   (compare term iterm)]
           #_(println (format "Looking at[%d] line=%s"
-                           (.getFilePointer fp)
-                           line))
+                             (.getFilePointer fp)
+                             line))
           (cond
             (<= (- epos spos) min-streaming-threshold)
             (with-open [rdr (BufferedReader.
@@ -299,7 +300,7 @@ index values returning records from the data file."
                term
                (fn [idx-val term]
                  #_(println (format "(.startsWith \"%s\" \"%s\") => %s"
-                                  idx-val term (.startsWith idx-val term)))
+                                    idx-val term (.startsWith idx-val term)))
                  (.startsWith idx-val term))
                rdr))
 
@@ -335,7 +336,7 @@ index values returning records from the data file."
     (if (<= epos min-streaming-threshold)
       (do
         #_(println (format "file size %d < thresh %d, falling back to streaming"
-                         epos min-streaming-threshold))
+                           epos min-streaming-threshold))
         (index-search idx-file term #(= %1 %2)))
       (index-search-prefix-impl idx-file term 0 epos))))
 

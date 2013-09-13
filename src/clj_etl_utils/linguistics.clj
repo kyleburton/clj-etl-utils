@@ -1,5 +1,5 @@
 (ns clj-etl-utils.linguistics
-  (:require [clojure.contrib.duck-streams :as ds])
+  (:require [clj-etl-utils.io :as io])
   (:use
    [clj-etl-utils.lang-utils :only [raise]])
   (:import [com.rn.codec Nysiis]
@@ -17,7 +17,7 @@
      (conj s (.toLowerCase l)))
    #{}
    (filter
-    #(not (empty? %1)) (ds/read-lines file))))
+    #(not (empty? %1)) (io/line-read-lines file))))
 
 
 (def *dict* (atom nil))

@@ -64,7 +64,8 @@
                (keys params))))
 
 ;;; (map->name-value-pair-vec { :foo "bar" :chicken "turkey" })
-;;; (map->name-value-pair-vec {})
+;;; (class (map->name-value-pair-vec {}))
+;;;
 
 (defn do-get [#^HttpClient ua #^String url & params]
   (let [get-method        (GetMethod. url)
@@ -73,7 +74,7 @@
     (if (contains? ua :follow-redirects)
       (.setFollowRedirects get-method true))
     ;;(printf "do-get: qs=%s" (.getQueryString get-method))
-    (let [return-code   (.executeMethod (:ua ua) get-method )
+    (let [return-code   (.executeMethod ^HttpClient (:ua ua) ^GetMethod get-method )
           response-body (.getResponseBodyAsString get-method)]
       ;;(println (format "Return Code: %s" return-code))
       ;;(println (format "Respone: %s" response-body ))
@@ -93,15 +94,15 @@
       (.setFollowRedirects post-method true))
     (if (:params params)
       (.setRequestBody post-method (map->name-value-pair-vec (:params params))))
-    (if (:body params)
+    (when-let [body ^String (:body params)]
       (do
         (.setRequestHeader post-method "Content-type" (or (:content-type params) "text/plain; charset=ISO-8859-1"))
         (.setRequestEntity
          post-method
          (InputStreamRequestEntity.
-          (ByteArrayInputStream. (.getBytes (:body params)))
-          (long (.length (:body params)))))))
-    (let [return-code   (.executeMethod (:ua ua) post-method)
+          (ByteArrayInputStream. (.getBytes body))
+          (long (.length body))))))
+    (let [return-code   (.executeMethod ^HttpClient (:ua ua) ^PostMethod post-method)
           response-body (.getResponseBodyAsString post-method)]
       (.releaseConnection post-method)
       ;;(println (format "Return Code: %s" return-code))
@@ -111,24 +112,24 @@
        :http-method   post-method})))
 
 
-(defonce *client-registry* (atom {}))
+(defonce client-registry (atom {}))
 
 (def ^:dynamic *client* nil)
 
 (defn register-client [client-name config-map]
-  (swap! *client-registry*
+  (swap! client-registry
          assoc client-name
          config-map))
 
 (defn lookup-client [registered-name]
-  (get @*client-registry* registered-name))
+  (get @client-registry registered-name))
 
 
 (defn with-client* [registered-name body-fn]
   (if-let [client-config (lookup-client registered-name)]
     (binding [*client* client-config]
       (body-fn))
-    (raise "Error: no HTTP client registered with the given name [%s], currently registered names are: %s" registered-name (clojure.string/join "," (keys @*client-registry*)))))
+    (raise "Error: no HTTP client registered with the given name [%s], currently registered names are: %s" registered-name (clojure.string/join "," (keys @client-registry)))))
 
 (defmacro with-client [registered-name & body]
   `(with-client* ~registered-name
@@ -142,17 +143,17 @@
         path     (format "%s/%s" base-url path)]
     (aprog1
         (GetMethod.)
-      (.setURI it (URI. scheme nil host port path))
+      (.setURI it (URI. ^String scheme nil ^String host ^int port ^String path))
       (doseq [[hdr-name hdr-val] (:request-headers *client*)]
         (.setRequestHeader it (name hdr-name) hdr-val)))))
 
 (defn client-get [#^String url & params]
   (let [get-method        (make-get-request url)
         name-value-pairs  (map->name-value-pair-vec (second params))]
-    (.setQueryString get-method name-value-pairs)
+    (.setQueryString ^GetMethod get-method name-value-pairs)
     ;;(printf "do-get: qs=%s" (.getQueryString get-method))
-    (let [return-code   (.executeMethod (:ua (apply user-agent (mapcat identity *client*))) get-method )
-          response-body (.getResponseBodyAsString get-method)]
+    (let [return-code   (.executeMethod ^HttpClient (:ua (apply user-agent (mapcat identity *client*))) ^GetMethod get-method )
+          response-body (.getResponseBodyAsString ^GetMethod get-method)]
       ;;(println (format "Return Code: %s" return-code))
       ;;(println (format "Respone: %s" response-body ))
       {:return-code   return-code

@@ -1,8 +1,7 @@
 (ns clj-etl-utils.test-helper
-  (:use [clojure.contrib.str-utils :as str-utils]
-        [clojure.contrib.logging :as log]))
+  (:use [clojure.tools.logging :as log]))
 
-(defonce *fixture-registry* (atom {}))
+(defonce fixture-registry (atom {}))
 
 (defn mm-get [m k1 k2]
   (and (contains? m k1)
@@ -18,15 +17,15 @@
        (contains? (m k1) k2)))
 
 (defn clear-fixture-registry []
-  (reset! *fixture-registry* (atom {})))
+  (reset! fixture-registry (atom {})))
 
 (defn register-fixture [type k v]
-  (reset! *fixture-registry*
-          (mm-put @*fixture-registry* type k v)))
+  (reset! fixture-registry
+          (mm-put @fixture-registry type k v)))
 
 ;; is this strategy good enough?
 (defn project-root []
-  (if-let [location (.getLocation (.getCodeSource (.getProtectionDomain (.getClass project-root))))]
+  (if-let [location (.getLocation ^java.security.CodeSource (.getCodeSource ^java.security.ProtectionDomain (.getProtectionDomain (.getClass ^Object project-root))))]
     (do
       (log/debug (format "project-root: from class location: %s" location))
       location)
@@ -34,20 +33,20 @@
       (log/debug (format "project-root: falling back to user.dir"))
       (System/getProperty "user.dir"))))
 
-(defn fixture-file [file]
+(defn fixture-file [^String file]
   (format "%s/test/fixtures/files/%s" (project-root) file))
 
-(defn fixture-file-contents [file]
+(defn fixture-file-contents [^String file]
   (let [fixture-path (fixture-file file)]
-    (if (not (.exists (java.io.File. fixture-path)))
+    (if (not (.exists (java.io.File. ^String fixture-path)))
       (throw (format "Error: no such fixture file '%s' => '%s'" file fixture-path)))
     (slurp fixture-path)))
 
 ;; load/access a fixture
 (defn fixture [type key]
   (cond (= :file type)                                (fixture-file-contents key)
-        (mm-contains? @*fixture-registry* type key)   (mm-get @*fixture-registry* type key)
-        :else                                         (throw (RuntimeException. (format "Error: unknown fixture type: %s / %s  registry(%s)" type key (keys @*fixture-registry*))))))
+        (mm-contains? @fixture-registry type key)   (mm-get @fixture-registry type key)
+        :else                                         (throw (RuntimeException. (format "Error: unknown fixture type: %s / %s  registry(%s)" type key (keys @fixture-registry))))))
 
 
 

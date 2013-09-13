@@ -2,7 +2,7 @@
   (:require
    [clj-etl-utils.indexer        :as indexer]
    [clojure.data.csv             :as csv]
-   [clojure.contrib.shell-out    :as sh]
+   [clojure.java.sh              :as sh]
    [clojure.string               :as string])
   (:use
    clj-etl-utils.indexer

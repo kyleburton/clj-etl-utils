@@ -1,23 +1,23 @@
 (ns
-    ^{:doc "Text manipulation utilities not yet in Clojure or Contrib."
+    ^{:doc "Text manipulation utilities."
       :author "Kyle Burton"}
   clj-etl-utils.text
   (:use [clj-etl-utils.lang-utils  :only [raise]])
-  (:require    [clojure.contrib.str-utils        :as str-utils])
+  (:require    [clojure.string        :as str-utils])
   (:import [org.apache.commons.lang WordUtils]
-           [java.text NumberFormat]
+           [java.text NumberFormat DecimalFormat]
            [org.apache.commons.codec.binary Base64]))
 
 (defn
   ^{:doc "Convert string to upper case, null safe (returns empty string on null)."}
-  uc [#^String s]
+  uc [^String s]
   (if (nil? s)
     ""
     (.toUpperCase s)))
 
 (defn
   ^{:doc "Convert string to lower case, null safe (returns empty string on null)."}
-  lc [#^String s]
+  lc [^String s]
   (if (nil? s)
     ""
     (.toLowerCase s)))
@@ -35,7 +35,7 @@ create or clean up the actual temporary file itself.
 
 (defn
   ^{:doc "Compute the MD5 sum of a byte buffer, returning it as a hex-encoded string."}
-  md5->string [bytes]
+  md5->string [^bytes bytes]
   (let [digester (java.security.MessageDigest/getInstance "MD5")]
     (.update digester bytes)
     (.toString
@@ -44,7 +44,7 @@ create or clean up the actual temporary file itself.
 
 (defn
   ^{:doc "Compute the SHA1 sum of a byte buffer, returning it as a hex-encoded string."}
-  sha1->string [bytes]
+  sha1->string [^bytes bytes]
   (let [digester (java.security.MessageDigest/getInstance "SHA1")]
     (.update digester bytes)
     (.toString
@@ -56,9 +56,9 @@ create or clean up the actual temporary file itself.
 The sequence consists of pairs of [provider-type provider-algorithm]"}
   security-providers-type-algorithm-seq []
   (mapcat (fn [provider]
-            (map (fn [svc]
+            (map (fn [^java.security.Provider$Service svc]
                    [(.getType svc) (.getAlgorithm svc)])
-                 (.getServices provider)))
+                 (.getServices ^java.security.Provider provider)))
           (java.security.Security/getProviders)))
 
 (defn
@@ -100,7 +100,7 @@ The sequence consists of pairs of [provider-type provider-algorithm]"}
 
 (defn
   ^{:doc "Compute and return the SHA256 sum of the given byte array, returned as a hex-encoded string."}
-  sha256->string [bytes]
+  sha256->string [^bytes bytes]
   (let [digester (java.security.MessageDigest/getInstance "SHA-256")]
     (.update digester bytes)
     (apply str (map (fn [byte]
@@ -109,13 +109,13 @@ The sequence consists of pairs of [provider-type provider-algorithm]"}
 
 (defn
   ^{:doc "Compute and return the SHA256 sum of the given string, returned as a hex-encoded string."}
-  string->sha256 [s]
+  string->sha256 [^String s]
   (sha256->string (.getBytes s)))
 
 
 (defn
   ^{:doc "Compute and return the SHA384 sum of the byte array, returned as a hex-encoded string."}
-  sha384->string [bytes]
+  sha384->string [^bytes bytes]
   (let [digester (java.security.MessageDigest/getInstance "SHA-384")]
     (.update digester bytes)
     (apply str (map (fn [byte]
@@ -124,12 +124,12 @@ The sequence consists of pairs of [provider-type provider-algorithm]"}
 
 (defn
   ^{:doc "Compute and return the SHA384 sum of the given string, returned as a hex-encoded string."}
-  string->sha384 [s]
+  string->sha384 [^String s]
   (sha384->string (.getBytes s)))
 
 (defn
   ^{:doc "Compute and return the SHA512 sum of the byte array, returned as a hex-encoded string."}
-  sha512->string [bytes]
+  sha512->string [^bytes bytes]
   (let [digester (java.security.MessageDigest/getInstance "SHA-512")]
     (.update digester bytes)
     (apply str (map (fn [byte]
@@ -138,7 +138,7 @@ The sequence consists of pairs of [provider-type provider-algorithm]"}
 
 (defn
   ^{:doc "Compute and return the SHA512 sum of the given string, returned as a hex-encoded string."}
-  string->sha512 [s]
+  string->sha512 [^String s]
   (sha512->string (.getBytes s)))
 
 (comment
@@ -273,9 +273,9 @@ Taken from: http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-
 
 "}
   word-split
-  ([str size]
+  ([^String str size]
      (word-split str size "\0"))
-  ([str size delim]
+  ([^String str size ^String delim]
      (if (>= (.indexOf str delim) 0)
        (raise "Input string must not contain delimiter string (%s). Unable to split (input string=%s" delim str)
        (seq
@@ -294,21 +294,21 @@ Taken from: http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-
   )
 
 
-(def *formatter-setters*
-     {:negative-prefix (fn [#^NumberFormat nf x] (.setNegativePrefix nf x))
-      :negative-suffix (fn [#^NumberFormat nf x] (.setNegativeSuffix nf x))
-      :positive-prefix (fn [#^NumberFormat nf x] (.setPositivePrefix nf x))
-      :positive-suffix (fn [#^NumberFormat nf x] (.setPositiveSuffix nf x))})
+(def formatter-setters
+     {:negative-prefix (fn [^DecimalFormat nf ^String x] (.setNegativePrefix nf x))
+      :negative-suffix (fn [^DecimalFormat nf ^String x] (.setNegativeSuffix nf x))
+      :positive-prefix (fn [^DecimalFormat nf ^String x] (.setPositivePrefix nf x))
+      :positive-suffix (fn [^DecimalFormat nf ^String x] (.setPositiveSuffix nf x))})
 
 (defn
   ^{:doc ""}
-  apply-format-setter [#^NumberFormat nf k v]
-  (if-not (contains? *formatter-setters* k)
+  apply-format-setter [^NumberFormat nf k v]
+  (if-not (contains? formatter-setters k)
     (raise "set-formatter-option: option not yet implemented: %s" k))
-  ((get *formatter-setters* k) nf v)
+  ((get formatter-setters k) nf v)
   nf)
 
-(declare *default-formatters*)
+(declare default-formatters)
 
 (defn get-currency-formatter [opts-or-keyword]
   (cond
@@ -318,17 +318,17 @@ Taken from: http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-
             (java.text.NumberFormat/getCurrencyInstance)
             opts-or-keyword)
     (keyword? opts-or-keyword)
-    (or (get @*default-formatters* opts-or-keyword)
+    (or (get @default-formatters opts-or-keyword)
         (raise "Error: formatter not found for keyword: %s" opts-or-keyword))
     :else
     (raise "Error: unrecognized formatter spec (not a map or keyword): [%s] %s"
            (class opts-or-keyword) opts-or-keyword)))
 
-(def *currency-with-negative* (get-currency-formatter {:negative-prefix "-$" :negative-suffix ""}))
+(def currency-with-negative (get-currency-formatter {:negative-prefix "-$" :negative-suffix ""}))
 
-(def *default-formatters*
+(def default-formatters
      (atom
-      {:currency-with-negative *currency-with-negative*
+      {:currency-with-negative currency-with-negative
        :default                (get-currency-formatter {})}))
 
 
@@ -338,30 +338,29 @@ Taken from: http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-
   ([num]
      (format-as-currency num :default))
   ([num opts]
-     (.format (get-currency-formatter opts)
+     (.format ^java.text.Format (get-currency-formatter opts)
               num)))
 
+(defonce rx-clean-phone-number #"\D+")
 
-(defonce *rx-clean-phone-number* #"\D+")
-
-(defn canonical-phone-number [mobile-number]
+(defn canonical-phone-number [^String mobile-number]
   (if (nil? mobile-number)
     ""
-    (let [num (str-utils/re-gsub *rx-clean-phone-number* "" mobile-number)]
+    (let [num (str-utils/replace  mobile-number rx-clean-phone-number "")]
       (if (= 10 (count num))
         (str 1 num)
         num))))
 
-
-(defn snake-case [s]
+(defn snake-case [^String s]
   (.toString
+   ^StringBuilder
    (reduce
     (fn [b c]
-      (if (Character/isUpperCase c)
+      (if (Character/isUpperCase ^char c)
         (do
-          (.append b "-")
-          (.append b (clojure.string/lower-case c)))
-        (.append b c)))
+          (.append ^StringBuilder b "-")
+          (.append ^StringBuilder b ^CharSequence (clojure.string/lower-case c)))
+        (.append ^StringBuilder b ^char c)))
     (StringBuilder.)
     (name s))))
 
@@ -375,7 +374,7 @@ Taken from: http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-
 (defn camel->underscore [^java.util.Map params]
   (reduce
    (fn [accum [k v]]
-     (assoc accum (keyword (.replaceAll (snake-case k) "-" "_")) v))
+     (assoc accum (keyword (.replaceAll ^String (snake-case k) "-" "_")) v))
    {}
    params))
 

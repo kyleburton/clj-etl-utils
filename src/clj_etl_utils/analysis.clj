@@ -1,12 +1,10 @@
 (ns ^{:doc "Data and Text file analysis functions.  These functions
-    work with delimited and fixed width files, such as database dumps,
+    work with delimited and fixed width files, such as database dumps
     log data and other exports."
       :author "Kyle Burton"}
-  clj-etl-utils.analysis
-  (:require
-   [clojure.contrib.duck-streams :as ds]))
+  clj-etl-utils.analysis)
 
-(defn ^{:doc "Given a sequence of records (a sequence of vectors),
+(defn ^{:doc "Given a sequence of records (a sequence of vectors)
   this function will track the maximum length string seen in each column
 of the records of the sequence."
     :added "1.0.0"}

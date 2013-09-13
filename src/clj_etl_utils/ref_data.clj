@@ -7,9 +7,8 @@ Some of the sources:
 
 "
       :author "Kyle Burton"}
-    clj-etl-utils.ref-data
-    (:require
-     clojure.contrib.duck-streams))
+  clj-etl-utils.ref-data
+  (:require [clojure.java.io :as io]))
 
 
 
@@ -1117,93 +1116,93 @@ Some of the sources:
        ("822" "--" "?" "   US/Canada toll free (proposed, may not be in use yet)")
        ("828" "NC" "-5" "   W North Carolina: Asheville (split from 704)")
        ("829" "--" "-4" "   Dominican Republic (perm 1/31/05; mand 8/1/05; overlaid on 809)")
-       ("830" "TX" "-6" "   Texas: region surrounding San Antonio (split from 210)")
-       ("831" "CA" "-8" "   California: central coast area from Santa Cruz through Monterey County")
-       ("832" "TX" "-6" "   Texas: Houston (overlay 713/281)")
-       ("833" "--" "?" "   US/Canada toll free (proposed, may not be in use yet)")
-       ("835" "PA" "-5" "   SE Pennsylvania: Allentown, Bethlehem, Reading, West Chester, Norristown (overlaid on 610, eff 5/1/01; see also 484)")
-       ("843" "SC" "-5" "   South Carolina, coastal area: Charleston, Beaufort, Myrtle Beach (split from 803)")
-       ("844" "--" "?" "   US/Canada toll free (proposed, may not be in use yet)")
-       ("845" "NY" "-5" "   New York: Poughkeepsie; Nyack, Nanuet, Valley Cottage, New City, Putnam, Dutchess, Rockland, Orange, Ulster and parts of Sullivan counties in New York's lower Hudson Valley and Delaware County in the Catskills (see 914; perm 6/5/00)")
-       ("847" "IL" "-6" "   Northern NE Illinois: northwestern suburbs of chicago (Evanston, Waukegan, Northbrook; see overlay 224)")
-       ("848" "NJ" "-5" "   Cent. New Jersey: Toms River, New Brunswick, Bound Brook (see overlay 732)")
-       ("850" "FL" "-6/-5" "   Florida panhandle, from east of Tallahassee to Pensacola (split from 904); western panhandle (Pensacola, Panama City) are UTC-6")
-       ("855" "--" "?" "   US/Canada toll free (proposed, may not be in use yet)")
-       ("856" "NJ" "-5" "   SW New Jersey: greater Camden area, Mt Laurel (split from 609)")
-       ("857" "MA" "-5" "   Massachusetts: greater Boston (overlaid on 617, eff 4/2/01)")
-       ("858" "CA" "-8" "   S California: San Diego (see split 760; overlay 619, 935)")
-       ("859" "KY" "-5" "   N and Central Kentucky: Lexington; suburban KY counties of Cincinnati OH metro area; Covington, Newport, Ft. Thomas, Ft. Wright, Florence (split from 606)")
-       ("860" "CT" "-5" "   Connecticut: areas outside of Fairfield and New Haven Counties (split from 203, overlay 959)")
-       ("862" "NJ" "-5" "   N New Jersey: Newark Paterson Morristown (overlaid on 973)")
-       ("863" "FL" "-5" "   Florida: Lakeland, Polk County (split from 941)")
-       ("864" "SC" "-5" "   South Carolina, upstate area: Greenville, Spartanburg (split from 803)")
-       ("865" "TN" "-5" "   E Tennessee: Knoxville, Knox and adjacent counties (split from 423; part of what used to be 615)")
-       ("866" "--" "?" "   US/Canada toll free")
-       ("867" "YT" "-5/-6/-7/-8" "   Canada: Yukon, Northwest Territories, Nunavut (split from 403/819)")
-       ("868" "--" "-4" "   Trinidad and Tobago (\"new\" -- see 809)")
-       ("869" "--" "-4" "   St. Kitts &amp; Nevis")
-       ("870" "AR" "-6" "   Arkansas: areas outside of west/central AR: Jonesboro, etc")
-       ("872" "IL" "-6" "   Illinois: Chicago (downtown only -- in the loop; see 773; overlaid on 312 and 773)")
-       ("876" "--" "-5" "   Jamaica (split from 809)")
-       ("877" "--" "?" "   US/Canada toll free")
-       ("878" "PA" "-5" "   Pittsburgh, New Castle (overlaid on 412, perm 8/17/01, mand t.b.a.)")
-       ("880" "--" "--" "   Paid Toll-Free Service")
-       ("881" "--" "--" "   Paid Toll-Free Service")
-       ("882" "--" "--" "   Paid Toll-Free Service")
-       ("888" "--" "?" "   US/Canada toll free")
-       ("898" "--" "?" "   VoIP service")
-       ("900" "--" "?" "   US toll calls -- prices vary with the number called")
-       ("901" "TN" "-6" "   W Tennessee: Memphis metro area (see 615, 931, split 731)")
-       ("902" "NS" "-4" "   Canada: Nova Scotia, Prince Edward Island")
-       ("903" "TX" "-6" "   NE Texas: Tyler (see overlay 430, eff 7/20/02)")
-       ("904" "FL" "-5" "   N Florida: Jacksonville (see splits 352, 386, 850)")
-       ("905" "ON" "-5" "   Canada: S Cent. Ontario: Greater Toronto Area -- Durham, Halton, Hamilton-Wentworth, Niagara, Peel, York, and southern Simcoe County (excluding Toronto -- see overlay 289 [eff 6/9/01], splits 416, 647)")
-       ("906" "MI" "-6/-5" "   Upper Peninsula Michigan: Sault Ste. Marie, Escanaba, Marquette (UTC-6 towards the WI border)")
-       ("907" "AK" "-9" "   Alaska")
-       ("908" "NJ" "-5" "   Cent. New Jersey: Elizabeth, Basking Ridge, Somerville, Bridgewater, Bound Brook")
-       ("909" "CA" "-8" "   California: Inland empire: San Bernardino (see split 951), Riverside")
-       ("910" "NC" "-5" "   S Cent. North Carolina: Fayetteville, Wilmington (see 336)")
-       ("911" "--" "--" "   Emergency")
-       ("912" "GA" "-5" "   SE Georgia: Savannah (see splits 229, 478)")
-       ("913" "KS" "-6" "   Kansas: Kansas City area (see 785)")
-       ("914" "NY" "-5" "   S New York: Westchester County (see 845)")
-       ("915" "TX" "-7/-6" "   W Texas: El Paso (see splits 325 eff 4/5/03; 432, eff 4/5/03)")
-       ("916" "CA" "-8" "   NE California: Sacramento, Walnut Grove, Lincoln, Newcastle and El Dorado Hills (split to 530)")
-       ("917" "NY" "-5" "   New York: New York City (cellular, see 646)")
-       ("918" "OK" "-6" "   E Oklahoma: Tulsa")
-       ("919" "NC" "-5" "   E North Carolina: Raleigh (see split 252, overlay 984)")
-       ("920" "WI" "-6" "   NE Wisconsin: Appleton, Green Bay, Sheboygan, Fond du Lac (from Beaver Dam NE to Oshkosh, Appleton, and Door County; part of what used to be 414)")
-       ("925" "CA" "-8" "   California: Contra Costa area: Antioch, Concord, Pleasanton, Walnut Creek (split from 510)")
-       ("927" "FL" "-5" "   Florida: Cellular coverage in Orlando area")
-       ("928" "AZ" "-7*" "   Central and Northern Arizona: Prescott, Flagstaff, Yuma (split from 520)")
-       ("931" "TN" "-6" "   Middle Tennessee: semi-circular ring around Nashville (split from 615)")
-       ("935" "CA" "-8" "   S California: San Diego (see split 760; overlay 858, 619; assigned but not in use)")
-       ("936" "TX" "-6" "   SE Texas: Conroe, Lufkin, Nacogdoches, Crockett (split from 409, see also 979)")
-       ("937" "OH" "-5" "   SW Ohio: Dayton (part of what used to be 513)")
-       ("939" "PR" "-4*" "   Puerto Rico (overlaid on 787, perm 8/1/01)")
-       ("940" "TX" "-6" "   N Cent. Texas: Denton, Wichita Falls (split from 254, 817)")
-       ("941" "FL" "-5" "   SW Florida: Sarasota and Manatee counties (part of what used to be 813; see split 863)")
-       ("947" "MI" "-5/-6" "   Michigan: Oakland County (overlays 248, perm 5/5/01)")
-       ("949" "CA" "-8" "   California: S Coastal Orange County (split from 714)")
-       ("951" "CA" "-8" "   California: W Riverside County (split from 909; eff 7/17/04)")
-       ("952" "MN" "-6" "   Minnesota: Minneapolis SW, Bloomington (split from 612; see also 763)")
-       ("954" "FL" "-5" "   Florida: Broward County area, incl Ft. Lauderdale (part of what used to be 305, see overlay 754)")
-       ("956" "TX" "-6" "   Texas: Valley of Texas area; Harlingen, Laredo (split from 210)")
-       ("957" "NM" "-7" "   New Mexico (pending; region unknown)")
-       ("959" "CT" "-5" "   Connecticut: Hartford, New London (postponed; was overlaid on 860 perm 1/6/01; mand 3/1/01???)")
-       ("970" "CO" "-7" "   N and W Colorado (part of what used to be 303)")
-       ("971" "OR" "-8" "   Oregon:  Metropolitan Portland, Salem/Keizer area, incl Cricket Wireless (see 503; perm 10/1/00)")
-       ("972" "TX" "-6" "   Texas: Dallas Metro (overlays 214/469)")
-       ("973" "NJ" "-5" "   N New Jersey: Newark, Paterson, Morristown (see overlay 862; split from 201)")
-       ("975" "MO" "-6" "   N Missouri: Kansas City (overlaid on 816)")
-       ("976" "--" "--" "   Unassigned")
-       ("978" "MA" "-5" "   Massachusetts: north of Boston to NH (see split 978 -- this is the northern half of old 508; see overlay 351)")
-       ("979" "TX" "-6" "   SE Texas: Bryan, College Station, Bay City (split from 409, see also 936)")
-       ("980" "NC" "-5" "   North Carolina: (overlay on 704; perm 5/1/00, mand 3/15/01)")
-       ("984" "NC" "-5" "   E North Carolina: Raleigh (overlaid on 919, perm 8/1/01, mand 2/5/02 POSTPONED)")
-       ("985" "LA" "-6" "   E Louisiana: SE/N shore of Lake Pontchartrain: Hammond, Slidell, Covington, Amite, Kentwood, area SW of New Orleans, Houma, Thibodaux, Morgan City (split from 504; perm 2/12/01; mand 10/22/01)")
-       ("989" "MI" "-5" "   Upper central Michigan: Mt Pleasant, Saginaw (split from 517; perm 4/7/01)")
-       ("999" "--" "--" "   Often used by carriers to indicate that the area code information is unavailable for CNID, even though the rest of the number is present")))
+                                                     ("830" "TX" "-6" "   Texas: region surrounding San Antonio (split from 210)")
+                                                     ("831" "CA" "-8" "   California: central coast area from Santa Cruz through Monterey County")
+                                                     ("832" "TX" "-6" "   Texas: Houston (overlay 713/281)")
+                                                     ("833" "--" "?" "   US/Canada toll free (proposed, may not be in use yet)")
+                                                     ("835" "PA" "-5" "   SE Pennsylvania: Allentown, Bethlehem, Reading, West Chester, Norristown (overlaid on 610, eff 5/1/01; see also 484)")
+                                                     ("843" "SC" "-5" "   South Carolina, coastal area: Charleston, Beaufort, Myrtle Beach (split from 803)")
+                                                     ("844" "--" "?" "   US/Canada toll free (proposed, may not be in use yet)")
+                                                     ("845" "NY" "-5" "   New York: Poughkeepsie; Nyack, Nanuet, Valley Cottage, New City, Putnam, Dutchess, Rockland, Orange, Ulster and parts of Sullivan counties in New York's lower Hudson Valley and Delaware County in the Catskills (see 914; perm 6/5/00)")
+                                                     ("847" "IL" "-6" "   Northern NE Illinois: northwestern suburbs of chicago (Evanston, Waukegan, Northbrook; see overlay 224)")
+                                                     ("848" "NJ" "-5" "   Cent. New Jersey: Toms River, New Brunswick, Bound Brook (see overlay 732)")
+                                                     ("850" "FL" "-6/-5" "   Florida panhandle, from east of Tallahassee to Pensacola (split from 904); western panhandle (Pensacola, Panama City) are UTC-6")
+                                                     ("855" "--" "?" "   US/Canada toll free (proposed, may not be in use yet)")
+                                                     ("856" "NJ" "-5" "   SW New Jersey: greater Camden area, Mt Laurel (split from 609)")
+                                                     ("857" "MA" "-5" "   Massachusetts: greater Boston (overlaid on 617, eff 4/2/01)")
+                                                     ("858" "CA" "-8" "   S California: San Diego (see split 760; overlay 619, 935)")
+                                                     ("859" "KY" "-5" "   N and Central Kentucky: Lexington; suburban KY counties of Cincinnati OH metro area; Covington, Newport, Ft. Thomas, Ft. Wright, Florence (split from 606)")
+                                                     ("860" "CT" "-5" "   Connecticut: areas outside of Fairfield and New Haven Counties (split from 203, overlay 959)")
+                                                     ("862" "NJ" "-5" "   N New Jersey: Newark Paterson Morristown (overlaid on 973)")
+                                                     ("863" "FL" "-5" "   Florida: Lakeland, Polk County (split from 941)")
+                                                     ("864" "SC" "-5" "   South Carolina, upstate area: Greenville, Spartanburg (split from 803)")
+                                                     ("865" "TN" "-5" "   E Tennessee: Knoxville, Knox and adjacent counties (split from 423; part of what used to be 615)")
+                                                     ("866" "--" "?" "   US/Canada toll free")
+                                                     ("867" "YT" "-5/-6/-7/-8" "   Canada: Yukon, Northwest Territories, Nunavut (split from 403/819)")
+                                                     ("868" "--" "-4" "   Trinidad and Tobago (\"new\" -- see 809)")
+                                                     ("869" "--" "-4" "   St. Kitts &amp; Nevis")
+                                                     ("870" "AR" "-6" "   Arkansas: areas outside of west/central AR: Jonesboro, etc")
+                                                     ("872" "IL" "-6" "   Illinois: Chicago (downtown only -- in the loop; see 773; overlaid on 312 and 773)")
+                                                     ("876" "--" "-5" "   Jamaica (split from 809)")
+                                                     ("877" "--" "?" "   US/Canada toll free")
+                                                     ("878" "PA" "-5" "   Pittsburgh, New Castle (overlaid on 412, perm 8/17/01, mand t.b.a.)")
+                                                     ("880" "--" "--" "   Paid Toll-Free Service")
+                                                     ("881" "--" "--" "   Paid Toll-Free Service")
+                                                     ("882" "--" "--" "   Paid Toll-Free Service")
+                                                     ("888" "--" "?" "   US/Canada toll free")
+                                                     ("898" "--" "?" "   VoIP service")
+                                                     ("900" "--" "?" "   US toll calls -- prices vary with the number called")
+                                                     ("901" "TN" "-6" "   W Tennessee: Memphis metro area (see 615, 931, split 731)")
+                                                     ("902" "NS" "-4" "   Canada: Nova Scotia, Prince Edward Island")
+                                                     ("903" "TX" "-6" "   NE Texas: Tyler (see overlay 430, eff 7/20/02)")
+                                                     ("904" "FL" "-5" "   N Florida: Jacksonville (see splits 352, 386, 850)")
+                                                     ("905" "ON" "-5" "   Canada: S Cent. Ontario: Greater Toronto Area -- Durham, Halton, Hamilton-Wentworth, Niagara, Peel, York, and southern Simcoe County (excluding Toronto -- see overlay 289 [eff 6/9/01], splits 416, 647)")
+                                                     ("906" "MI" "-6/-5" "   Upper Peninsula Michigan: Sault Ste. Marie, Escanaba, Marquette (UTC-6 towards the WI border)")
+                                                     ("907" "AK" "-9" "   Alaska")
+                                                     ("908" "NJ" "-5" "   Cent. New Jersey: Elizabeth, Basking Ridge, Somerville, Bridgewater, Bound Brook")
+                                                     ("909" "CA" "-8" "   California: Inland empire: San Bernardino (see split 951), Riverside")
+                                                     ("910" "NC" "-5" "   S Cent. North Carolina: Fayetteville, Wilmington (see 336)")
+                                                     ("911" "--" "--" "   Emergency")
+                                                     ("912" "GA" "-5" "   SE Georgia: Savannah (see splits 229, 478)")
+                                                     ("913" "KS" "-6" "   Kansas: Kansas City area (see 785)")
+                                                     ("914" "NY" "-5" "   S New York: Westchester County (see 845)")
+                                                     ("915" "TX" "-7/-6" "   W Texas: El Paso (see splits 325 eff 4/5/03; 432, eff 4/5/03)")
+                                                     ("916" "CA" "-8" "   NE California: Sacramento, Walnut Grove, Lincoln, Newcastle and El Dorado Hills (split to 530)")
+                                                     ("917" "NY" "-5" "   New York: New York City (cellular, see 646)")
+                                                     ("918" "OK" "-6" "   E Oklahoma: Tulsa")
+                                                     ("919" "NC" "-5" "   E North Carolina: Raleigh (see split 252, overlay 984)")
+                                                     ("920" "WI" "-6" "   NE Wisconsin: Appleton, Green Bay, Sheboygan, Fond du Lac (from Beaver Dam NE to Oshkosh, Appleton, and Door County; part of what used to be 414)")
+                                                     ("925" "CA" "-8" "   California: Contra Costa area: Antioch, Concord, Pleasanton, Walnut Creek (split from 510)")
+                                                     ("927" "FL" "-5" "   Florida: Cellular coverage in Orlando area")
+                                                     ("928" "AZ" "-7*" "   Central and Northern Arizona: Prescott, Flagstaff, Yuma (split from 520)")
+                                                     ("931" "TN" "-6" "   Middle Tennessee: semi-circular ring around Nashville (split from 615)")
+                                                     ("935" "CA" "-8" "   S California: San Diego (see split 760; overlay 858, 619; assigned but not in use)")
+                                                     ("936" "TX" "-6" "   SE Texas: Conroe, Lufkin, Nacogdoches, Crockett (split from 409, see also 979)")
+                                                     ("937" "OH" "-5" "   SW Ohio: Dayton (part of what used to be 513)")
+                                                     ("939" "PR" "-4*" "   Puerto Rico (overlaid on 787, perm 8/1/01)")
+                                                     ("940" "TX" "-6" "   N Cent. Texas: Denton, Wichita Falls (split from 254, 817)")
+                                                     ("941" "FL" "-5" "   SW Florida: Sarasota and Manatee counties (part of what used to be 813; see split 863)")
+                                                     ("947" "MI" "-5/-6" "   Michigan: Oakland County (overlays 248, perm 5/5/01)")
+                                                     ("949" "CA" "-8" "   California: S Coastal Orange County (split from 714)")
+                                                     ("951" "CA" "-8" "   California: W Riverside County (split from 909; eff 7/17/04)")
+                                                     ("952" "MN" "-6" "   Minnesota: Minneapolis SW, Bloomington (split from 612; see also 763)")
+                                                     ("954" "FL" "-5" "   Florida: Broward County area, incl Ft. Lauderdale (part of what used to be 305, see overlay 754)")
+                                                     ("956" "TX" "-6" "   Texas: Valley of Texas area; Harlingen, Laredo (split from 210)")
+                                                     ("957" "NM" "-7" "   New Mexico (pending; region unknown)")
+                                                     ("959" "CT" "-5" "   Connecticut: Hartford, New London (postponed; was overlaid on 860 perm 1/6/01; mand 3/1/01???)")
+                                                     ("970" "CO" "-7" "   N and W Colorado (part of what used to be 303)")
+                                                     ("971" "OR" "-8" "   Oregon:  Metropolitan Portland, Salem/Keizer area, incl Cricket Wireless (see 503; perm 10/1/00)")
+                                                     ("972" "TX" "-6" "   Texas: Dallas Metro (overlays 214/469)")
+                                                     ("973" "NJ" "-5" "   N New Jersey: Newark, Paterson, Morristown (see overlay 862; split from 201)")
+                                                     ("975" "MO" "-6" "   N Missouri: Kansas City (overlaid on 816)")
+                                                     ("976" "--" "--" "   Unassigned")
+                                                     ("978" "MA" "-5" "   Massachusetts: north of Boston to NH (see split 978 -- this is the northern half of old 508; see overlay 351)")
+                                                     ("979" "TX" "-6" "   SE Texas: Bryan, College Station, Bay City (split from 409, see also 936)")
+                                                     ("980" "NC" "-5" "   North Carolina: (overlay on 704; perm 5/1/00, mand 3/15/01)")
+                                                     ("984" "NC" "-5" "   E North Carolina: Raleigh (overlaid on 919, perm 8/1/01, mand 2/5/02 POSTPONED)")
+                                                     ("985" "LA" "-6" "   E Louisiana: SE/N shore of Lake Pontchartrain: Hammond, Slidell, Covington, Amite, Kentwood, area SW of New Orleans, Houma, Thibodaux, Morgan City (split from 504; perm 2/12/01; mand 10/22/01)")
+                                                     ("989" "MI" "-5" "   Upper central Michigan: Mt Pleasant, Saginaw (split from 517; perm 4/7/01)")
+                                                     ("999" "--" "--" "   Often used by carriers to indicate that the area code information is unavailable for CNID, even though the rest of the number is present")))
 
 (def *us-area-codes* (map #(nth % 0)
                           (drop 2 *us-area-code-detail*)))
@@ -1707,66 +1706,15 @@ Some of the sources:
 
 ;;
 
-(comment
-
-  (def *page* (slurp  "http://www.usps.com/ncsc/lookups/abbreviations.html"))
-
-  (require 'clj-etl-utils.landmark-parser)
-
-  (def *abbrs-segment*
-       (clj-etl-utils.landmark-parser/extract
-        (clj-etl-utils.landmark-parser/make-parser *page*)
-        [[:fp "Street Suffixes"]
-         [:ft "Street Suffixes"]
-         [:rp "<table"]]
-        [[:fp "United States Postal Service"]
-         [:fp "</table>"]]))
-
-
-  (require 'clojure.contrib.pprint)
-
-  (def *rows*
-       (map
-        (fn [s]
-          (.. s
-              (replaceAll "<[^>]+?>" "")
-              (replaceAll "&nbsp;" " ")
-              (replaceAll "\t" " ")
-              (replaceAll "[\r\n]+" "")
-              (replaceAll "(?i:</tr)$" "")
-              (trim)))
-        (filter
-         (fn [l]
-           (and
-            (not (.contains l "Street Suffixes"))))
-         (clj-etl-utils.landmark-parser/table-rows *abbrs-segment*))))
-
-  (require 'clojure.contrib.duck-streams)
-  (require 'clojure.contrib.string)
-
-  (with-open [outp (clojure.contrib.duck-streams/writer "resources/clj_etl_utils/ref_data/usps-abbreviations.tab")]
-    (let [write-rec (fn [r]
-                      (.println outp (clojure.contrib.string/join "\t" r)))]
-      (write-rec ["PRIMARY_NAME" "COMMON_ABBREVIATION" "USPS_ABBREVIATION"])
-      (doseq [rec (map
-                   #(vec (.split %1 "\\s+" 3))
-                   (filter
-                    #(.matches % "^[A-Z]+\\s+[A-Z]+\\s+[A-Z]+$")
-                    *rows*))]
-        (write-rec rec))))
-
-
-  )
-
 (defn generate-iso-3-xsd []
-    (with-open [outp (clojure.contrib.duck-streams/writer "resources/xsd/iso-3-country-codes.xsd")]
+  (with-open [outp (io/writer "resources/xsd/iso-3-country-codes.xsd")]
     (.println outp "<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
     (.println outp (str "<!--
 See: http://en.wikipedia.org/w/index.php?title=ISO_3166-1_alpha-3&oldid=422511645
 Generated: " (java.util.Date.) "
 -->"))
     (.print outp  "
-<xs:schema 
+<xs:schema
   xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"
   xmlns=\"http://www.tm-xml.org/XMLSchema/common\"
   version=\"1.0\"
@@ -1796,14 +1744,14 @@ Generated: " (java.util.Date.) "
 ")))
 
 (defn generate-iso-2-xsd []
-    (with-open [outp (clojure.contrib.duck-streams/writer "resources/xsd/iso-2-country-codes.xsd")]
+  (with-open [outp (io/writer "resources/xsd/iso-2-country-codes.xsd")]
     (.println outp "<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
     (.println outp (str "<!--
 See: http://en.wikipedia.org/w/index.php?title=ISO_3166-2&oldid=419867458
 Generated: " (java.util.Date.) "
 -->"))
     (.print outp  "
-<xs:schema 
+<xs:schema
   xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"
   xmlns=\"http://www.tm-xml.org/XMLSchema/common\"
   version=\"1.0\"

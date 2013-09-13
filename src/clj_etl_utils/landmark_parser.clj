@@ -1,6 +1,6 @@
 (ns ^{:doc "Semi-structured Text parsing library.  The library uses an
     automation and a command set to extract portions of a document.
-    Atomic commands are instructions such as: start, end,
+    Atomic commands are instructions such as: start, end
     forward-char, backward-char, forward-past, rewind-to and so on.
     The landmarks can be either literal or logical (regular
     expressions, 'types', etc).  This extractor can often succeed in
@@ -15,7 +15,7 @@
    [clj-etl-utils.regex :as regex]))
 
 
-(declare *cmds*)
+(declare lp-commands)
 
 (defstruct parser :pos :doc :ldoc :doclen)
 
@@ -26,17 +26,17 @@
     :doclen (.length doc)
     :doc doc))
 
-(defn forward-past [parser landmark]
-  (let [pos (.indexOf (:ldoc parser) (.toLowerCase landmark) @(:pos parser))]
+(defn forward-past [parser ^String landmark]
+  (let [pos (.indexOf ^String (:ldoc parser) (.toLowerCase landmark) ^int @(:pos parser))]
     (if (= -1 pos)
       false
       (do
         (reset! (:pos parser) (+ pos (count landmark)))
         @(:pos parser)))))
 
-(defn forward-to [parser landmark]
+(defn forward-to [parser ^String landmark]
   (let [start (:post parser)
-        pos (.indexOf (:ldoc parser) (.toLowerCase landmark) @(:pos parser))]
+        pos (.indexOf ^String (:ldoc parser) ^String (.toLowerCase landmark) ^int @(:pos parser))]
     (if (= -1 pos)
       false
       (do
@@ -77,20 +77,20 @@
         true))))
 
 
-(defn rewind-to [p landmark]
-  (let [pos (.lastIndexOf (:ldoc p)
+(defn rewind-to [p ^String landmark]
+  (let [pos (.lastIndexOf ^String (:ldoc p)
                           (.toLowerCase landmark)
-                          @(:pos p))]
+                          ^int @(:pos p))]
     (if (= -1 pos)
       false
       (do
         (reset! (:pos p) (+ pos (count landmark)))
         @(:pos p)))))
 
-(defn rewind-past [p landmark]
-  (let [pos (.lastIndexOf (:ldoc p)
+(defn rewind-past [p ^String landmark]
+  (let [pos (.lastIndexOf ^String (:ldoc p)
                           (.toLowerCase landmark)
-                          @(:pos p))]
+                          ^int @(:pos p))]
     (if (= -1 pos)
       false
       (do
@@ -113,7 +113,7 @@
   (loop [[[cmd & args] & cmds] (parse-cmds cmds)]
     (if cmd
       (do
-        (if (apply (*cmds* cmd) (cons parser args))
+        (if (apply (lp-commands cmd) (cons parser args))
           (do
             (recur cmds))
           false))
@@ -123,22 +123,22 @@
   (loop [[[cmd & args] & cmds] (parse-cmds cmds)]
     (if cmd
       (do
-        (if (not (*cmds* cmd))
+        (if (not (lp-commands cmd))
           (raise "Error: invalid command: %s" cmd))
-        (if (apply (*cmds* cmd) (cons parser args))
+        (if (apply (lp-commands cmd) (cons parser args))
           (do
             (recur cmds))
           false))
       true)))
 
 (defn forward-past-regex
-  "See also regex/*common-regexes*"
+  "See also regex/common-regexes"
   [p regex]
   (log "forward-past-regex regex=%s" regex)
-  (let [pat (if (and (keyword? regex) (regex regex/*common-regexes*))
-              (regex regex/*common-regexes*)
-              (Pattern/compile (str regex) (bit-or Pattern/MULTILINE Pattern/CASE_INSENSITIVE)))
-        m   (.matcher pat (:doc p))]
+  (let [^java.util.regex.Pattern pat (if (and (keyword? regex) (regex regex/common-regexes))
+                                       (regex regex/common-regexes)
+                                       (Pattern/compile (str regex) (bit-or Pattern/MULTILINE Pattern/CASE_INSENSITIVE)))
+        ^java.util.regex.Matcher m   (.matcher pat (:doc p))]
     (log "forward-past-regex: pat=%s m=%s" pat m)
     (if (.find m @(:pos p))
       (do
@@ -148,11 +148,11 @@
       false)))
 
 (defn forward-to-regex [p regex]
-  "See also regex/*common-regexes*"
-  (let [pat (if (and (keyword? regex) (regex regex/*common-regexes*))
-              (regex regex/*common-regexes*)
+  "See also regex/common-regexes"
+  (let [pat (if (and (keyword? regex) (regex regex/common-regexes))
+              (regex regex/common-regexes)
               (Pattern/compile (str regex) (bit-or Pattern/MULTILINE Pattern/CASE_INSENSITIVE)))
-        m   (.matcher pat (:doc p))]
+        m   ^java.util.regex.Matcher (.matcher ^java.util.regex.Pattern pat ^String (:doc p))]
     (log "forward-to-regex: using pat=%s" pat)
     (if (.find m @(:pos p))
       (do
@@ -161,7 +161,7 @@
       false)))
 
 
-(def *cmds*
+(def lp-commands
      {:apply-commands        apply-commands
       :a                     apply-commands
       :do-commands           do-commands
@@ -191,7 +191,7 @@
 
 
 (defn doc-substr [parser cnt]
-  (.substring (:doc parser)
+  (.substring ^String (:doc parser)
               @(:pos parser)
               (+ @(:pos parser)
                  cnt)))
@@ -201,7 +201,7 @@
     (if (do-commands p start-cmds)
       (let [spos @(:pos p)]
         (if (do-commands p end-cmds)
-          (.substring (:doc p)
+          (.substring ^String (:doc p)
                       spos
                       @(:pos p))
           (do (set-pos! p orig-pos)
@@ -218,7 +218,7 @@
     (if (do-commands p start-cmds)
       (let [spos @(:pos p)]
         (if (do-commands p end-cmds)
-          (recur (conj res (.substring (:doc p) spos @(:pos p))))
+          (recur (conj res (.substring ^String (:doc p) spos @(:pos p))))
           res))
       res)))
 
@@ -251,14 +251,13 @@
 (defn anchor->body [html]
   (first (regex/re-find-first #">(.+?)</a>" html)))
 
-(defn html-find-link-with-body [html text]
+(defn html-find-link-with-body [^String html ^String text]
   (first
    (regex/re-find-first
     #"href=\"([^\"]+)\""
     (first
-     (filter #(.contains % text)
+     (filter #(.contains ^String % text)
              (html->anchors html))))))
-
 
 (defn html->tables [html]
   (extract-all-from html
@@ -295,9 +294,9 @@
 ;; TODO: parse out textarea, button and select
 (defn parse-form-elements [html]
   (apply concat [(map parse-input-element (extract-all-from html '(:ft "<input") '(:fp ">")))
-;;                  (extract-all-from html '(:ft "<textarea") '(:fp "</textarea>"))
-;;                  (extract-all-from html '(:ft "<button") '(:fp ">"))
-;;                  (extract-all-from html '(:ft "<select") '(:fp "</select>"))
+                 ;;                  (extract-all-from html '(:ft "<textarea") '(:fp "</textarea>"))
+                 ;;                  (extract-all-from html '(:ft "<button") '(:fp ">"))
+                 ;;                  (extract-all-from html '(:ft "<select") '(:fp "</select>"))
                  ]))
 
 ;;(parse-form-elements (first (html->form-blocks com.github.kyleburton.sandbox.web/html)))
