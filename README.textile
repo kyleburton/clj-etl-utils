@@ -1,9 +1,5 @@
 h1. clj-etl-utils
 
-This branch is for Clojure 1.2 Support.  All clj-etl-util versions released from this branch shall have a 1.0.x version numbering scheme.  Clojure 1.3 support will be on the master branch.
-
-h2. Testing
-
 ETL Utilities for Clojure.  This library began with functions that worked with data on disk, such as database dumps and log files, at least that was the original purpose of the library, it has since grown to include other utilities.
 
 h2. Modules
@@ -170,7 +166,9 @@ pre.. ( [ "1\tis is the second line" ]
 
 h2. Installation
 
-Leiningen and Maven repository / depdencney inforamtion using Clojars.
+@clj-etl-utils@ is available via Clojars:
+
+  https://clojars.org/com.github.kyleburton/clj-etl-utils
 
 h2. References
 
