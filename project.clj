@@ -1,4 +1,4 @@
-(defproject com.github.kyleburton/clj-etl-utils "1.0.76-SNAPSHOT"
+(defproject com.github.kyleburton/clj-etl-utils "1.0.76"
   :description "ETL Utilities"
   :url         "http://github.com/kyleburton/clj-etl-utils"
   :lein-release {:deploy-via :clojars :scm :git}
