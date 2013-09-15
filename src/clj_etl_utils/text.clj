@@ -356,11 +356,11 @@ Taken from: http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-
    ^StringBuilder
    (reduce
     (fn [b c]
-      (if (Character/isUpperCase ^char c)
+      (if (Character/isUpperCase c)
         (do
           (.append ^StringBuilder b "-")
           (.append ^StringBuilder b ^CharSequence (clojure.string/lower-case c)))
-        (.append ^StringBuilder b ^char c)))
+        (.append ^StringBuilder b c)))
     (StringBuilder.)
     (name s))))
 

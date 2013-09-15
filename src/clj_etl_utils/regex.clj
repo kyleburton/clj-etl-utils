@@ -92,7 +92,7 @@
 (defn all-groups
   "Extracts all the groups from a java.util.regex.Matcher into a seq."
   [^java.util.regex.Matcher m]
-  (for [^int grp (range 1 (+ 1 (.groupCount m)))]
+  (for [grp (range 1 (+ 1 (.groupCount m)))]
     (.group m grp)))
 
 

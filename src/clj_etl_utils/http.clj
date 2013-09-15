@@ -143,7 +143,7 @@
         path     (format "%s/%s" base-url path)]
     (aprog1
         (GetMethod.)
-      (.setURI it (URI. ^String scheme nil ^String host ^int port ^String path))
+      (.setURI it (URI. ^String scheme nil ^String host port ^String path))
       (doseq [[hdr-name hdr-val] (:request-headers *client*)]
         (.setRequestHeader it (name hdr-name) hdr-val)))))
 

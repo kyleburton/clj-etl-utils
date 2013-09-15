@@ -27,7 +27,7 @@
     :doc doc))
 
 (defn forward-past [parser ^String landmark]
-  (let [pos (.indexOf ^String (:ldoc parser) (.toLowerCase landmark) ^int @(:pos parser))]
+  (let [pos (.indexOf ^String (:ldoc parser) (.toLowerCase landmark) @(:pos parser))]
     (if (= -1 pos)
       false
       (do
@@ -36,7 +36,7 @@
 
 (defn forward-to [parser ^String landmark]
   (let [start (:post parser)
-        pos (.indexOf ^String (:ldoc parser) ^String (.toLowerCase landmark) ^int @(:pos parser))]
+        pos (.indexOf ^String (:ldoc parser) ^String (.toLowerCase landmark) @(:pos parser))]
     (if (= -1 pos)
       false
       (do
@@ -80,7 +80,7 @@
 (defn rewind-to [p ^String landmark]
   (let [pos (.lastIndexOf ^String (:ldoc p)
                           (.toLowerCase landmark)
-                          ^int @(:pos p))]
+                          @(:pos p))]
     (if (= -1 pos)
       false
       (do
@@ -90,7 +90,7 @@
 (defn rewind-past [p ^String landmark]
   (let [pos (.lastIndexOf ^String (:ldoc p)
                           (.toLowerCase landmark)
-                          ^int @(:pos p))]
+                          @(:pos p))]
     (if (= -1 pos)
       false
       (do

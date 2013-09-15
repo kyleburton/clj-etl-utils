@@ -241,8 +241,13 @@ following actions are supported:
        (~sym-name :final))))
 
 
+;; NB: this now exists in clojure.core as some->
+(defmacro ..?
+  ([x form] `(if (nil? ~x) nil (. ~x ~form)))
+  ([x form & more] `(..? (if (nil? ~x) nil (. ~x ~form)) ~@more)))
+
 (defn array? [^Object thing]
-  (some-> thing (.getClass) (.isArray)))
+  (..? thing (getClass) (isArray)))
 
 (def rec-bean
      (let [primitive? #{Class
@@ -285,10 +290,6 @@ following actions are supported:
       (recur (conj res next)
              (.getCause next))
       res)))
-
-(defmacro ..?
-  ([x form] `(if (nil? ~x) nil (. ~x ~form)))
-  ([x form & more] `(..? (if (nil? ~x) nil (. ~x ~form)) ~@more)))
 
 (defmacro restructure-map [& vars]
   (reduce (fn [accum var]
