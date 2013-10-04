@@ -172,3 +172,12 @@
             ~@body))))
 
 
+
+(defn invalidate-standard-cache [cache-name args]
+  (let [cache
+        (->
+         @*cache-registry*
+         (get cache-name)
+         :cache)]
+    (swap! cache
+           dissoc args)))
