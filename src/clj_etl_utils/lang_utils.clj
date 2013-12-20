@@ -127,6 +127,13 @@
         (set (keys params))))
    key-lists))
 
+(defn valid-request-opts? [params required-keys allowable-keys]
+  (let [param-keyset (set (keys params))]
+    (and
+     (empty? (clojure.set/difference param-keyset allowable-keys))
+     (empty? (clojure.set/difference required-keys param-keyset)))))
+
+
 (defn assert-allowed-keys! [m allowed-keys]
   (let [allowed-keys (apply hash-set allowed-keys)]
     (doseq [k (keys m)]
