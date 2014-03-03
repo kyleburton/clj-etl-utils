@@ -261,6 +261,7 @@ following actions are supported:
   (or
    (seq? thing)
    (..? thing (getClass) (isArray))
+   (isa? (class thing) java.lang.Iterable)
    (isa? (class thing) java.util.List)))
 
 (def rec-bean
