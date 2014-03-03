@@ -256,6 +256,13 @@ following actions are supported:
 (defn array? [^Object thing]
   (..? thing (getClass) (isArray)))
 
+
+(defn iterable? [^Object thing]
+  (or
+   (seq? thing)
+   (..? thing (getClass) (isArray))
+   (isa? (class thing) java.util.List)))
+
 (def rec-bean
      (let [primitive? #{Class
                         String
@@ -276,7 +283,7 @@ following actions are supported:
            (let [bn (dissoc (bean thing) :class)]
              (reduce (fn [res k]
                        (assoc res k
-                              (if (array? (get bn k))
+                              (if (iterable? (get bn k))
                                 (vec (map rec-bean (get bn k)))
                                 (rec-bean (get bn k)))))
                      {}
@@ -398,5 +405,3 @@ following actions are supported:
   (let [cl  (.getClassLoader (.getClass *ns*))
         url (.findResource ^ClassLoader cl ^String resource)]
     (.getFile ^java.net.URL url)))
-
-
