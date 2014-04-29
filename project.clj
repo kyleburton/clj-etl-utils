@@ -17,7 +17,7 @@
   }
 
   :profiles             {:dev {:dependencies [[swank-clojure "1.4.3"]
-                                              [lein-marginalia "0.6.0"]]}
+                                              [lein-marginalia "0.7.1"]]}
                          :1.2 {:dependencies [[org.clojure/clojure "1.2.0"]
                                               [org.clojure/data.json      "0.2.2"]]}
                          :1.3 {:dependencies [[org.clojure/clojure "1.3.0"]
