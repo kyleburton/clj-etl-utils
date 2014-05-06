@@ -38,4 +38,4 @@
                          [commons-lang               "2.5"]
                          [org.clojure/data.csv       "0.1.2"]
                          [org.clojure/tools.logging  "0.2.6"]
-                         [joda-time/joda-time        "1.6.2"]])
+                         [[clj-time                  "0.7.0"]]])
