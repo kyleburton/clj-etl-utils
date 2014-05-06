@@ -2,6 +2,8 @@
     ^{:doc "Core, shared utility functions that aid in development with Clojure, or with development on the JVM."
       :author "Kyle Burton"}
   clj-etl-utils.lang-utils
+  (:require 
+    clojure.set)
   (:import [org.apache.commons.io IOUtils]
            [java.net InetAddress]))
 

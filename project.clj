@@ -1,4 +1,4 @@
-(defproject com.github.kyleburton/clj-etl-utils "1.0.80-SNAPSHOT"
+(defproject com.github.kyleburton/clj-etl-utils "1.0.84-SNAPSHOT"
   :description "ETL Utilities"
   :url         "http://github.com/kyleburton/clj-etl-utils"
   :lein-release {:deploy-via :clojars :scm :git}
@@ -17,7 +17,7 @@
   }
 
   :profiles             {:dev {:dependencies [[swank-clojure "1.4.3"]
-                                              [lein-marginalia "0.6.0"]]}
+                                              [lein-marginalia "0.7.1"]]}
                          :1.2 {:dependencies [[org.clojure/clojure "1.2.0"]
                                               [org.clojure/data.json      "0.2.2"]]}
                          :1.3 {:dependencies [[org.clojure/clojure "1.3.0"]
