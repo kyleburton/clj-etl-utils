@@ -10,7 +10,7 @@
   (is (= 1     (time/mins-between "13:00" "13:01")))
   (is (= 361   (time/mins-between "13:00" "19:01")))
   (is (= 360   (time/mins-between "23:00" "05:00")))
-)
+  )
 
 (deftest test-business-hours
   ;; 1 min before 9am
@@ -26,6 +26,9 @@
        (org.joda.time.DateTime. "2014-05-06T01:59:59Z")
        "09:00" "22:00" "EDT"))
   ;; at 10pm
+  (is (time/during-business-hours?
+       (org.joda.time.DateTime. "2014-05-06T02:00:00Z")
+       "09:00" "22:00" "EDT"))
   (is (not (time/during-business-hours?
-            (org.joda.time.DateTime. "2014-05-06T02:00:00Z")
+            (org.joda.time.DateTime. "2014-05-06T02:01:00Z")
             "09:00" "22:00" "EDT"))))

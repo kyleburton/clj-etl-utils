@@ -108,6 +108,13 @@
         tstamp (time/to-time-zone tstamp (DateTimeZone/forID "UTC"))]
     tstamp))
 
+(comment
+
+  (hour-span-to-time-stamps current-time start-hour end-hour tzone)
+
+  (translate-time-of-day-to-utc-time-stamp hour-of-day tstamp tz)
+  )
+
 (defn hour-span-to-time-stamps
   " (hour-span-to-time-stamps tstamp \"09:00\" \"17:00\" \"EDT\")  "
   [^DateTime current-time ^String start-hour ^String end-hour ^String tzone]
@@ -116,20 +123,32 @@
         end-tstamp   (time/plus start-tstamp (time/minutes mins))]
     [start-tstamp end-tstamp]))
 
+(defn minutes-into-day [^org.joda.time.DateTime dt]
+  (+
+   (* 60 (.getHourOfDay dt))
+   (.getMinuteOfHour dt)))
+
+
 (defn during-business-hours?
   "
     (during-business-hours?
       (time/now)
       \"09:00\"
       \"17:00\"
-      \"EDT\"q)
+      \"EDT\")
 
 "
   [^org.joda.time.DateTime current-time ^String start-hour-min ^String end-hour-min ^String tz]
   (let [current-time        (time/to-time-zone current-time (DateTimeZone/forID "UTC"))
-        [bus-start bus-end] (hour-span-to-time-stamps current-time
-                                                      start-hour-min
-                                                      end-hour-min
-                                                      tz)]
-    (time/within? (time/interval bus-start bus-end)
-                  current-time)))
+        [bus-start bus-end] (hour-span-to-time-stamps
+                             current-time
+                             start-hour-min
+                             end-hour-min
+                             tz)
+        current-mins      (minutes-into-day current-time)
+        bus-start-mins    (minutes-into-day bus-start)
+        bus-end-mins      (minutes-into-day bus-end)]
+    (if (< bus-end-mins bus-start-mins)
+      (or (>= current-mins bus-start-mins)
+          (<= current-mins bus-end-mins))
+      (<= bus-start-mins current-mins bus-end-mins))))
