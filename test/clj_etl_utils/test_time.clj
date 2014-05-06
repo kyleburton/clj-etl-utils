@@ -5,12 +5,21 @@
    [clj-etl-utils.time :as time]))
 
 
+(deftest date-seq
+  (is (= 1 (count (time/date-seq
+                   (org.joda.time.DateTime. "2014-05-06T12:59:59Z")
+                   (org.joda.time.DateTime. "2014-05-06T12:59:59Z")))))
+  (is (= 3 (count (time/date-seq
+                   (org.joda.time.DateTime. "2014-05-06T12:59:59Z")
+                   (org.joda.time.DateTime. "2014-05-08T12:59:59Z"))))))
+
 (deftest test-mins-between-end-and-start
   (is (zero?   (time/mins-between "13:00" "13:00")))
   (is (= 1     (time/mins-between "13:00" "13:01")))
   (is (= 361   (time/mins-between "13:00" "19:01")))
   (is (= 360   (time/mins-between "23:00" "05:00")))
   )
+
 
 (deftest test-business-hours
   ;; 1 min before 9am

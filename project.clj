@@ -1,4 +1,4 @@
-(defproject com.github.kyleburton/clj-etl-utils "1.0.85-SNAPSHOT"
+(defproject com.github.kyleburton/clj-etl-utils "1.0.86-SNAPSHOT"
   :description "ETL Utilities"
   :url         "http://github.com/kyleburton/clj-etl-utils"
   :lein-release {:deploy-via :clojars :scm :git}
@@ -26,7 +26,7 @@
                                               [org.clojure/data.json      "0.2.3"]]}
                          :1.5 {:dependencies [[org.clojure/clojure "1.5.1"]
                                               [org.clojure/data.json      "0.2.3"]]}
-                         :1.6 {:dependencies [[org.clojure/clojure "1.6.0-master-SNAPSHOT"]
+                         :1.6 {:dependencies [[org.clojure/clojure "1.6.0"]
                                               [org.clojure/data.json      "0.2.3"]]}}
   :aliases              {"all" ["with-profile" "dev,1.2:dev,1.3:dev,1.4:dev,1.5:dev,1.6"]}
   :global-vars          {*warn-on-reflection* true}
@@ -38,4 +38,5 @@
                          [commons-lang               "2.5"]
                          [org.clojure/data.csv       "0.1.2"]
                          [org.clojure/tools.logging  "0.2.6"]
-                         [clj-time                  "0.7.0"]])
+                         [clj-time                  "0.7.0"
+                           :exclusions [org.clojure/clojure]]])

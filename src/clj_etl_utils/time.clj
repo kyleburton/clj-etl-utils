@@ -7,8 +7,18 @@
    [org.joda.time LocalDate DateTime Days DateTimeConstants DateTimeZone Minutes]))
 
 (defn date-seq
-  "Sequence of timestamps, each a day ahead of the previous."
-  [start-date end-date]
+  "Sequence of timestamps, each one day ahead of the previous, inclusive of the end-time.
+
+    (time/date-seq
+      (org.joda.time.DateTime. \"2014-05-06T12:59:59Z\")
+      (org.joda.time.DateTime. \"2014-05-08T12:59:59Z\"))
+    =>
+     (#<DateTime 2014-05-06T08:59:59.000-04:00>
+      #<DateTime 2014-05-07T08:59:59.000-04:00>
+      #<DateTime 2014-05-08T08:59:59.000-04:00>)
+
+"
+  [^DateTime start-date ^DateTime end-date]
   (take-while
    #(or (.isBefore %1 end-date)
         (.isEqual  %1 end-date))
@@ -17,8 +27,15 @@
             start-date)))
 
 (defn same-day?
-  "Test if the two DateTime's represent the same day."
-  [t1 t2]
+  "Test if the two DateTime's represent the same day.
+
+   (same-day?
+     (org.joda.time.DateTime. \"2014-05-06T12:59:59Z\")
+     (org.joda.time.DateTime. \"2014-05-06T12:59:59Z\"))
+   => true
+
+"
+  [^DateTime t1 ^DateTime t2]
   (let [d1 (.toLocalDate t1)
         d2 (.toLocalDate t2)]
     (.isEqual d1 d2)))
@@ -32,7 +49,7 @@
       DateTimeConstants/FRIDAY    "Friday"
       DateTimeConstants/SATURDAY  "Saturday"})
 
-(defn day-of-week-long [dt]
+(defn day-of-week-long [^DateTime dt]
   (get *days-of-week-long* (.getDayOfWeek dt)))
 
 (def *days-of-week-abbr*
@@ -44,7 +61,7 @@
       DateTimeConstants/FRIDAY    "Fri"
       DateTimeConstants/SATURDAY  "Sat"})
 
-(defn day-of-week-abbr [dt]
+(defn day-of-week-abbr [^DateTime dt]
   (get *days-of-week-abbr* (.getDayOfWeek dt)))
 
 (def *days-of-week-short*
