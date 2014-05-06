@@ -1,7 +1,8 @@
 (ns clj-etl-utils.time
   (:require
    [clj-etl-utils.lang-utils :refer [raise]]
-   [clj-time.core            :as time])
+   [clj-time.core            :as time]
+   [clj-time.format          :as tformat])
   (:import
    [org.joda.time LocalDate DateTime Days DateTimeConstants DateTimeZone Minutes]))
 
@@ -56,7 +57,7 @@
       DateTimeConstants/SATURDAY  "S"})
 
 
-(defonce hour-minute-time-formatter (clj-time.format/formatter "HH:mm"))
+(defonce hour-minute-time-formatter (tformat/formatter "HH:mm"))
 
 (defn make-time-zone-for-id
   "Helper that translates coloquial time zones (eg: EDT and PDT) to the official zone.  Returns a Joda DateTimeZone."
@@ -78,8 +79,8 @@
     (DateTimeZone/forID id)))
 
 (defn mins-between [^String start-hour-min ^String end-hour-min]
-  (let [stime                (clj-time.format/parse hour-minute-time-formatter start-hour-min)
-        etime                (clj-time.format/parse hour-minute-time-formatter end-hour-min)
+  (let [stime                (tformat/parse hour-minute-time-formatter start-hour-min)
+        etime                (tformat/parse hour-minute-time-formatter end-hour-min)
         end-is-before-start? (.isBefore etime stime)
         etime                (if end-is-before-start?
                                (time/plus etime (time/minutes (* 24 60)))
@@ -97,7 +98,7 @@
       => ^DateTime timestamp
 "
   [^String hour-of-day ^org.joda.time.DateTime tstamp ^String tz]
-  (let [htime  (clj-time.format/parse hour-minute-time-formatter hour-of-day)
+  (let [htime  (tformat/parse hour-minute-time-formatter hour-of-day)
         tstamp (time/to-time-zone tstamp (make-time-zone-for-id tz))
         tstamp (.withTime
                 tstamp
