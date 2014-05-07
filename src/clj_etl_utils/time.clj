@@ -167,5 +167,7 @@
         bus-end-mins      (minutes-into-day bus-end)]
     (if (< bus-end-mins bus-start-mins)
       (or (>= current-mins bus-start-mins)
-          (<= current-mins bus-end-mins))
-      (<= bus-start-mins current-mins bus-end-mins))))
+          (<  current-mins bus-end-mins))
+      (and
+       (<= bus-start-mins current-mins)
+       (< current-mins bus-end-mins)))))

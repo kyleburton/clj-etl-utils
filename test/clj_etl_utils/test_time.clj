@@ -35,9 +35,13 @@
        (org.joda.time.DateTime. "2014-05-06T01:59:59Z")
        "09:00" "22:00" "EDT"))
   ;; at 10pm
-  (is (time/during-business-hours?
-       (org.joda.time.DateTime. "2014-05-06T02:00:00Z")
-       "09:00" "22:00" "EDT"))
+  (is (not
+       (time/during-business-hours?
+        (org.joda.time.DateTime. "2014-05-06T02:00:00Z")
+        "09:00" "22:00" "EDT")))
   (is (not (time/during-business-hours?
             (org.joda.time.DateTime. "2014-05-06T02:01:00Z")
+            "09:00" "22:00" "EDT")))
+  (is (not (time/during-business-hours?
+            (org.joda.time.DateTime. "2014-05-06T02:00:30Z")
             "09:00" "22:00" "EDT"))))
