@@ -441,3 +441,18 @@ Taken from: http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-
   (human-readable-byte-count (* 3 1024 1024))
   (human-readable-byte-count (* 3 1024 1024) true)
   )
+
+
+(defn trim-and-truncate
+  ([^String value ^Number max-len]
+     (trim-and-truncate value max-len nil))
+  ([^String value ^Number max-len ^String default-value]
+     (cond
+       (nil? value)
+       default-value
+
+       :trim-and-truncate
+       (let [value (.trim value)]
+         (if (empty? value)
+           default-value
+           (.trim (substr value 0 max-len)))))))
