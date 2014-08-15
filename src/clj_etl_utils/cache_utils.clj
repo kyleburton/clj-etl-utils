@@ -7,7 +7,7 @@
 ;;
 (ns clj-etl-utils.cache-utils
   (:require
-   [clj-etl-utils.log        :as log])
+   [clojure.tools.logging    :as log])
   (:use
    [clj-etl-utils.lang-utils :only [raise aprog1]])
   (:import
