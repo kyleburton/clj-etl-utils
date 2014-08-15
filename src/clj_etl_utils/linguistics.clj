@@ -1,7 +1,7 @@
 (ns clj-etl-utils.linguistics
-  (:require [clj-etl-utils.io :as io])
-  (:use
-   [clj-etl-utils.lang-utils :only [raise]])
+  (:require
+   [clj-etl-utils.io         :as io]
+   [clj-etl-utils.lang-utils :refer [raise]])
   (:import [com.rn.codec Nysiis]
            [org.apache.commons.codec.language DoubleMetaphone]
            [org.apache.commons.codec.language Soundex]))

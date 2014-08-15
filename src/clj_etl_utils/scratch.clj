@@ -3,16 +3,12 @@
    [clj-etl-utils.indexer        :as indexer]
    [clojure.data.csv             :as csv]
    [clojure.java.sh              :as sh]
-   [clojure.string               :as string])
-  (:use
-   clj-etl-utils.indexer
-   [clj-etl-utils.lang-utils :only [raise]])
+   [clojure.string               :as string]
+   [clj-etl-utils.indexer        :as indexer]
+   [clj-etl-utils.lang-utils     :refer [raise]])
   (:import
    [java.io RandomAccessFile FileInputStream InputStreamReader BufferedReader]
    [org.apache.commons.io.input BoundedInputStream]))
-
-
-
 
 (comment
 

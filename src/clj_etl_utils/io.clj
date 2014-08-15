@@ -98,15 +98,15 @@ marking, it will be reset back so that the bytes are not actually read."
         :added "1.0.0"}
   byte-marker-matches? [marker-bytes file-bytes]
   (cond
-    (empty? marker-bytes) false
-    (empty? file-bytes)   false
-    :else
-    (loop [[marker & marker-bytes] marker-bytes
-           [byte & file-bytes]     file-bytes]
-      (cond
-        (or (not marker) (not byte))      true
-        (= marker byte)                   (recur marker-bytes file-bytes)
-        :else                             false))))
+   (empty? marker-bytes) false
+   (empty? file-bytes)   false
+   :else
+   (loop [[marker & marker-bytes] marker-bytes
+          [byte & file-bytes]     file-bytes]
+     (cond
+      (or (not marker) (not byte))      true
+      (= marker byte)                   (recur marker-bytes file-bytes)
+      :else                             false))))
 
 ;; TODO: what if the stream doesn't support mark?
 ;; TODO: may return a false positive on arbitrary binary data
@@ -281,26 +281,6 @@ marking, it will be reset back so that the bytes are not actually read."
 (defmethod exists? File     [#^File f]   (.exists f))
 (defmethod exists? :default [x] (throw (Exception. (str "Do not know how to test <" (pr-str x) "> if it `exists?'"))))
 
-
-(defn drain-line-reader
-  "Drain a buffered reader into a sequence."
-  [#^java.io.BufferedReader rdr]
-  (loop [res []
-         line (.readLine rdr)]
-    (if line
-      (recur (conj res line)
-             (.readLine rdr))
-      res)))
-
-(defn exec
-  "Simple wrapper around Runtime.exec"
-  [#^String cmd]
-  (let [proc (.exec (Runtime/getRuntime) cmd)
-        rv (.waitFor proc)]
-    {:error (drain-line-reader (java.io.BufferedReader. (java.io.InputStreamReader. (.getErrorStream proc))))
-     :output (drain-line-reader (java.io.BufferedReader. (java.io.InputStreamReader. (.getInputStream proc))))
-     :exit rv}))
-
 (defn symlink
   "Create a symlink."
   [#^String src #^String dst]
@@ -346,20 +326,23 @@ marking, it will be reset back so that the bytes are not actually read."
       (log "[ERROR] %s" (:error res)))))
 
 
-(defn object->file [#^Object obj #^String file]
+(defn object->file
   "Use Java Serialization to emit an object to a file (binary format)."
+  [#^Object obj #^String file]
   (with-open [outp (java.io.ObjectOutputStream. (java.io.FileOutputStream. file))]
     (.writeObject outp obj)))
 
 
-(defn file->object [#^String file]
+(defn file->object
   "Use Java Serialization to pull an object from a file (see object->file)."
+  [#^String file]
   (with-open [inp (java.io.ObjectInputStream. (java.io.FileInputStream. file))]
     (.readObject inp)))
 
 ;; clojure.lang.PersistentVector$Node ins't serializable any longer...is this an oversight? ignore for now...
-(defn freeze [#^Object obj]
+(defn freeze
   "Serialize an object to a byte array."
+  [#^Object obj]
   (with-open [baos (java.io.ByteArrayOutputStream. 1024)
               oos  (java.io.ObjectOutputStream. baos)]
     (.writeObject oos obj)
@@ -368,8 +351,9 @@ marking, it will be reset back so that the bytes are not actually read."
 ;; (freeze "foo")
 ;; (freeze "foo" "bar" "qux")
 
-(defn thaw [#^bytes bytes]
+(defn thaw
   "Deserialize from a byte array to the object."
+  [#^bytes bytes]
   (with-open [bais (java.io.ByteArrayInputStream. bytes)
               ois  (java.io.ObjectInputStream. bais)]
     (.readObject ois)))
@@ -379,14 +363,16 @@ marking, it will be reset back so that the bytes are not actually read."
 ;; (object->file "foo" ($HOME "/foo.bin"))
 ;; (file->object ($HOME "/foo.bin"))
 
-(defmacro with-stdout-to-file [file & body]
+(defmacro with-stdout-to-file
   "Wrap code, redirecting stdout to a file."
+  [file & body]
   `(with-open [out# (ds/writer ~file)]
      (binding [*out* out#]
        ~@body)))
 
-(defmacro with-stderr-to-file [file & body]
+(defmacro with-stderr-to-file
   "Wrap code, redirecting stderr to a file."
+  [file & body]
   `(with-open [out# (ds/writer ~file)]
      (binding [*err* out#]
        ~@body)))
@@ -500,22 +486,22 @@ marking, it will be reset back so that the bytes are not actually read."
 (defn rewind-to-line-boundary [^java.io.RandomAccessFile fp]
   (loop [fp fp]
     (cond
-      (= 0 (.getFilePointer fp))
-      fp
+     (= 0 (.getFilePointer fp))
+     fp
 
-      (= (.length fp) (.getFilePointer fp))
-      (do
-        (.seek fp (- (.getFilePointer fp) 1))
-        (recur fp))
+     (= (.length fp) (.getFilePointer fp))
+     (do
+       (.seek fp (- (.getFilePointer fp) 1))
+       (recur fp))
 
-      (let [byte (.readByte fp)]
-        (= \newline (char byte)))
-      fp
+     (let [byte (.readByte fp)]
+       (= \newline (char byte)))
+     fp
 
-      :else
-      (do
-        (.seek fp (- (.getFilePointer fp) 2))
-        (recur fp)))))
+     :else
+     (do
+       (.seek fp (- (.getFilePointer fp) 2))
+       (recur fp)))))
 
 (comment
   (char (first (.getBytes "\n")))
@@ -531,19 +517,19 @@ marking, it will be reset back so that the bytes are not actually read."
   (let [seek-size (* 1024 1024 1)]
     (loop [curr-val (.readLine ^RandomAccessFile (rewind-to-line-boundary fp))]
       (cond
-        (< (.compareTo ^String curr-val value) 0)
-        fp
+       (< (.compareTo ^String curr-val value) 0)
+       fp
 
-        (< (.getFilePointer fp) seek-size)
-        (do
-          (.seek fp 0)
-          fp)
+       (< (.getFilePointer fp) seek-size)
+       (do
+         (.seek fp 0)
+         fp)
 
-        :else
-        (do
-          (.seek fp (- (.getFilePointer fp)
-                       seek-size))
-          (recur (.readLine ^RandomAccessFile (rewind-to-line-boundary fp))))))))
+       :else
+       (do
+         (.seek fp (- (.getFilePointer fp)
+                      seek-size))
+         (recur (.readLine ^RandomAccessFile (rewind-to-line-boundary fp))))))))
 
 
 (defn stream-segment-lines [^String file-name start ^String value]
@@ -565,31 +551,31 @@ marking, it will be reset back so that the bytes are not actually read."
       (let [mid-point (long (/ (+ spos epos) 2))
             [val-from-idx] (.split (.readLine fp) "\t")]
         (cond
-          (zero? max)
-          nil
+         (zero? max)
+         nil
 
-          (= epos spos) ;; nowhere else to seek to
-          nil
+         (= epos spos) ;; nowhere else to seek to
+         nil
 
-          (= spos (.length fp))
-          nil
+         (= spos (.length fp))
+         nil
 
-          (= value val-from-idx)
-          (do
-            (seek-to-before-segment fp value)
-            (stream-segment-lines
-             idx-file
-             (.getFilePointer fp)
-             value))
+         (= value val-from-idx)
+         (do
+           (seek-to-before-segment fp value)
+           (stream-segment-lines
+            idx-file
+            (.getFilePointer fp)
+            value))
 
-          (< (.compareTo value val-from-idx) 0)
-          (recur spos      (long mid-point) (dec max))
+         (< (.compareTo value val-from-idx) 0)
+         (recur spos      (long mid-point) (dec max))
 
-          (= 1 (- epos spos))
-          nil
+         (= 1 (- epos spos))
+         nil
 
-          :else
-          (recur mid-point (long epos) (dec max)))))))
+         :else
+         (recur mid-point (long epos) (dec max)))))))
 
 
 

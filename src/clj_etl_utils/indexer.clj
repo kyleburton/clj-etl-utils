@@ -34,7 +34,7 @@
        [[line start-pos end-pos]]
        (line-position-seq fp)))))
 
-(defn line-index-seq [^RandomAccessFile fp key-fn]
+(defn line-index-seq
   "Given a random access file (need not be positioned at the start)
 and a key function (run on the line to compute the keys for the line)
 this will return a sequence of:
@@ -44,6 +44,7 @@ this will return a sequence of:
 For all the lines in the file.
 
 "
+  [^RandomAccessFile fp key-fn]
   (pmap (fn [[line start-pos end-pos]]
           [(key-fn line) start-pos end-pos])
         (line-position-seq fp)))
@@ -173,9 +174,10 @@ For all the lines in the file.
 ;; the implementation such that we can create multiple indicies by
 ;; streaming only one time...
 
-(defn record-blocks-via-index [^String inp-file ^String index-file]
+(defn record-blocks-via-index
   "Given an data file and an index file, this stream through the distinct
 index values returning records from the data file."
+  [^String inp-file ^String index-file]
   (map (partial records-for-idx-block inp-file)
        (index-blocks-seq index-file)))
 

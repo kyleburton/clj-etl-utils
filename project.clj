@@ -18,8 +18,6 @@
 
   :profiles             {:dev {:dependencies [[swank-clojure "1.4.3"]
                                               [lein-marginalia "0.7.1"]]}
-                         :1.2 {:dependencies [[org.clojure/clojure "1.2.0"]
-                                              [org.clojure/data.json      "0.2.2"]]}
                          :1.3 {:dependencies [[org.clojure/clojure "1.3.0"]
                                               [org.clojure/data.json      "0.2.3"]]}
                          :1.4 {:dependencies [[org.clojure/clojure "1.4.0"]
@@ -38,5 +36,5 @@
                          [commons-lang               "2.5"]
                          [org.clojure/data.csv       "0.1.2"]
                          [org.clojure/tools.logging  "0.2.6"]
-                         [clj-time                  "0.7.0"
+                         [clj-time                   "0.7.0"
                            :exclusions [org.clojure/clojure]]])
