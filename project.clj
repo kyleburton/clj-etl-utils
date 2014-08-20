@@ -31,7 +31,6 @@
   :dependencies         [[commons-io                 "2.0"]
                          [log4j/log4j                "1.2.14"]
                          [org.mindrot/jbcrypt        "0.3m"]
-                         [org.apache.httpcomponents/httpclient "4.1.2"]
                          [commons-codec              "1.4"]
                          [commons-lang               "2.5"]
                          [org.clojure/data.csv       "0.1.2"]
