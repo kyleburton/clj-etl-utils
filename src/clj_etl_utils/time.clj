@@ -145,17 +145,19 @@
    (* 60 (.getHourOfDay dt))
    (.getMinuteOfHour dt)))
 
+(def int->day-of-week-keyword
+     {0 :sunday
+      1 :monday
+      2 :tuesday
+      3 :wednesday
+      4 :thursday
+      5 :friday
+      6 :saturday})
+
 (defn joda-time->day-of-week
-  [joda-time]
+  [^org.joda.time.DateTime joda-time]
   (let [day-of-week-int (.getDayOfWeek joda-time)]
-    (get {0 :sunday
-          1 :monday
-          2 :tuesday
-          3 :wednesday
-          4 :thursday
-          5 :friday
-          6 :saturday}
-         day-of-week-int)))
+    (get int->day-of-week-keyword day-of-week-int)))
 
 (defn during-business-hours?
   "
