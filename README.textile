@@ -4,32 +4,6 @@ ETL Utilities for Clojure.  This library began with functions that worked with d
 
 h2. Modules
 
-h3. clj-etl-utils.http
-
-This is a wrapper around Apache Jakarta Commons HttpClent.  This is yet another http client library for clojure.  This implementation is not attempting to be dependency free (as are many of the other clojure http client libraries).  It is merely a convienience wrapper around the Jakarta Commons HttpClient.  I need to utilize many of the common features that user agents typically support such as: cookies, automatically following redirects, basic authentication including realms, automatic form encoding, posting non-form url encoded data, etc.  Jakart's HTTP Client fits this feature set very well, thought its api is not brief - this library attempts to make it more convienient to use without limiting access to any of its advanced features.
-
-h4. User Agent
-
-Creating a user agent is done by calling the @(user-agent)@ function.  It accepts two paramters: @:follow-redirects@ which controls whether or not it follows HTTP redirect responses to the pointed to locations; and @:basic-auth@ which allows you to supply authorization credentials for HTTP's basic auth system.
-
-bc.. (ws/get  (user-agent) url :params {:foo "bar"})
-(ws/post (user-agent) url :params {:foo "bar"})
-(ws/post (user-agent) url :body "this is the body" :content-type "text/plain")
-(ws/post (user-agent) url :body "<xml? ...>"       :content-type "text/xml")
-
-(defonce *ua* (user-agent :follow-redirects :true
-                          ;; defaults to Realm/ANY, you can override with :realm value
-                          :basic-auth {:user "bob" :pass "sekret"}))
-
-(let [req (ws/get-req url :params {:foo "bar"})]
-  (ws/get *ua* req))
-
-(let [req (ws/get-req url :params {:foo "bar"})]
-  (ws/get *ua* req))
-
-(ws/post *ua* url :params {:foo "bar"})
-(ws/post *ua* url :body "this is the body" :content-type "text/plain")
-
 h3. clj-etl-utils.io
 
 IO and File utilities.
