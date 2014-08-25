@@ -343,6 +343,7 @@ Taken from: http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-
 
 (defonce rx-clean-phone-number #"\D+")
 
+
 (defn canonical-phone-number [^String mobile-number]
   (if (nil? mobile-number)
     ""
@@ -350,6 +351,12 @@ Taken from: http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-
       (if (= 10 (count num))
         (str 1 num)
         num))))
+
+
+(defn uncanonicalize-phone-number [^String mobile-number]
+  (let [phone-number (canonical-phone-number mobile-number)
+        [_ area-code central-office subscriber-number] (re-find #"\d{1}(\d{3})(\d{3})(\d{4})" phone-number)]
+    (format "%s-%s-%s" area-code central-office subscriber-number)))
 
 (defn snake-case [^String s]
   (.toString
