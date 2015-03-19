@@ -79,21 +79,22 @@
 (defn make-time-zone-for-id
   "Helper that translates coloquial time zones (eg: EDT and PDT) to the official zone.  Returns a Joda DateTimeZone."
   [^String id]
-  (cond
-    (nil? id)
-    (DateTimeZone/forID "EST5EDT")
+  (let [id (and id (.toUpperCase id))]
+    (cond
+      (nil? id)
+      (DateTimeZone/forID "EST5EDT")
 
-    (= "EDT" id)
-    (DateTimeZone/forID "EST5EDT")
+      (= "EDT" id)
+      (DateTimeZone/forID "EST5EDT")
 
-    (= "PDT" id)
-    (DateTimeZone/forID "PST8PDT")
+      (= "PDT" id)
+      (DateTimeZone/forID "PST8PDT")
 
-    (= "PST" id)
-    (DateTimeZone/forID "America/Los_Angeles")
+      (= "PST" id)
+      (DateTimeZone/forID "America/Los_Angeles")
 
-    :otherwise
-    (DateTimeZone/forID id)))
+      :otherwise
+      (DateTimeZone/forID id))))
 
 (defn mins-between [^String start-hour-min ^String end-hour-min]
   (let [stime                (tformat/parse hour-minute-time-formatter start-hour-min)
