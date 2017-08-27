@@ -59,13 +59,12 @@
       (progress))
     (progress :final :done))
 
-
   )
 
 (deftest test-nth-let
-  (let [rec (vec (rest (.split "abcdefghijklmnopqrstuvwxyz" "")))]
+  (let [rec (vec (.split "abcdefghijklmnopqrstuvwxyz" ""))]
     (nth-let [rec
-              lstart 0
+              lstart   0
               lmiddle 12
               llast   25]
       (is (= "a" lstart))

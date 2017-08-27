@@ -1,12 +1,11 @@
 (defproject com.github.kyleburton/clj-etl-utils "1.0.95-SNAPSHOT"
   :description "ETL Utilities"
   :url         "http://github.com/kyleburton/clj-etl-utils"
-  :lein-release {:deploy-via :clojars :scm :git}
-  :license {:name         "Eclipse Public License - v 1.0"
-            :url          "http://www.eclipse.org/legal/epl-v10.html"
-            :distribution :repo
-            :comments     "Same as Clojure"}
-  :repositories         {"sonatype-oss-public" "https://oss.sonatype.org/content/groups/public/"}
+  :license      {:name         "Eclipse Public License - v 1.0"
+                 :url          "http://www.eclipse.org/legal/epl-v10.html"
+                 :distribution :repo
+                 :comments     "Same as Clojure"}
+  ;; :repositories         {"sonatype-oss-public" "https://oss.sonatype.org/content/groups/public/"}
   :java-source-path     "java"
   :local-repo-classpath true
   :autodoc {
@@ -15,25 +14,22 @@
     :description "ETL Utilites for Clojure"
     :web-home    "http://kyleburton.github.com/projects/clj-etl-utils/"
   }
+  :main ^:skip-aot clj-etl-utils.repl
 
-  :profiles             {:dev {:dependencies [[swank-clojure "1.4.3"]
-                                              [lein-marginalia "0.7.1"]]}
-                         :1.3 {:dependencies [[org.clojure/clojure "1.3.0"]
-                                              [org.clojure/data.json      "0.2.3"]]}
-                         :1.4 {:dependencies [[org.clojure/clojure "1.4.0"]
-                                              [org.clojure/data.json      "0.2.3"]]}
-                         :1.5 {:dependencies [[org.clojure/clojure "1.5.1"]
-                                              [org.clojure/data.json      "0.2.3"]]}
-                         :1.6 {:dependencies [[org.clojure/clojure "1.6.0"]
-                                              [org.clojure/data.json      "0.2.3"]]}}
-  :aliases              {"all" ["with-profile" "dev,1.2:dev,1.3:dev,1.4:dev,1.5:dev,1.6"]}
   :global-vars          {*warn-on-reflection* true}
-  :dependencies         [[commons-io                 "2.0"]
-                         [log4j/log4j                "1.2.14"]
-                         [org.mindrot/jbcrypt        "0.3m"]
-                         [commons-codec              "1.4"]
-                         [commons-lang               "2.5"]
-                         [org.clojure/data.csv       "0.1.2"]
-                         [org.clojure/tools.logging  "0.2.6"]
-                         [clj-time                   "0.7.0"
-                           :exclusions [org.clojure/clojure]]])
+  :profiles {:dev {:resource-paths ["dev-resources"]
+                   :dependencies   [
+                                    [org.clojure/clojure          "1.8.0"]
+                                    [org.clojure/tools.nrepl      "0.2.12"]
+                                    [cider/cider-nrepl            "0.13.0"]
+                                    [prismatic/schema             "1.1.3"]
+                                    ]}}
+  :dependencies         [[commons-io/commons-io                  "2.5"]
+                         [org.clojure/tools.logging              "0.3.1"]
+                         [ch.qos.logback/logback-classic         "1.0.13"]
+                         [org.mindrot/jbcrypt                    "0.4"]
+                         [commons-codec/commons-codec            "1.9"]
+                         [commons-lang/commons-lang              "2.6"]
+                         [org.clojure/data.csv                   "0.1.4"]
+                         [org.clojure/data.json                  "0.2.6"]
+                         [clj-time                               "0.14.0"]])
