@@ -5,7 +5,9 @@
                  :url          "http://www.eclipse.org/legal/epl-v10.html"
                  :distribution :repo
                  :comments     "Same as Clojure"}
-  ;; :repositories         {"sonatype-oss-public" "https://oss.sonatype.org/content/groups/public/"}
+  :deploy-repositories [
+                 ["releases"  {:url "https://clojars.org/repo" :creds :gpg}]
+                 ["snapshots" {:url "https://clojars.org/repo" :creds :gpg}]]
   :java-source-path     "java"
   :local-repo-classpath true
   :autodoc {
