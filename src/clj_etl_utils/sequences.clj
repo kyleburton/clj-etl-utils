@@ -75,59 +75,59 @@ sampling process."}
 
   )
 
-(defn make-resevior-sampler
-  "(make-resevior-sampler resevior-size
-  (make-resevior-sampler resevior-size rand-int-fn)
+(defn make-reservoir-sampler
+  "(make-reservoir-sampler reservoir-size
+  (make-reservoir-sampler reservoir-size rand-int-fn)
 
-Returns a function that will take a resevior sample from a sequence (see: https://en.wikipedia.org/wiki/Reservoir_sampling)."
-  ([resevior-size]
-   (make-resevior-sampler resevior-size rand-int))
-  ([resevior-size rand-int-fn]
-   (fn resevior-sampler [elements]
-     ;; fill the resevior w/the first resevior-size elements
+Returns a function that will take a reservoir sample from a sequence (see: https://en.wikipedia.org/wiki/Reservoir_sampling)."
+  ([reservoir-size]
+   (make-reservoir-sampler reservoir-size rand-int))
+  ([reservoir-size rand-int-fn]
+   (fn reservoir-sampler [elements]
+     ;; fill the reservoir w/the first reservoir-size elements
      (loop [elements elements
-            resevior []
+            reservoir []
             ii       0]
        (cond
          ;; completed?
          (empty? elements)
-         resevior
+         reservoir
 
-         ;; need to fill the resevior?
-         (< (count resevior) resevior-size)
+         ;; need to fill the reservoir?
+         (< (count reservoir) reservoir-size)
          (recur
           (rest elements)
-          (conj resevior (first elements))
+          (conj reservoir (first elements))
           (inc ii))
 
          :attempt-sampling
          (let [jj (rand-int-fn (inc ii))]
-           (if (< jj resevior-size)
+           (if (< jj reservoir-size)
              (recur
               (rest elements)
-              (assoc resevior jj (first elements))
+              (assoc reservoir jj (first elements))
               (inc ii))
              (recur
               (rest elements)
-              resevior
+              reservoir
               (inc ii)))))))))
 
-(defn resevior-sample-seq [resevior-size elements]
-  ((make-resevior-sampler resevior-size) elements))
+(defn reservoir-sample-seq [reservoir-size elements]
+  ((make-reservoir-sampler reservoir-size) elements))
 
 
 (comment
 
-  ((make-resevior-sampler 10) (range 10))
+  ((make-reservoir-sampler 10) (range 10))
   [0 1 2 3 4 5 6 7 8 9]
 
-  ((make-resevior-sampler 10) (range 100))
+  ((make-reservoir-sampler 10) (range 100))
   [53 83 73 70 91 78 49 7 52 9]
 
-  ((make-resevior-sampler 10) (range 10000))
+  ((make-reservoir-sampler 10) (range 10000))
   [5388 3861 8622 9700 4658 5334 1517 8222 8591 6114]
 
-  (let [sampler (make-resevior-sampler 1)]
+  (let [sampler (make-reservoir-sampler 1)]
     (->>
      (range 99)
      (mapv (fn [trial] (sampler [1 2 3])))

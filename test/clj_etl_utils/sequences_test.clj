@@ -25,9 +25,9 @@
     (is (= [:a :c :e :g :i]) (sampler population (count population) 5))))
 
 
-(deftest test-make-resevior-sampler
-  (is (= [] ((sequences/make-resevior-sampler 6) [])))
-  (is (= [1] ((sequences/make-resevior-sampler 6) [1])))
-  (is (= [0 1 2 3 4 5] ((sequences/make-resevior-sampler 6) [0 1 2 3 4 5])))
-  (let [sampler (sequences/make-resevior-sampler 2 (fn [_] 0))]
+(deftest test-make-reservoir-sampler
+  (is (= [] ((sequences/make-reservoir-sampler 6) [])))
+  (is (= [1] ((sequences/make-reservoir-sampler 6) [1])))
+  (is (= [0 1 2 3 4 5] ((sequences/make-reservoir-sampler 6) [0 1 2 3 4 5])))
+  (let [sampler (sequences/make-reservoir-sampler 2 (fn [_] 0))]
     (is (= [:d :b] (sampler [:a :b :c :d])))))
