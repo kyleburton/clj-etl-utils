@@ -30,7 +30,7 @@
                          [org.clojure/tools.logging              "0.3.1"]
                          [ch.qos.logback/logback-classic         "1.0.13"]
                          [org.mindrot/jbcrypt                    "0.4"]
-                         [commons-codec/commons-codec            "1.9"]
+                         [commons-codec/commons-codec            "1.10"]
                          [commons-lang/commons-lang              "2.6"]
                          [org.clojure/data.csv                   "0.1.4"]
                          [org.clojure/data.json                  "0.2.6"]
