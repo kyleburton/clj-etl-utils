@@ -27,7 +27,7 @@
                                     [prismatic/schema             "1.1.3"]
                                     ]}}
   :dependencies         [[commons-io/commons-io                  "2.5"]
-                         [org.clojure/tools.logging              "0.3.1"]
+                         [org.clojure/tools.logging              "1.2.1"]
                          [ch.qos.logback/logback-classic         "1.0.13"]
                          [org.mindrot/jbcrypt                    "0.4"]
                          [commons-codec/commons-codec            "1.10"]
