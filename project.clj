@@ -22,9 +22,9 @@
   :profiles {:dev {:resource-paths ["dev-resources"]
                    :dependencies   [
                                     [org.clojure/clojure          "1.8.0"]
-                                    [org.clojure/tools.nrepl      "0.2.12"]
-                                    [cider/cider-nrepl            "0.13.0"]
                                     [prismatic/schema             "1.1.3"]
+                                    [nrepl/nrepl                  "1.0.0"]
+                                    [cider/cider-nrepl            "0.43.3"]
                                     ]}}
   :dependencies         [[commons-io/commons-io                  "2.5"]
                          [org.clojure/tools.logging              "1.2.1"]
