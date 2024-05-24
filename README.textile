@@ -66,7 +66,7 @@ Returns a sequence of lines from the file across the given starting and ending p
 
 h3. clj-etl-utils.landmark_parser
 
-h3. clj-etl-utils.lang
+h3. clj-etl-utils.lang-utils
 
 @lang/make-periodic-invoker@ can be used to easily create 'progress' indicators or bars
 
