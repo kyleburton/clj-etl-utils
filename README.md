@@ -1,89 +1,105 @@
-h1. clj-etl-utils
+# clj-etl-utils
 
 ETL Utilities for Clojure.  This library began with functions that worked with data on disk, such as database dumps and log files, at least that was the original purpose of the library, it has since grown to include other utilities.
 
-h2. Modules
+## Modules
 
-h3. clj-etl-utils.io
+### clj-etl-utils.io
 
 IO and File utilities.
 
-h4. string-reader, string-input-stream
+#### string-reader, string-input-stream
 
 Returns a Reader or an InputStream, respectively, that will read from the given string.
 
-h4. read-fixed-length-string
+#### read-fixed-length-string
 
 Reads a fixed-length string.
 
-h4. chmod
+#### chmod
 
-Changes the permissions on a file by shelling out to the @chmod@ command.
+Changes the permissions on a file by shelling out to the `chmod` command.
 
-h4. mkdir
+#### mkdir
 
 Creates the given directory, just returning true if the given directory already exists (as opposed to throwing an exception).
 
-h4. exists?
+#### exists?
 
 Tests if a file exists.
 
-h4. symlink
+#### symlink
 
 Establishes a symlink for a file.
 
-h4. freeze, thaw
+#### freeze, thaw
 
 freeze invokes the java serialization and returns a byte array.  Thaw does the opposite: takes a byte array and deserializes it.
 
-h4. object->file
+#### object->file
 
 Uses Java serialization to write an object to the given file, truncating if it exists.
 
-h4. file->object
+#### file->object
 
 Deserializes a serialized object from a file.
 
-h4. ensure-directory
+#### ensure-directory
 
 Ensures a directory path exists (recursively), doing nothing if it already exists.
 
-h4. string-gzip
+#### string-gzip
 
 Compress a string, returning the bytes.
 
-h4. byte-partitions-at-line-boundaries
+#### byte-partitions-at-line-boundaries
 
 This can be used in divide and conquer scenarios where you want to process different segments of a single file in parallel.  It takes an input file name and a desired block size.  Block boundaries will be close to the desired size - the size is used as a seek position, any line remnant present at that position is read, such that a given block will end cleanly at a line boundary.
 
-h4. random-access-file-line-seq-with-limit
+#### random-access-file-line-seq-with-limit
 
 Returns a lazy sequence of lines from a RandomAccessFile up to a given limit.  If a line spans the limit, the entire line will be returned, so that a valid line is always returned.
 
-h4. read-lines-from-file-segment
+#### read-lines-from-file-segment
 
 Returns a sequence of lines from the file across the given starting and ending positions.
 
-h3. clj-etl-utils.landmark_parser
+### clj-etl-utils.landmark\_parser
 
-h3. clj-etl-utils.lang-utils
+### clj-etl-utils.lang-utils
 
-@lang/make-periodic-invoker@ can be used to easily create 'progress' indicators or bars
+`lang/make-periodic-invoker` can be used to easily create 'progress' indicators or bars
 
-h4. Example
+#### Example
 
-pre.. (let [total   1000
-      period   100
-      progress (lang/make-periodic-invoker
-                 period
-                 (fn [val & [is-done]]
-                   (if (= is-done :done)
-                     (printf "All Done! %d\n" val)
-                     (printf "So far we did %d, we are  %3.2f%% complete.\n" val (* 100.0 (/ val 1.0 total))))))]
-  (dotimes [ii total]
-    ;; do some work / processing here
-    (progress))
-  (progress :final :done))
+pre..  (let [total         1000
+        period        100
+        started-at-ms (.getTime (java.util.Date.))
+        progress      (make-periodic-invoker
+                       period
+                       (fn [status counter]
+                         (let [elapsed-ms    (- (.getTime (java.util.Date.)) started-at-ms)
+                               elapsed-secs  (/ elapsed-ms 1000)
+                               num-remaining (- total counter)
+                               rate-per-sec  (/ counter elapsed-secs)
+                               eta-secs      (/ num-remaining rate-per-sec)]
+                           (cond
+                             (= status :final)
+                             (printf "All Done! %d processed in %d seconds at %3.2f/s\n" counter (long elapsed-secs) (double rate-per-sec))
+
+                             :else
+                             (printf "So far we've completed %d of %d, we are  %3.2f%% complete at %3.2f per second, we should be done in %d seconds.\n"
+                                     counter
+                                     total
+                                     (double (* 100.0 (/ counter total 1.0)))
+                                     (double rate-per-sec)
+                                     (long eta-secs))))))]
+    (dotimes [ii total]
+      ;; do some work / processing here
+      (Thread/sleep ^long (rand-nth [0 1 2 3 4 5]))
+      (progress))
+    (progress :final)
+    :done)
 
 p. Produces the following output:
 
@@ -99,21 +115,21 @@ So far we did 900, we are  90.00% complete.
 So far we did 1000, we are  100.00% complete.
 All Done! 1000
 
-h3. clj-etl-utils.ref_data
+### clj-etl-utils.ref\_data
 
-h3. clj-etl-utils.regex
+### clj-etl-utils.regex
 
-h3. clj-etl-utils.sequences
+### clj-etl-utils.sequences
 
-h3. clj-etl-utils.text
+### clj-etl-utils.text
 
-h3. clj-etl-utils.indexer
+### clj-etl-utils.indexer
 
 Module for working with line-oriented data files in-situ on disk.  These tools allow you to create (somewhat) arbitrary indexes into a file and walk through the indexed values.
 
-h4. Example
+#### Example
 
-Given the tab delimited file @file.txt@:
+Given the tab delimited file `file.txt`:
 
 pre.. 99	line with larger key
 1	is is the second line
@@ -121,7 +137,7 @@ pre.. 99	line with larger key
 3	this is another line
 99	duplicated line for key
 
-p. We can create an index on the @id@ column id:
+p. We can create an index on the `id` column id:
 
 pre.. (index-file! "file.txt" ".file.txt.id-idx" #(first (.split % "\t")))
 
@@ -136,36 +152,36 @@ pre.. ( [ "1\tis is the second line" ]
 [ "99\tline with larger key"
 "99\tduplicated line for key" ] )
 
-h2. Installation
+## Installation
 
-@clj-etl-utils@ is available via Clojars:
+`clj-etl-utils` is available via Clojars:
 
   https://clojars.org/com.github.kyleburton/clj-etl-utils
 
-h2. References
+## References
 
 UTF and BOM
 
-  http://unicode.org/faq/utf_bom.html
+  http://unicode.org/faq/utf\_bom.html
 
-h2. Random Sampling
+## Random Sampling
 
-  "How to pick a random sample from a list":http://www.javamex.com/tutorials/random_numbers/random_sample.shtml
+  [How to pick a random sample from a list](http://www.javamex.com/tutorials/random\_numbers/random\_sample.shtml)
 
-h2. Reference Data
+## Reference Data
 
-h3. US Zip5 Codes
+### US Zip5 Codes
 
-"Fun with Zip Codes":http://www.mattcutts.com/blog/fun-with-zip-codes/
+[Fun with Zip Codes](http://www.mattcutts.com/blog/fun-with-zip-codes/)
 
-"US Census Tigerline Data: Zip Codes":http://www.census.gov/tiger/tms/gazetteer/zips.txt
+[US Census Tigerline Data: Zip Codes](http://www.census.gov/tiger/tms/gazetteer/zips.txt)
 
 
-h2. License
+## License
 
 This code is covered under the same as Clojure.
 
-h1. Authors
+# Authors
 
 Kyle Burton <kyle.burton@gmail.com>
 
