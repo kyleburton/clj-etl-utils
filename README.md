@@ -72,7 +72,8 @@ Returns a sequence of lines from the file across the given starting and ending p
 
 #### Example
 
-pre..  (let [total         1000
+```clojure
+  (let [total         1000
         period        100
         started-at-ms (.getTime (java.util.Date.))
         progress      (make-periodic-invoker
@@ -100,10 +101,12 @@ pre..  (let [total         1000
       (progress))
     (progress :final)
     :done)
+```
 
-p. Produces the following output:
+Produces the following output:
 
-pre.. So far we did 100, we are  10.00% complete.
+```text
+So far we did 100, we are  10.00% complete.
 So far we did 200, we are  20.00% complete.
 So far we did 300, we are  30.00% complete.
 So far we did 400, we are  40.00% complete.
@@ -114,6 +117,7 @@ So far we did 800, we are  80.00% complete.
 So far we did 900, we are  90.00% complete.
 So far we did 1000, we are  100.00% complete.
 All Done! 1000
+```
 
 ### clj-etl-utils.ref\_data
 
@@ -131,26 +135,34 @@ Module for working with line-oriented data files in-situ on disk.  These tools a
 
 Given the tab delimited file `file.txt`:
 
-pre.. 99	line with larger key
+```
+99	line with larger key
 1	is is the second line
 2	this is a line
 3	this is another line
 99	duplicated line for key
+```
 
-p. We can create an index on the `id` column id:
+We can create an index on the `id` column id:
 
-pre.. (index-file! "file.txt" ".file.txt.id-idx" #(first (.split % "\t")))
+```clojure
+(index-file! "file.txt" ".file.txt.id-idx" #(first (.split % "\t")))
+```
 
-p. That index can then be used to read groups of records from the file with
-the same key values:
+ That index can then be used to read groups of records from the file with the same key values:
 
-pre.. (record-blocks-via-index "file.txt" ".file.txt.id-idx")
+```clojure
+(record-blocks-via-index "file.txt" ".file.txt.id-idx")
+```
 
-pre.. ( [ "1\tis is the second line" ]
+
+```clojure
+( [ "1\tis is the second line" ]
 [ "2\tthis is a line" ]
 [ "3\tthis is another line" ]
 [ "99\tline with larger key"
 "99\tduplicated line for key" ] )
+```
 
 ## Installation
 
