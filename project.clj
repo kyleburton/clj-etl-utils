@@ -16,7 +16,6 @@
     :description "ETL Utilites for Clojure"
     :web-home    "http://kyleburton.github.com/projects/clj-etl-utils/"
   }
-  :main ^:skip-aot clj-etl-utils.repl
 
   :global-vars          {*warn-on-reflection* true}
   :profiles {:dev {:resource-paths ["dev-resources"]

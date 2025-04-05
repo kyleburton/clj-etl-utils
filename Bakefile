@@ -1,0 +1,6 @@
+#!/bin/bash
+
+bake_task run-dev "Run a development Cider-NREPL"
+run-dev () {
+  lein run -m clj-etl-utils.repl "$@"
+}
