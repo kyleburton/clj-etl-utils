@@ -75,14 +75,15 @@ For all the lines in the file.
 (defn create-index-file [^String input-file ^String index-file key-fn]
   ;; run the indexer (seq), emit to index-file
   ;; sort index-file
-  (with-open [outp (cljio/writer index-file)]
+  (with-open [^java.io.Writer outp (cljio/writer index-file)]
     (loop [[[kvals start end] & vals] (file-index-seq input-file key-fn)]
       (if (or (nil? kvals)
               (empty? kvals))
         true
         (do
           (doseq [val kvals]
-            (.println outp (format "%s\t%s\t%s" val start end)))
+            (.write outp (format "%s\t%s\t%s" val start end))
+            (.write outp "\n"))
           (recur vals))))))
 
 ;; NB: return value isn't taking into account error statuses
@@ -127,11 +128,11 @@ For all the lines in the file.
 ;; TODO: this is splitting multiple times, rework to only split 1x
 (defn index-blocks-seq [^String index-file]
   (map (fn [grp]
-         (map (fn [l]
+         (map (fn [^String l]
                 (let [[val spos epos] (.split l "\t")]
                   [val (Integer/parseInt spos) (Integer/parseInt epos)]))
               grp))
-       (sequences/group-with (fn [l]
+       (sequences/group-with (fn [^String l]
                                (first (.split l "\t")))
                              (io/lazy-read-lines index-file))))
 
@@ -199,7 +200,7 @@ index values returning records from the data file."
   ([idx-file term matcher]
      (with-open [rdr (cljio/reader idx-file)]
        (index-search idx-file term matcher rdr)))
-  ([idx-file term matcher rdr]
+  ([idx-file term matcher ^java.io.BufferedReader rdr]
      (loop [line (.readLine rdr)
             res  []]
        (if (nil? line)
@@ -230,7 +231,8 @@ index values returning records from the data file."
         ;; (<= max-iters 0)
         ;; (raise "Too much recursion")
 
-        (= (.intValue b) 10)
+        ;; (int (aget (.getBytes "a") 0))
+        (= (int b) 10)
         (do
           #_(println (format "rewind-to-newline: Found newline at %d" (.getFilePointer fp)))
           true)
@@ -268,7 +270,7 @@ index values returning records from the data file."
       #_(println (format "before binary search, spos=%d to epos=%d under THRESH, falling back to streaming search" spos epos))
       (index-search idx-file
                     term
-                    (fn [idx-val term]
+                    (fn [^String idx-val ^String term]
                       (.startsWith idx-val term))
                     rdr))
     (with-open [fp (RandomAccessFile. idx-file "r")]
@@ -300,7 +302,7 @@ index values returning records from the data file."
               (index-search
                idx-file
                term
-               (fn [idx-val term]
+               (fn [^String idx-val ^String term]
                  #_(println (format "(.startsWith \"%s\" \"%s\") => %s"
                                     idx-val term (.startsWith idx-val term)))
                  (.startsWith idx-val term))
@@ -372,8 +374,9 @@ index values returning records from the data file."
 ;;   (with-in-str s
 ;;     (first (csv/read-csv *in*))))
 
-(defn index-file-path [src idx-name]
-  (let [src-file (java.io.File. (-> src :config :file))]
+(defn index-file-path ^String [src idx-name]
+  (let [^String fname (-> src :config :file)
+        src-file      (java.io.File. fname)]
     (format "%s/.%s.%s-idx"
             (.getParent src-file)
             (.getName src-file)
@@ -383,7 +386,7 @@ index values returning records from the data file."
   (doseq [[idx-name idx] (-> src :config :indexes)]
     (println (format "idx:%s" idx))
     (let [src-path (-> src :config :file)
-          src-file (java.io.File. src-path)
+          src-file (java.io.File. ^String src-path)
           idx-path (index-file-path src (:name idx))
           idx-file (java.io.File. idx-path)]
       ;; only if the idx-file doesn't exist or the src file is newer
@@ -396,7 +399,7 @@ index values returning records from the data file."
          idx-path
          (:fn idx))))))
 
-(defn make-candidate-keyfile [sources index-name candfile]
+(defn make-candidate-keyfile [sources index-name ^String candfile]
   ;; combine the index values, sort and count them
   (with-open [wtr (java.io.PrintWriter. candfile)]
     (doseq [src sources]
@@ -404,7 +407,7 @@ index values returning records from the data file."
             idx-file (index-file-path src index-name)]
         (with-open [rdr (java.io.BufferedReader. (java.io.FileReader. idx-file))]
           (doall
-           (for [line (line-seq rdr)]
+           (for [^String line (line-seq rdr)]
              (.println wtr (first (.split line "\t" 2)))))))))
   (let [tmp    (java.io.File/createTempFile "cand-srt" "tmp")
         tmpnam (.getName tmp)]
@@ -413,7 +416,7 @@ index values returning records from the data file."
     (println (format "mv %s %s" tmpnam candfile))
     (sh/sh "mv" tmpnam candfile)))
 
-(defn ensure-candidate-keyfile [sources index-name candfile]
+(defn ensure-candidate-keyfile [sources index-name ^String candfile]
   (let [f (java.io.File. candfile)]
     (when-not (.exists f)
       (make-candidate-keyfile sources index-name candfile))))
@@ -434,6 +437,3 @@ index values returning records from the data file."
                                      :recs       (vec (index-search-file input-file index-file term))}))
                                 sources))]
           (f term cluster))))))
-
-
-

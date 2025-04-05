@@ -17,12 +17,12 @@
       #<DateTime 2014-05-07T08:59:59.000-04:00>
       #<DateTime 2014-05-08T08:59:59.000-04:00>)
 
-"
+  "
   [^DateTime start-date ^DateTime end-date]
   (take-while
-   #(or (.isBefore %1 end-date)
-        (.isEqual  %1 end-date))
-   (iterate (fn [d]
+   #(or (.isBefore ^DateTime %1 end-date)
+        (.isEqual  ^DateTime %1 end-date))
+   (iterate (fn [^DateTime d]
               (.plusDays d 1))
             start-date)))
 
@@ -34,44 +34,44 @@
      (org.joda.time.DateTime. \"2014-05-06T12:59:59Z\"))
    => true
 
-"
+  "
   [^DateTime t1 ^DateTime t2]
   (let [d1 (.toLocalDate t1)
         d2 (.toLocalDate t2)]
     (.isEqual d1 d2)))
 
-(def *days-of-week-long*
-     {DateTimeConstants/SUNDAY    "Sunday"
-      DateTimeConstants/MONDAY    "Monday"
-      DateTimeConstants/TUESDAY   "Tuesday"
-      DateTimeConstants/WEDNESDAY "Wednesday"
-      DateTimeConstants/THURSDAY  "Thursday"
-      DateTimeConstants/FRIDAY    "Friday"
-      DateTimeConstants/SATURDAY  "Saturday"})
+(def days-of-week-long
+  {DateTimeConstants/SUNDAY    "Sunday"
+   DateTimeConstants/MONDAY    "Monday"
+   DateTimeConstants/TUESDAY   "Tuesday"
+   DateTimeConstants/WEDNESDAY "Wednesday"
+   DateTimeConstants/THURSDAY  "Thursday"
+   DateTimeConstants/FRIDAY    "Friday"
+   DateTimeConstants/SATURDAY  "Saturday"})
 
 (defn day-of-week-long [^DateTime dt]
-  (get *days-of-week-long* (.getDayOfWeek dt)))
+  (get days-of-week-long (.getDayOfWeek dt)))
 
-(def *days-of-week-abbr*
-     {DateTimeConstants/SUNDAY    "Sun"
-      DateTimeConstants/MONDAY    "Mon"
-      DateTimeConstants/TUESDAY   "Tue"
-      DateTimeConstants/WEDNESDAY "Wed"
-      DateTimeConstants/THURSDAY  "Thu"
-      DateTimeConstants/FRIDAY    "Fri"
-      DateTimeConstants/SATURDAY  "Sat"})
+(def days-of-week-abbr
+  {DateTimeConstants/SUNDAY    "Sun"
+   DateTimeConstants/MONDAY    "Mon"
+   DateTimeConstants/TUESDAY   "Tue"
+   DateTimeConstants/WEDNESDAY "Wed"
+   DateTimeConstants/THURSDAY  "Thu"
+   DateTimeConstants/FRIDAY    "Fri"
+   DateTimeConstants/SATURDAY  "Sat"})
 
 (defn day-of-week-abbr [^DateTime dt]
-  (get *days-of-week-abbr* (.getDayOfWeek dt)))
+  (get days-of-week-abbr (.getDayOfWeek dt)))
 
-(def *days-of-week-short*
-     {DateTimeConstants/SUNDAY    "S"
-      DateTimeConstants/MONDAY    "M"
-      DateTimeConstants/TUESDAY   "T"
-      DateTimeConstants/WEDNESDAY "W"
-      DateTimeConstants/THURSDAY  "Th"
-      DateTimeConstants/FRIDAY    "F"
-      DateTimeConstants/SATURDAY  "S"})
+(def days-of-week-short
+  {DateTimeConstants/SUNDAY    "S"
+   DateTimeConstants/MONDAY    "M"
+   DateTimeConstants/TUESDAY   "T"
+   DateTimeConstants/WEDNESDAY "W"
+   DateTimeConstants/THURSDAY  "Th"
+   DateTimeConstants/FRIDAY    "F"
+   DateTimeConstants/SATURDAY  "S"})
 
 
 (defonce hour-minute-time-formatter (tformat/formatter "HH:mm"))
@@ -97,10 +97,10 @@
       (DateTimeZone/forID id))))
 
 (defn mins-between [^String start-hour-min ^String end-hour-min]
-  (let [stime                (tformat/parse hour-minute-time-formatter start-hour-min)
-        etime                (tformat/parse hour-minute-time-formatter end-hour-min)
+  (let [^DateTime stime      (tformat/parse hour-minute-time-formatter start-hour-min)
+        ^DateTime etime      (tformat/parse hour-minute-time-formatter end-hour-min)
         end-is-before-start? (.isBefore etime stime)
-        etime                (if end-is-before-start?
+        ^DateTime etime      (if end-is-before-start?
                                (time/plus etime (time/minutes (* 24 60)))
                                etime)
         shour                (.getHourOfDay stime)
@@ -114,16 +114,16 @@
   "
     (translate-time-of-day-to-utc-time-of-day \"09:00\" \"EDT\")
       => ^DateTime timestamp
-"
+  "
   [^String hour-of-day ^org.joda.time.DateTime tstamp ^String tz]
-  (let [htime  (tformat/parse hour-minute-time-formatter hour-of-day)
-        tstamp (time/to-time-zone tstamp (make-time-zone-for-id tz))
-        tstamp (.withTime
-                tstamp
-                (.getHourOfDay    htime)
-                (.getMinuteOfHour htime)
-                0 0)
-        tstamp (time/to-time-zone tstamp (DateTimeZone/forID "UTC"))]
+  (let [^DateTime htime (tformat/parse hour-minute-time-formatter hour-of-day)
+        tstamp          (time/to-time-zone tstamp (make-time-zone-for-id tz))
+        tstamp          (.withTime
+                         tstamp
+                         (.getHourOfDay    htime)
+                         (.getMinuteOfHour htime)
+                         0 0)
+        tstamp          (time/to-time-zone tstamp (DateTimeZone/forID "UTC"))]
     tstamp))
 
 (comment
@@ -147,13 +147,13 @@
    (.getMinuteOfHour dt)))
 
 (def int->day-of-week-keyword
-     {1 :monday
-      2 :tuesday
-      3 :wednesday
-      4 :thursday
-      5 :friday
-      6 :saturday
-      7 :sunday})
+  {1 :monday
+   2 :tuesday
+   3 :wednesday
+   4 :thursday
+   5 :friday
+   6 :saturday
+   7 :sunday})
 
 (defn joda-time->day-of-week
   [^org.joda.time.DateTime joda-time]
@@ -168,7 +168,7 @@
       \"17:00\"
       \"EDT\")
 
-"
+  "
   [^org.joda.time.DateTime current-time ^String start-hour-min ^String end-hour-min ^String tz]
   (let [current-time        (time/to-time-zone current-time (DateTimeZone/forID "UTC"))
         [bus-start bus-end] (hour-span-to-time-stamps

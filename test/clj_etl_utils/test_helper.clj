@@ -33,7 +33,7 @@
       (log/debug (format "project-root: falling back to user.dir"))
       (System/getProperty "user.dir"))))
 
-(defn fixture-file [^String file]
+(defn fixture-file ^String [^String file]
   (format "%s/test/fixtures/files/%s" (project-root) file))
 
 (defn fixture-file-contents [^String file]

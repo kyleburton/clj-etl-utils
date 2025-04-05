@@ -21,14 +21,14 @@
   :global-vars          {*warn-on-reflection* true}
   :profiles {:dev {:resource-paths ["dev-resources"]
                    :dependencies   [
-                                    [org.clojure/clojure          "1.8.0"]
+                                    [org.clojure/clojure          "1.12.0"]
                                     [prismatic/schema             "1.1.3"]
                                     [nrepl/nrepl                  "1.0.0"]
-                                    [cider/cider-nrepl            "0.43.3"]
+                                    [cider/cider-nrepl            "0.52.1"]
                                     ]}}
   :dependencies         [[commons-io/commons-io                  "2.5"]
-                         [org.clojure/tools.logging              "1.2.1"]
-                         [ch.qos.logback/logback-classic         "1.0.13"]
+                         [org.clojure/tools.logging              "1.3.0"]
+                         [ch.qos.logback/logback-classic         "1.2.11"]
                          [org.mindrot/jbcrypt                    "0.4"]
                          [commons-codec/commons-codec            "1.10"]
                          [commons-lang/commons-lang              "2.6"]

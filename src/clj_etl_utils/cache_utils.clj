@@ -24,7 +24,7 @@
 ;;
 ;;   `(register-cache :clj-etl-utils.cache-utils.my-function #{:standard} (atom {}))`
 ;;
-(defonce *cache-registry* (atom {}))
+(defonce cache-registry (atom {}))
 
 ;; ### Cache Tags
 ;;
@@ -33,11 +33,11 @@
 ;; which represents a standard memoize based cache.
 
 (defn register-cache [name #^java.util.Set tags cache-ref & [cache-reset-fn]]
-  (swap! *cache-registry* assoc name {:name name :tags tags :cache cache-ref :reset-fn (or cache-reset-fn
+  (swap! cache-registry assoc name {:name name :tags tags :cache cache-ref :reset-fn (or cache-reset-fn
                                                                                            (fn [entry] (reset! (:cache entry) {})))}))
 
 (defn lookup-cache-by-name [name]
-  (get @*cache-registry* name))
+  (get @cache-registry name))
 
 (defn purge-cache-named [n]
   (reset! (:cache (lookup-cache-by-name n))
@@ -46,7 +46,7 @@
 (defn lookup-caches-by-tag [tag]
   (filter (fn [entry]
             (contains? (:tags entry) tag))
-          (vals @*cache-registry*)))
+          (vals @cache-registry)))
 
 (defn purge-caches-with-tag [tag]
   (doseq [entry (lookup-caches-by-tag tag)]
@@ -118,7 +118,7 @@
     (fn [& args]
       (let [k    (args-ser-fn args)
             cmap @cache]
-        (when (.isBeforeNow @exp-time)
+        (when (.isBeforeNow ^DateTime @exp-time)
           (reset! exp-time (.plusMillis  (DateTime.) duration))
           (reset! cache {}))
         (if (contains? cmap k)
@@ -176,7 +176,7 @@
 (defn invalidate-standard-cache [cache-name args]
   (let [cache
         (->
-         @*cache-registry*
+         @cache-registry
          (get cache-name)
          :cache)]
     (swap! cache

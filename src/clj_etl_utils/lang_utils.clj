@@ -94,11 +94,6 @@
   [& stuff]
   (throw (RuntimeException. ^String (apply str stuff))))
 
-
-;; TODO: get rid of 'log'
-(defn log [& args]
-  (.println System/err (apply format args)))
-
 (defn seq-like? [thing]
   (or (seq? thing)
       (vector? thing)))
@@ -406,5 +401,12 @@ following actions are supported:
 
 (defn resource->file-path [^String resource]
   (let [cl  (.getClassLoader (.getClass *ns*))
-        url (.findResource ^ClassLoader cl ^String resource)]
+        url (.getResource ^ClassLoader cl ^String resource)]
     (.getFile ^java.net.URL url)))
+
+(comment
+
+  (resource->file-path "xsd/iso-2-country-codes.xsd")
+  (resource->file-path "xsd/iso-3-country-codes.xsd")
+
+)

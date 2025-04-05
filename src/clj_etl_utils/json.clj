@@ -9,7 +9,7 @@
 
 
 (extend java.sql.Timestamp json/JSONWriter
-        {:-write (fn [x #^PrintWriter out]
+        {:-write (fn [^java.sql.Timestamp x #^PrintWriter out]
                    (.print out "\"")
                    (.print out
                            (.print (ISODateTimeFormat/dateTime )
@@ -17,19 +17,19 @@
                    (.print out "\""))})
 
 (extend org.joda.time.DateTime json/JSONWriter
-        {:-write (fn [x #^PrintWriter out]
+        {:-write (fn [^org.joda.time.DateTime x #^PrintWriter out]
                    (.print out "\"")
                    (.print out (.toString x))
                    (.print out "\""))})
 
 (extend java.util.Date json/JSONWriter
-        {:-write (fn [x #^PrintWriter out]
+        {:-write (fn [^java.util.Date x #^PrintWriter out]
                    (.print out "\"")
                    (.print out (.toString (org.joda.time.DateTime. x)))
                    (.print out "\""))})
 
 (extend clojure.lang.Fn json/JSONWriter
-        {:-write (fn [x #^PrintWriter out]
+        {:-write (fn [^clojure.lang.Fn x #^PrintWriter out]
                    (.print out "\"")
                    (.print out (.toString x))
                    (.print out "\""))})

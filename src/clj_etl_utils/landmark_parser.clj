@@ -10,9 +10,10 @@
       :author "Kyle Burton"}
   clj-etl-utils.landmark-parser
   (:import [java.util.regex Pattern Matcher])
-  (:use    [clj-etl-utils.lang-utils :only (raise seq-like? log)])
+  (:use    [clj-etl-utils.lang-utils :only (raise seq-like?)])
   (:require
-   [clj-etl-utils.regex :as regex]))
+   [clj-etl-utils.regex              :as regex]
+   [clojure.tools.logging            :as log]))
 
 
 (declare lp-commands)
@@ -21,13 +22,13 @@
 
 (defn make-parser [#^String doc]
   (struct-map parser
-    :pos (atom 0)
-    :ldoc (.toLowerCase doc)
+    :pos    (atom 0)
+    :ldoc   (.toLowerCase doc)
     :doclen (.length doc)
-    :doc doc))
+    :doc    doc))
 
 (defn forward-past [parser ^String landmark]
-  (let [pos (.indexOf ^String (:ldoc parser) (.toLowerCase landmark) @(:pos parser))]
+  (let [pos (.indexOf ^String (:ldoc parser) (.toLowerCase landmark) (int @(:pos parser)))]
     (if (= -1 pos)
       false
       (do
@@ -36,7 +37,7 @@
 
 (defn forward-to [parser ^String landmark]
   (let [start (:post parser)
-        pos (.indexOf ^String (:ldoc parser) ^String (.toLowerCase landmark) @(:pos parser))]
+        pos   (.indexOf ^String (:ldoc parser) ^String (.toLowerCase landmark) (int @(:pos parser)))]
     (if (= -1 pos)
       false
       (do
@@ -80,7 +81,7 @@
 (defn rewind-to [p ^String landmark]
   (let [pos (.lastIndexOf ^String (:ldoc p)
                           (.toLowerCase landmark)
-                          @(:pos p))]
+                          (int @(:pos p)))]
     (if (= -1 pos)
       false
       (do
@@ -90,7 +91,7 @@
 (defn rewind-past [p ^String landmark]
   (let [pos (.lastIndexOf ^String (:ldoc p)
                           (.toLowerCase landmark)
-                          @(:pos p))]
+                          (int @(:pos p)))]
     (if (= -1 pos)
       false
       (do
@@ -134,15 +135,15 @@
 (defn forward-past-regex
   "See also regex/common-regexes"
   [p regex]
-  (log "forward-past-regex regex=%s" regex)
+  (log/infof "forward-past-regex regex=%s" regex)
   (let [^java.util.regex.Pattern pat (if (and (keyword? regex) (regex regex/common-regexes))
                                        (regex regex/common-regexes)
                                        (Pattern/compile (str regex) (bit-or Pattern/MULTILINE Pattern/CASE_INSENSITIVE)))
         ^java.util.regex.Matcher m   (.matcher pat (:doc p))]
-    (log "forward-past-regex: pat=%s m=%s" pat m)
+    (log/infof "forward-past-regex: pat=%s m=%s" pat m)
     (if (.find m @(:pos p))
       (do
-        (log "forward-past-regex: found reg:%s at:(%d,%d,)" regex (.start m) (.end m))
+        (log/infof "forward-past-regex: found reg:%s at:(%d,%d,)" regex (.start m) (.end m))
         (reset! (:pos p) (.end m))
         @(:pos p))
       false)))
@@ -153,7 +154,7 @@
               (regex regex/common-regexes)
               (Pattern/compile (str regex) (bit-or Pattern/MULTILINE Pattern/CASE_INSENSITIVE)))
         m   ^java.util.regex.Matcher (.matcher ^java.util.regex.Pattern pat ^String (:doc p))]
-    (log "forward-to-regex: using pat=%s" pat)
+    (log/infof "forward-to-regex: using pat=%s" pat)
     (if (.find m @(:pos p))
       (do
         (reset! (:pos p) (.start m))
@@ -308,10 +309,3 @@
                nil)
    :params (vec (parse-form-elements html))
    })
-
-
-
-
-
-
-

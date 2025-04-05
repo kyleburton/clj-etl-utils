@@ -91,7 +91,7 @@
   "Extracts all the groups from a java.util.regex.Matcher into a seq."
   [^java.util.regex.Matcher m]
   (for [grp (range 1 (+ 1 (.groupCount m)))]
-    (.group m grp)))
+    (.group m (int grp))))
 
 
 (defn re-find-all
@@ -114,4 +114,3 @@
       (if (.find m)
         (recur m (conj res (vec (all-groups m))))
         res)))))
-
