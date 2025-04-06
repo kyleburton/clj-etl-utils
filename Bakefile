@@ -4,3 +4,8 @@ bake_task run-dev "Run a development Cider-NREPL"
 run-dev () {
   lein run -m clj-etl-utils.repl "$@"
 }
+
+bake_task lint "lint the source code"
+lint () {
+  ag ' \(def ' | cat
+}

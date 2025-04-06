@@ -24,7 +24,7 @@
     @stat)
 
 
-  (def *timer* (lang-utils/make-periodic-invoker
+  ( def *timer* (lang-utils/make-periodic-invoker
                 10
                 (fn [val & args]
                   (printf "triggered: val=%s args=%s\n" val args))))
@@ -70,6 +70,3 @@
       (is (= "a" lstart))
       (is (= "m" lmiddle))
       (is (= "z" llast)))))
-
-
-

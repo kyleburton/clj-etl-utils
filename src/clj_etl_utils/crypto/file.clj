@@ -68,7 +68,7 @@
 
 
 (comment
-  (def crypt-info (file-encrypt "/home/superg/foo.txt" "/home/superg/foo.enc"))
+  ( def crypt-info (file-encrypt "/home/superg/foo.txt" "/home/superg/foo.enc"))
 
   (file-decrypt "/home/superg/foo.enc" "/home/superg/foo.dec" (:skey crypt-info) (:ivec crypt-info))
   )

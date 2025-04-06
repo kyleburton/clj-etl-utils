@@ -24,36 +24,36 @@
 
    "candidates.tab")
 
-  (def sources
-       {:boutell
-        {:name   :boutell
-         :config {:file "tmp/zipcode.csv"
-                  :has-header true
-                  :indexes {:city {:name :city
-                                   :fn   (fn [l]
-                                           (let [rec (csv-parse l)]
-                                             ;; 4th col is City
-                                             (when-not (empty? rec)
-                                               [(.toLowerCase (nth rec 1))])))}
-                            :state {:name :state
-                                    :fn   (fn [l]
-                                            (let [rec (csv-parse l)]
-                                              ;; 4th col is City
-                                              (when-not (empty? rec)
-                                                [(.toLowerCase (nth rec 2))])))}}}}
-        :free-zipcode-database
-        {:name :free-zipcode-database
-         :config {:file "tmp/free-zipcode-database.csv"
-                  :has-header true
-                  :indexes {:city {:name :city
-                                   :fn   (fn [l]
-                                           (let [rec (csv-parse l)]
-                                             [(.toLowerCase (nth rec 3))]))}
-                            :state
-                            {:name :state
-                             :fn   (fn [l]
-                                     (let [rec (csv-parse l)]
-                                       [(.toLowerCase (nth rec 4))]))}}}}})
+  ( def sources
+   {:boutell
+    {:name   :boutell
+     :config {:file "tmp/zipcode.csv"
+              :has-header true
+              :indexes {:city {:name :city
+                               :fn   (fn [l]
+                                       (let [rec (csv-parse l)]
+                                         ;; 4th col is City
+                                         (when-not (empty? rec)
+                                           [(.toLowerCase (nth rec 1))])))}
+                        :state {:name :state
+                                :fn   (fn [l]
+                                        (let [rec (csv-parse l)]
+                                          ;; 4th col is City
+                                          (when-not (empty? rec)
+                                            [(.toLowerCase (nth rec 2))])))}}}}
+    :free-zipcode-database
+    {:name :free-zipcode-database
+     :config {:file "tmp/free-zipcode-database.csv"
+              :has-header true
+              :indexes {:city {:name :city
+                               :fn   (fn [l]
+                                       (let [rec (csv-parse l)]
+                                         [(.toLowerCase (nth rec 3))]))}
+                        :state
+                        {:name :state
+                         :fn   (fn [l]
+                                 (let [rec (csv-parse l)]
+                                   [(.toLowerCase (nth rec 4))]))}}}}})
 
   (time
    (do

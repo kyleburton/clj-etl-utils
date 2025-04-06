@@ -42,56 +42,56 @@ marking, it will be reset back so that the bytes are not actually read."
     @res))
 
 ;; ;; from: http://unicode.org/faq/utf_bom.html
-;; (def *utf-16be*
+;; ( def *utf-16be*
 ;;      {:encoding  "UTF-16BE"
 ;;       :name      :utf-16be
 ;;       :marker    "\u00FE\u00FF"
 ;;       :marker-bytes [0xFE 0xFF]})
 
-;; (def *utf-16le*
+;; ( def *utf-16le*
 ;;      {:encoding  "UTF-16LE"
 ;;       :name      :utf-16le
 ;;       :marker    "\u00FF\u00FE"
 ;;       :marker-bytes [0xFF 0xFE]})
 
-;; (def *utf-32be*
+;; ( def *utf-32be*
 ;;      {:encoding  "UTF-32BE"
 ;;       :name       :utf-32be
 ;;       :marker    "\u0000\u0000\u00FE\u00FF"
 ;;       :marker-bytes [0x00 0x00 0xFE 0xFF]})
 
-;; (def *utf-32le*
+;; ( def *utf-32le*
 ;;      {:encoding  "UTF-32LE"
 ;;       :name      :utf-32le
 ;;       :marker    "\u00FF\u00FE\u0000\u0000"
 ;;       :marker-bytes [0xFF 0xFE 0x00 0x00]})
 
-;; (def *utf-8*
+;; ( def *utf-8*
 ;;      {:encoding  "UTF-8"
 ;;       :name      :utf-8
 ;;       :marker    "\u00EF\u00BB\u00BF"
 ;;       :marker-bytes [0xEF 0xBB 0xBF]})
 
-;; (def *iso-8851-1*
+;; ( def *iso-8851-1*
 ;;      {:encoding  "ISO-8859-1"
 ;;       :name      :iso-8859-1
 ;;       :marker    ""
 ;;       :marker-bytes []})
 
-;; (def *us-ascii*
+;; ( def *us-ascii*
 ;;      {:encoding  "US-ASCII"
 ;;       :name      :us-ascii
 ;;       :marker    ""
 ;;       :marker-bytes []})
 
-;; (def *bom-markers*
+;; ( def *bom-markers*
 ;;      [*utf-32be*
 ;;       *utf-32le*
 ;;       *utf-16be*
 ;;       *utf-16le*
 ;;       *utf-8*])
 
-;; (def *default-encoding* *iso-8851-1*)
+;; ( def *default-encoding* *iso-8851-1*)
 
 
 (defn ^{:doc "Test if a given marker is equivalent to the given set of

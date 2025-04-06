@@ -21,14 +21,14 @@ of the records of the sequence."
 
 (comment
 
-  (def *example-data* "field1\tfield2\tfield3
+  ( def *example-data* "field1\tfield2\tfield3
 This\ttaht\tother
 \t\t
 some more stuff\tand yet more\tfinal field
 the quick brown\t fox jumped over\t the lazy\t toad
 \tguns\t germs\t steel")
 
-  (def *example-recs* (map (fn [l] (vec (.split l "\t"))) (.split *example-data* "\\n")))
+  ( def *example-recs* (map (fn [l] (vec (.split l "\t"))) (.split *example-data* "\\n")))
 
   (max-col-lens *example-recs*)
 

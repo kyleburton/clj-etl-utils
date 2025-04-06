@@ -32,5 +32,5 @@
                          [commons-codec/commons-codec            "1.10"]
                          [commons-lang/commons-lang              "2.6"]
                          [org.clojure/data.csv                   "0.1.4"]
-                         [org.clojure/data.json                  "0.2.6"]
+                         [org.clojure/data.json                  "2.5.1"]
                          [clj-time                               "0.14.0"]])

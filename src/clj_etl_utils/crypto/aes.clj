@@ -27,12 +27,13 @@
   (.getBytes (.substring s 0 16) "UTF-8"))
 
 
-(comment "Example usage"
+(comment
+  "Example usage"
 
-         (def *key* (string->key "some key with some more padding"))
+  ( def *key* (string->key "some key with some more padding"))
 
-         (String. (encode-base64 (do-encrypt *key* "this is some plaintext")))
+  (String. (encode-base64 (do-encrypt *key* "this is some plaintext")))
 
-         (do-decrypt *key* (do-encrypt *key* "this is some plaintext"))
+  (do-decrypt *key* (do-encrypt *key* "this is some plaintext"))
 
-         )
+  )

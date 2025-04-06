@@ -274,12 +274,12 @@
                     '(:fp "</form>")))
 
 
-;; (def p (make-parser (com.github.kyleburton.sandbox.web/get->string "http://asymmetrical-view.com/")))
+;; ( def p (make-parser (com.github.kyleburton.sandbox.web/get->string "http://asymmetrical-view.com/")))
 ;; (forward-past-regex p :num-real)
 ;; (forward-to-regex p #"\d{4}")
 
-;; (def pat (Pattern/compile (str #"\d{4}") (bit-or Pattern/MULTILINE Pattern/CASE_INSENSITIVE)))
-;; (def m (.matcher pat (:doc p)))
+;; ( def pat (Pattern/compile (str #"\d{4}") (bit-or Pattern/MULTILINE Pattern/CASE_INSENSITIVE)))
+;; ( def m (.matcher pat (:doc p)))
 
 
 ;; (html->links (com.github.kyleburton.sandbox.web/get->string "http://asymmetrical-view.com/"))
