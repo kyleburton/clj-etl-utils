@@ -1,4 +1,4 @@
-(defproject com.github.kyleburton/clj-etl-utils "1.0.99"
+(defproject com.github.kyleburton/clj-etl-utils "1.0.100"
   :description "ETL Utilities"
   :url         "http://github.com/kyleburton/clj-etl-utils"
   :license      {:name         "Eclipse Public License - v 1.0"
